@@ -1,1 +1,5 @@
-apply from: '../../common-android.gradle'
+apply from: '../../common-java.gradle'
+
+dependencies {
+    compile project(':stormannotations')
+}

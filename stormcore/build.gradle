@@ -1,1 +1,10 @@
 apply from: '../common-android.gradle'
+
+dependencies {
+    compile project(':stormdatabase')
+    compile project(':stormiterator')
+    compile project(':stormquery')
+    compile project(':stormscheme:scheme-runtime')
+    compile project(':stormparser:parser-runtime')
+    compile project(':stormlazy')
+}

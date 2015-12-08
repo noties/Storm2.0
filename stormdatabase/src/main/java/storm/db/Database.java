@@ -61,22 +61,25 @@ public class Database implements Closeable {
     }
 
     // any modules must be registered before calling open
-    public void registerModule(DatabaseModule dbModule) {
+    public Database registerModule(DatabaseModule dbModule) {
         synchronized (mMutex) {
             mModules.add(dbModule);
         }
+        return this;
     }
 
-    public void registerModules(DatabaseModule... modules) {
+    public Database registerModules(DatabaseModule... modules) {
         synchronized (mMutex) {
             Collections.addAll(mModules, modules);
         }
+        return this;
     }
 
-    public void registerModules(Collection<DatabaseModule> modules) {
+    public Database registerModules(Collection<DatabaseModule> modules) {
         synchronized (mMutex) {
             mModules.addAll(modules);
         }
+        return this;
     }
 
     // after obtaining SQLiteDatabase through this call, don't forget to call `Database.close()`

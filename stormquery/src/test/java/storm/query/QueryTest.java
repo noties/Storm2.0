@@ -5,6 +5,14 @@ package storm.query;
  */
 public class QueryTest extends AbsStatementTest<Query> {
 
+    static {
+        new Query()
+                .select()
+                .from("SomeTable")
+                .where("")
+                .limit(12);
+    }
+
     @Override
     protected Query setUpStatement() {
         return new Query();

@@ -9,7 +9,7 @@ public class Lazy<T> {
     private final LazyProvider<T> mProvider;
 
     private T mCachedValue;
-    private boolean mIsProviderCalled;
+    private volatile boolean mIsProviderCalled;
 
     public Lazy(LazyProvider<T> provider) {
         if (provider == null) {
@@ -20,8 +20,10 @@ public class Lazy<T> {
 
     public T get() {
         if (!mIsProviderCalled) {
-            mCachedValue = mProvider.provide();
-            mIsProviderCalled = true;
+            synchronized (this) {
+                mCachedValue = mProvider.provide();
+                mIsProviderCalled = true;
+            }
         }
         return mCachedValue;
     }
