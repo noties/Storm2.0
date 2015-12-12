@@ -10,6 +10,7 @@ import storm.annotations.Default;
 import storm.annotations.ForeignKey;
 import storm.annotations.Index;
 import storm.annotations.NewColumn;
+import storm.annotations.NewTable;
 import storm.annotations.PrimaryKey;
 import storm.annotations.SQLiteNotNull;
 import storm.annotations.Serialize;
@@ -59,7 +60,20 @@ class StormSchemeProviderRuntime implements StormSchemeProvider {
             throw new StormSchemeException("Class `" + cl.getName() + "` has no columns creation statements.");
         }
 
-        return new StormSchemeStatementsGenerator(new StormSchemeTable(tableName, columns));
+        final int versionWhenAdded;
+        {
+            final NewTable newTable = cl.getAnnotation(NewTable.class);
+            if (newTable == null) {
+                versionWhenAdded = 0;
+            } else {
+                versionWhenAdded = newTable.value();
+            }
+        }
+
+        final StormSchemeTable table = new StormSchemeTable(tableName, columns)
+                .setVersionWhenAdded(versionWhenAdded);
+
+        return new StormSchemeStatementsGenerator(table);
     }
 
     static String getTableName(Class<?> cl) throws StormSchemeException {

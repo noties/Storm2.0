@@ -10,6 +10,7 @@ import storm.annotations.Default;
 import storm.annotations.ForeignKey;
 import storm.annotations.Index;
 import storm.annotations.NewColumn;
+import storm.annotations.NewTable;
 import storm.annotations.PrimaryKey;
 import storm.annotations.SQLiteNotNull;
 import storm.annotations.Serialize;
@@ -148,6 +149,42 @@ public class SchemeGeneratorRuntimeTest extends TestCase {
                 "CREATE TABLE Test5(id INTEGER PRIMARY KEY, someInt INTEGER, someLong INTEGER, someFloat REAL, someDouble REAL, someString TEXT);"
         );
         assertSchemeOnUpdate(Test5.class);
+    }
+
+    @Table("name")
+    @NewTable(2)
+    private static class Test6 {
+        @Column
+        @PrimaryKey
+        long id;
+
+        @Column
+        @Default("0")
+        int someInt;
+
+        @Column("some_double")
+        @NewColumn(3)
+        @Default("0.0")
+        double someDouble;
+    }
+
+    public void test6() {
+        assertSchemeOnCreate(
+                Test6.class,
+                "CREATE TABLE name(id INTEGER PRIMARY KEY, someInt INTEGER DEFAULT 0, some_double REAL DEFAULT 0.0);"
+        );
+        assertSchemeOnUpdate(
+                Test6.class,
+                0,
+                2,
+                "CREATE TABLE name(id INTEGER PRIMARY KEY, someInt INTEGER DEFAULT 0);"
+        );
+        assertSchemeOnUpdate(
+                Test6.class,
+                0,
+                3,
+                "ALTER TABLE name ADD COLUMN some_double REAL DEFAULT 0.0"
+        );
     }
 
     private void assertSchemeOnCreate(Class<?> cl, String... createStatements) {
