@@ -5,6 +5,10 @@ package storm.scheme;
  */
 public class StormSchemeException extends Exception {
 
+    public static StormSchemeException newInstance(String message, Object... args) {
+        return new StormSchemeException(String.format(message, args));
+    }
+
     public StormSchemeException(String detailMessage) {
         super(detailMessage);
     }

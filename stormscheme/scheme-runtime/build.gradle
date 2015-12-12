@@ -3,4 +3,6 @@ apply from: '../../common-java.gradle'
 dependencies {
     compile project(':stormannotations')
     compile project(':stormtypes')
+    compile project(':stormserializer')
+    compile project(':stormreflect')
 }

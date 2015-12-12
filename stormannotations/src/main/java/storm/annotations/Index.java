@@ -16,6 +16,6 @@ public @interface Index {
         ASC, DESC
     }
 
-    String value() default "";
+    String value();
     Sorting sorting() default Sorting.ASC;
 }
