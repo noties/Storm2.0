@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface PrimaryKey {
 
     String value() default "";
-    boolean autoincrement() default true;
+    boolean autoincrement() default false;
 }

@@ -11,6 +11,7 @@ import storm.annotations.ForeignKey;
 import storm.annotations.Index;
 import storm.annotations.NewColumn;
 import storm.annotations.PrimaryKey;
+import storm.annotations.SQLiteNotNull;
 import storm.annotations.Serialize;
 import storm.annotations.Table;
 import storm.annotations.Unique;
@@ -134,6 +135,12 @@ class StormSchemeProviderRuntime implements StormSchemeProvider {
             defValue = def != null ? def.value() : null;
         }
 
+        final boolean isNonNull;
+        {
+            final SQLiteNotNull notNull = field.getAnnotation(SQLiteNotNull.class);
+            isNonNull = notNull != null;
+        }
+
         final StormSchemeIndex index = parseIndex(field);
 
         final StormSchemeForeignKey foreignKey = parseForeignKey(field);
@@ -146,6 +153,7 @@ class StormSchemeProviderRuntime implements StormSchemeProvider {
                 .setVersionWhenAdded(versionWhenAdded)
                 .setIsUnique(isUnique)
                 .setDefaultValue(defValue)
+                .setIsNonNull(isNonNull)
                 .setIndex(index)
                 .setForeignKey(foreignKey);
     }

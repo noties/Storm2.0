@@ -23,7 +23,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 10.12.2015.
  */
-public class SchemeRuntimeTest extends TestCase {
+public class SchemeParserRuntimeTest extends TestCase {
 
     public void testTableNoAnnotation() {
         try {

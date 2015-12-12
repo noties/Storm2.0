@@ -105,7 +105,7 @@ public class StormSchemeStatementsGenerator implements StormScheme {
         }
 
         if (column.isNonNull()) {
-            builder.append(" NON NULL");
+            builder.append(" NOT NULL");
         }
 
         if (!SchemeTextUtils.isEmpty(column.getDefaultValue())) {
