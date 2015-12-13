@@ -38,4 +38,26 @@ class DatabaseOpenHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+
+        if (mModules != null) {
+            for (DatabaseModule module: mModules) {
+                module.onOpen(db);
+            }
+        }
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+
+        if (mModules != null) {
+            for (DatabaseModule module: mModules) {
+                module.onConfigure(db);
+            }
+        }
+    }
 }

@@ -10,4 +10,6 @@ public interface DatabaseModule {
     void onCreate(SQLiteDatabase db);
     void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
 
+    void onOpen(SQLiteDatabase db);
+    void onConfigure(SQLiteDatabase db);
 }
