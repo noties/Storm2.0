@@ -57,29 +57,61 @@ public class StormSchemeStatementsGenerator implements StormScheme {
         final UpgradeChecker upgradeChecker = new UpgradeChecker(oldVersion, newVersion);
 
         // first check if the whole table is new
-        // if it is, when add all the create statements
-        if (upgradeChecker.isUpgrade(mTable.getVersionWhenAdded())) {
-            return onCreate();
-        }
+        // if it is, when add all the create statements not annotated with NewColumn with version bigger that current `new`
 
         final String tableName = mTable.getTableName();
-
-        final List<String> list = new ArrayList<>();
+        final List<String> list;
 
         StormSchemeIndex index;
 
-        for (StormSchemeColumn column: mTable.getColumns()) {
+        if (upgradeChecker.isUpgrade(mTable.getVersionWhenAdded())) {
 
-            if (upgradeChecker.isUpgrade(column.getVersionWhenAdded())) {
+            final List<String> schemeStatements = new ArrayList<>();
+            final List<String> indexStatements = new ArrayList<>();
 
-                list.add(String.format(ALTER_TABLE_PATTERN, tableName, getColumnCreateStatement(column)));
+            int versionWhenAdded;
 
-                index = column.getIndex();
-                if (index != null) {
-                    list.add(getColumnIndexStatement(tableName, column.getColumnName(), index));
+            for (StormSchemeColumn column: mTable.getColumns()) {
+
+                versionWhenAdded = column.getVersionWhenAdded();
+
+                // this condition should add all columns
+                // with version when added == 0 || when column is annotated with NewColumn
+                // not bigger than current newVersion
+                if (versionWhenAdded == 0 || upgradeChecker.isUpgrade(versionWhenAdded)) {
+
+                    schemeStatements.add(getColumnCreateStatement(column));
+
+                    index = column.getIndex();
+                    if (index != null) {
+                        indexStatements.add(getColumnIndexStatement(tableName, column.getColumnName(), index));
+                    }
+                }
+
+            }
+
+            list = getOnCreateStatement(tableName, schemeStatements, indexStatements);
+
+        } else {
+
+            final List<String> alterStatements = new ArrayList<>();
+
+            for (StormSchemeColumn column: mTable.getColumns()) {
+
+                if (upgradeChecker.isUpgrade(column.getVersionWhenAdded())) {
+
+                    alterStatements.add(String.format(ALTER_TABLE_PATTERN, tableName, getColumnCreateStatement(column)));
+
+                    index = column.getIndex();
+                    if (index != null) {
+                        alterStatements.add(getColumnIndexStatement(tableName, column.getColumnName(), index));
+                    }
                 }
             }
+
+            list = alterStatements;
         }
+
 
         if (list.size() == 0) {
             return null;

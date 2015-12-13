@@ -181,7 +181,7 @@ public class SchemeGeneratorRuntimeTest extends TestCase {
         );
         assertSchemeOnUpdate(
                 Test6.class,
-                0,
+                2,
                 3,
                 "ALTER TABLE name ADD COLUMN some_double REAL DEFAULT 0.0"
         );
