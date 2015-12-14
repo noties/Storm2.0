@@ -6,6 +6,7 @@ package storm.db.pragma;
 public class SynchronousPragma implements Pragma {
 
     public enum Synchronous {
+
         OFF     (0),
         NORMAL  (1),
         FULL    (2);
