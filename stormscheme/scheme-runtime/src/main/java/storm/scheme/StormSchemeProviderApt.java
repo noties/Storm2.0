@@ -5,6 +5,10 @@ package storm.scheme;
  */
 class StormSchemeProviderApt implements StormSchemeProvider {
 
+    static boolean lookup(Class<?> cl) {
+        return false;
+    }
+
     @Override
     public StormScheme provide(Class<?> cl) throws StormSchemeException {
         return null;

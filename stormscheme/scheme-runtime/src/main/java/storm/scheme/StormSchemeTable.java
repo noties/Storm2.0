@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Dimitry Ivanov on 09.12.2015.
  */
-public class StormSchemeTable {
+class StormSchemeTable {
 
     private final String mTableName;
     private final List<StormSchemeColumn> mColumns;

@@ -18,7 +18,7 @@ public class StormParserFactory {
     private final Map<Class<?>, StormParser<?>> mCache;
     private final StormSerializerProvider mSerializerProvider;
 
-    private StormParserFactory() {
+    public StormParserFactory() {
         this.mCache = Collections.synchronizedMap(new HashMap<Class<?>, StormParser<?>>());
         this.mSerializerProvider = new StormSerializerProviderImpl();
     }

@@ -5,7 +5,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 09.12.2015.
  */
-public class StormSchemeColumn {
+class StormSchemeColumn {
 
     private StormType mType;
     private String mColumnName;
