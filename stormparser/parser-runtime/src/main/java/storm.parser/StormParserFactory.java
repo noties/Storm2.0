@@ -12,20 +12,27 @@ import storm.serializer.StormSerializer;
  */
 public class StormParserFactory {
 
+    public interface InstanceCreatorProvider {
+        <T> StormInstanceCreator<T> provide(Class<T> cl);
+    }
+
     private static final StormParserProvider PROVIDER_APT = new StormParserProviderApt();
     private static final StormParserProvider PROVIDER_RUNTIME = new StormParserProviderRuntime();
 
+    private final InstanceCreatorProvider mInstanceCreatorProvider;
     private final Map<Class<?>, StormParser<?>> mCache;
     private final StormSerializerProvider mSerializerProvider;
 
-    public StormParserFactory() {
+    public StormParserFactory(InstanceCreatorProvider instanceCreatorProvider) {
+        this.mInstanceCreatorProvider = instanceCreatorProvider;
         this.mCache = Collections.synchronizedMap(new HashMap<Class<?>, StormParser<?>>());
         this.mSerializerProvider = new StormSerializerProviderImpl();
     }
 
-    public <T> StormParser<T> provide(Class<T> cl, StormInstanceCreator<T> instanceCreator) throws StormParserException {
+    public <T> StormParser<T> provide(Class<T> cl) throws StormParserException {
         StormParser<?> parser = mCache.get(cl);
         if (parser == null) {
+            final StormInstanceCreator<T> instanceCreator = mInstanceCreatorProvider.provide(cl);
             if (StormParserProviderApt.lookup(cl)) {
                 parser = PROVIDER_APT.provideParser(cl, instanceCreator, mSerializerProvider);
             } else {
