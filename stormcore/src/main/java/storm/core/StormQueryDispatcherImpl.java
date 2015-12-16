@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,15 +63,9 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
                 return Collections.emptyList();
             }
 
-            final List<T> list = new ArrayList<>(cursor.getCount());
             final StormParser<T> parser = storm.parser(table);
 
-            while (!cursor.isAfterLast()) {
-                list.add(parser.fromCursor(cursor));
-                cursor.moveToNext();
-            }
-
-            return list;
+            return parser.fromCursorList(cursor);
 
         } finally {
             cursor.close();

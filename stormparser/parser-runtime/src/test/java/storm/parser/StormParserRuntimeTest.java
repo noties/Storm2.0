@@ -10,8 +10,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
@@ -84,9 +86,9 @@ public class StormParserRuntimeTest extends TestCase {
     public void test1_1() {
 
         final StormParser<Test1> parser = getParser(Test1.class, null);
-        final Cursor cursor = StormCursorMock1.newInstance(
+        final Cursor cursor = StormCursorMock.newInstance(
                 Test1.class,
-                2L, "someString", 3.F, -.05D, -88, new byte[]{(byte) 1}
+                new StormCursorMock.Row(2L, "someString", 3.F, -.05D, -88, new byte[]{(byte) 1})
         );
 
         final Test1 initial = new Test1() {{
@@ -111,9 +113,9 @@ public class StormParserRuntimeTest extends TestCase {
     public void test1_2() {
 
         final StormParser<Test1> parser = getParser(Test1.class, null);
-        final Cursor cursor = StormCursorMock1.newInstance(
+        final Cursor cursor = StormCursorMock.newInstance(
                 Test1.class,
-                11L, null, null, null, 15, null
+                new StormCursorMock.Row(11L, null, null, null, 15, null)
         );
 
         final Test1 initial = new Test1() {{
@@ -191,9 +193,9 @@ public class StormParserRuntimeTest extends TestCase {
 
         final long time = System.currentTimeMillis();
 
-        final Cursor cursor = StormCursorMock1.newInstance(
+        final Cursor cursor = StormCursorMock.newInstance(
                 Test2.class,
-                "123", 1, "false", time
+                new StormCursorMock.Row("123", 1, "false", time)
         );
 
         final Test2 initial = new Test2() {{
@@ -210,6 +212,52 @@ public class StormParserRuntimeTest extends TestCase {
 
         assertContentValuesNotNull(cvWith, "id", "someBooleanInt", "someBooleanString", "someDate");
         assertContentValuesNotNull(cvWithout, "someBooleanInt", "someBooleanString", "someDate");
+    }
+
+
+    private static class Test3 {
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            Test3 test3 = (Test3) o;
+
+            if (id != test3.id) return false;
+            return !(someString != null ? !someString.equals(test3.someString) : test3.someString != null);
+
+        }
+
+        @PrimaryKey(autoincrement = true)
+        @Column
+        long id;
+
+        @Column
+        String someString;
+    }
+
+    @Test
+    public void test3_1() {
+
+        final StormParser<Test3> parser = getParser(Test3.class, null);
+
+        final Cursor cursor = StormCursorMock.newInstance(
+                Test3.class,
+                new StormCursorMock.Row(0L, "0"),
+                new StormCursorMock.Row(1L, "1"),
+                new StormCursorMock.Row(2L, "2")
+        );
+
+        final List<Test3> initial = new ArrayList<>(3);
+        for (int i = 0; i < 3; i++) {
+            final long val = i;
+            initial.add(new Test3() {{id = val; someString = String.valueOf(val);}});
+        }
+
+        cursor.moveToFirst();
+        final List<Test3> parsed = parser.fromCursorList(cursor);
+
+        assertTrue(initial.equals(parsed));
     }
 
     static <T> StormParser<T> getParser(Class<T> cl, StormSerializerProvider serializerProvider) {

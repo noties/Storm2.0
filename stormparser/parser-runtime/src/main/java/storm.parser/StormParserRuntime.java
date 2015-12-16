@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.util.SparseArray;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import storm.serializer.StormSerializer;
@@ -19,8 +21,6 @@ class StormParserRuntime<T> implements StormParser<T> {
     private final StormInstanceCreator<T> mInstanceCreator;
     private final StormSerializerProvider mSerializerProvider;
 
-    private SparseArray<String> mCursorIndexes;
-
     StormParserRuntime(
             List<StormParserColumn> columns,
             StormInstanceCreator<T> instanceCreator,
@@ -34,13 +34,35 @@ class StormParserRuntime<T> implements StormParser<T> {
     @Override
     public T fromCursor(Cursor cursor) {
 
-        if (mCursorIndexes == null) {
-            mCursorIndexes = buildCursorIndexes(cursor);
-        }
+        final SparseArray<String> cursorIndexes = buildCursorIndexes(cursor);
 
-        if (mCursorIndexes == null) {
+        if (cursorIndexes == null) {
             return null;
         }
+
+        return parse(cursor, cursorIndexes);
+    }
+
+    @Override
+    public List<T> fromCursorList(Cursor cursor) {
+
+        final SparseArray<String> cursorIndexes = buildCursorIndexes(cursor);
+
+        if (cursorIndexes == null) {
+            return Collections.emptyList();
+        }
+
+        final List<T> list = new ArrayList<>(cursor.getCount());
+
+        while (!cursor.isAfterLast()) {
+            list.add(parse(cursor, cursorIndexes));
+            cursor.moveToNext();
+        }
+
+        return list;
+    }
+
+    private T parse(Cursor cursor, SparseArray<String> cursorIndexes) {
 
         final T instance = mInstanceCreator.create();
 
@@ -53,12 +75,12 @@ class StormParserRuntime<T> implements StormParser<T> {
 
         for (StormParserColumn column: mColumns) {
 
-            cacheValueIndex = mCursorIndexes.indexOfValue(column.getName());
+            cacheValueIndex = cursorIndexes.indexOfValue(column.getName());
             if (cacheValueIndex < 0) {
                 continue;
             }
 
-            cursorIndex = mCursorIndexes.keyAt(cacheValueIndex);
+            cursorIndex = cursorIndexes.keyAt(cacheValueIndex);
             cursorType  = cursor.getType(cursorIndex);
             type = column.getType();
             field = column.getField();

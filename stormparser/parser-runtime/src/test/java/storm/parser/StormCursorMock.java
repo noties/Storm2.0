@@ -18,9 +18,18 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-public class StormCursorMock1 implements Cursor {
+public class StormCursorMock implements Cursor {
 
-    static StormCursorMock1 newInstance(Class<?> cl, Object... values) {
+    static class Row {
+
+        final Object[] values;
+
+        Row(Object... values) {
+            this.values = values;
+        }
+    }
+
+    static StormCursorMock newInstance(Class<?> cl, Row... rows) {
 
         final Field[] fields = cl.getDeclaredFields();
 
@@ -44,20 +53,43 @@ public class StormCursorMock1 implements Cursor {
         final String[] outNames = new String[names.size()];
         names.toArray(outNames);
 
-        return new StormCursorMock1(outNames, values);
+        return new StormCursorMock(outNames, buildRows(rows));
+    }
+
+    private static Object[][] buildRows(Row[] rows) {
+
+        if (rows == null
+                || rows.length == 0) {
+            return new Object[0][0];
+        }
+
+        final int rowsCount = rows.length;
+
+        final Object[][] values = new Object[rowsCount][];
+
+        for (int i = 0; i < rowsCount; i++) {
+            values[i] = rows[i].values;
+        }
+
+        return values;
     }
 
     private final String[] mNames;
-    private final Object[] mValues;
+    private final Object[][] mValues;
+    private final int mRows;
 
-    StormCursorMock1(String[] names, Object[] values) {
+    private int mPosition;
+    private boolean mIsClosed;
+
+    StormCursorMock(String[] names, Object[][] values) {
         this.mNames = names;
         this.mValues = values;
+        this.mRows = values.length;
     }
 
     @Override
     public int getCount() {
-        return 1;
+        return mRows;
     }
 
     @Override
@@ -77,6 +109,10 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public boolean moveToFirst() {
+        if (mRows > 0) {
+            mPosition = 0;
+            return true;
+        }
         return false;
     }
 
@@ -87,7 +123,7 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public boolean moveToNext() {
-        return false;
+        return (++mPosition < mRows);
     }
 
     @Override
@@ -112,7 +148,7 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public boolean isAfterLast() {
-        return false;
+        return mPosition >= mRows;
     }
 
     @Override
@@ -147,12 +183,12 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public byte[] getBlob(int columnIndex) {
-        return (byte[]) mValues[columnIndex];
+        return (byte[]) mValues[mPosition][columnIndex];
     }
 
     @Override
     public String getString(int columnIndex) {
-        return (String) mValues[columnIndex];
+        return (String) mValues[mPosition][columnIndex];
     }
 
     @Override
@@ -167,28 +203,28 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public int getInt(int columnIndex) {
-        return (Integer) mValues[columnIndex];
+        return (Integer) mValues[mPosition][columnIndex];
     }
 
     @Override
     public long getLong(int columnIndex) {
-        return (Long) mValues[columnIndex];
+        return (Long) mValues[mPosition][columnIndex];
     }
 
     @Override
     public float getFloat(int columnIndex) {
-        return (Float) mValues[columnIndex];
+        return (Float) mValues[mPosition][columnIndex];
     }
 
     @Override
     public double getDouble(int columnIndex) {
-        return (Double) mValues[columnIndex];
+        return (Double) mValues[mPosition][columnIndex];
     }
 
     @Override
     public int getType(int columnIndex) {
 
-        final Object value = mValues[columnIndex];
+        final Object value = mValues[mPosition][columnIndex];
         if (value == null) {
             return FIELD_TYPE_NULL;
         }
@@ -237,12 +273,12 @@ public class StormCursorMock1 implements Cursor {
 
     @Override
     public void close() {
-
+        mIsClosed = true;
     }
 
     @Override
     public boolean isClosed() {
-        return false;
+        return mIsClosed;
     }
 
     @Override
