@@ -32,6 +32,10 @@ public class StormCursorMock implements Cursor {
     public static StormCursorMock newInstance(Class<?> cl, Row... rows) {
 
         final Field[] fields = cl.getDeclaredFields();
+        if (fields == null
+                || fields.length == 0) {
+            throw new IllegalStateException("Class " + cl.getName() + "` has no fields");
+        }
 
         final List<String> names = new ArrayList<>();
 
@@ -40,6 +44,9 @@ public class StormCursorMock implements Cursor {
             final String name;
             {
                 final Column column = field.getAnnotation(Column.class);
+                if (column == null) {
+                    continue;
+                }
                 final String columnValue = column.value();
                 if (columnValue == null || columnValue.length() == 0) {
                     name = field.getName();
@@ -48,6 +55,10 @@ public class StormCursorMock implements Cursor {
                 }
             }
             names.add(name);
+        }
+
+        if (names.size() == 0) {
+            throw new IllegalStateException("Class `" + cl.getName() + "` has no fields annotated with @Column");
         }
 
         final String[] outNames = new String[names.size()];
