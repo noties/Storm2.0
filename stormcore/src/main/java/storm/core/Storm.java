@@ -36,20 +36,43 @@ public class Storm {
                 .orderBy("col", Sorting.ASC)
                 .limit(3)
                 .asList();
-    }
 
-    static final StormQueryDispatcher QUERY_DISPATCHER = new StormQueryDispatcherImpl();
+        newInstance(null)
+                .delete(null/*SomeTabel.class*/, "somw_col < ?", 9)
+                .execute();
+
+        newInstance(null)
+                .count(null)
+                .equals("col", null)
+                .glob(null, null)
+                .execute();
+
+        newInstance(null)
+                .count(null, "someCol = ?", "someValue")
+                .execute();
+
+        newInstance(null)
+                .count(null, new Selection().glob("glob", "pattern"))
+                .execute();
+    }
 
     public static Storm newInstance(Database.Configuration configuration) {
         return new Storm(configuration);
     }
+
+    static final StormQueryDispatcher QUERY_DISPATCHER = new StormQueryDispatcherImpl();
+    static final StormDeleteDispatcher DELETE_DISPATCHER = new StormDeleteDispatcherImpl();
+    static final StormCountDispatcher COUNT_DISPATCHER = new StormCountDispatcherImpl();
+    static final StormSaveOneDispatcher SAVE_ONE_DISPATCHER = new StormSaveOneDispatcherImpl();
+    static final StormSaveManyDispatcher SAVE_MANY_DISPATCHER = new StormSaveManyDispatcherImpl();
+    static final StormFillDispatcher FILL_DISPATCHER = new StormFillDispatcherImpl();
 
     private final Database mDatabase;
     private final StormSchemeFactory mSchemeFactory;
     private final StormParserFactory mParserFactory;
     private final StormInstanceCreators mInstanceCreators;
 
-    private Storm(Database.Configuration configuration) {
+    Storm(Database.Configuration configuration) {
         this.mDatabase = new Database(configuration);
         this.mInstanceCreators = new StormInstanceCreators();
         this.mSchemeFactory = new StormSchemeFactory();
@@ -110,7 +133,7 @@ public class Storm {
         return mDatabase;
     }
 
-    // todo table: name, notificationUri
+    // todo table: name, notificationUri, isPrimaryKeyAutoincrement, primaryKeySelection
 
     public <T extends StormObject> StormParser<T> parser(Class<T> table) {
         try {
@@ -122,15 +145,30 @@ public class Storm {
 
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table) {
-        return new StormQuery<T>(this, table, new Query().from(null), QUERY_DISPATCHER);
+        return new StormQuery<T>(
+                this,
+                table,
+                new Query().select().from(null),
+                QUERY_DISPATCHER
+        );
     }
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table, String selection, Object... args) {
-        return new StormQuery<T>(this, table, new Query().from(null).where(new Selection().raw(selection, args)), QUERY_DISPATCHER);
+        return new StormQuery<T>(
+                this,
+                table,
+                new Query().select().from(null).where(new Selection().raw(selection, args)),
+                QUERY_DISPATCHER
+        );
     }
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table, Selection selection) {
-        return new StormQuery<T>(this, table, new Query().from(null).where(selection), QUERY_DISPATCHER);
+        return new StormQuery<T>(
+                this,
+                table,
+                new Query().select().from(null).where(selection),
+                QUERY_DISPATCHER
+        );
     }
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table, Query query) {
@@ -138,11 +176,120 @@ public class Storm {
     }
 
 
-    public <T extends StormObject> void save(T object) {
-
+    public <T extends StormObject> StormCount<T> count(Class<T> table) {
+        return new StormCount<>(
+                this,
+                table,
+                new Selection(),
+                COUNT_DISPATCHER
+        );
     }
 
-    public <T extends StormObject> void save(Collection<T> objects) {
+    public <T extends StormObject> StormCount<T> count(Class<T> table, Selection selection) {
+        return new StormCount<>(
+                this,
+                table,
+                selection,
+                COUNT_DISPATCHER
+        );
+    }
 
+    public <T extends StormObject> StormCount<T> count(Class<T> table, String where, Object... args) {
+        return new StormCount<>(
+                this,
+                table,
+                new Selection().raw(where, args),
+                COUNT_DISPATCHER
+        );
+    }
+
+
+    public <T extends StormObject> StormSaveOne<T> save(T value) {
+        return new StormSaveOne<>(
+                this,
+                value,
+                SAVE_ONE_DISPATCHER
+        );
+    }
+
+    public <T extends StormObject> StormSaveMany<T> save(Collection<T> values) {
+        return new StormSaveMany<>(
+                this,
+                values,
+                SAVE_MANY_DISPATCHER
+        );
+    }
+
+
+    public <T extends StormObject> StormUpdateOne<T> update(T value) {
+        return new StormUpdateOne<>(
+                this,
+                value,
+                null
+        );
+    }
+
+    public <T extends StormObject> StormUpdateMany<T> update(Collection<T> values) {
+        return new StormUpdateMany<>(
+                this,
+                values,
+                null
+        );
+    }
+
+
+    public <T extends StormObject> StormFill<T> fill(T value) {
+        return new StormFill<>(
+                this,
+                new Selection(),
+                value,
+                FILL_DISPATCHER
+        );
+    }
+
+    public <T extends StormObject> StormFill<T> fill(T value, Selection selection) {
+        return new StormFill<>(
+                this,
+                selection,
+                value,
+                FILL_DISPATCHER
+        );
+    }
+
+
+    public <T extends StormObject> StormDeleteAll<T> deleteAll(Class<T> table) {
+        return new StormDeleteAll<>(
+                this,
+                table,
+                null,
+                DELETE_DISPATCHER
+        );
+    }
+
+    public <T extends StormObject> StormDelete<T> delete(Class<T> table) {
+        return new StormDelete<>(
+                this,
+                table,
+                new Selection(),
+                DELETE_DISPATCHER
+        );
+    }
+
+    public <T extends StormObject> StormDelete<T> delete(Class<T> table, Selection selection) {
+        return new StormDelete<>(
+                this,
+                table,
+                selection,
+                DELETE_DISPATCHER
+        );
+    }
+
+    public <T extends StormObject> StormDelete<T> delete(Class<T> table, String where, Object... args) {
+        return new StormDelete<>(
+                this,
+                table,
+                new Selection().raw(where, args),
+                DELETE_DISPATCHER
+        );
     }
 }

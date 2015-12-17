@@ -188,6 +188,9 @@ public class Selection implements IStatementBuilder {
 
     @Override
     public String getStatement() {
+        if (mBuilder.length() == 0) {
+            return null;
+        }
         return mBuilder.toString();
     }
 
