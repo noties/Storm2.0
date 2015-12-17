@@ -39,7 +39,12 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
             int index = 0;
             ContentValues cv;
 
-            db.beginTransaction();
+            // at this point we already might have a transaction
+            final boolean hasTransactionAlready = db.inTransaction();
+
+            if (!hasTransactionAlready) {
+                db.beginTransaction();
+            }
 
             try {
                 for (T value: collection) {
@@ -48,13 +53,19 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
                     cv = parser.toContentValues(value, true);
                     out[index++] = db.insert(null, null, cv);
                 }
-                db.setTransactionSuccessful();
+
+                if (!hasTransactionAlready) {
+                    db.setTransactionSuccessful();
+                }
+
             } catch (SQLiteException e) {
 
                 throw new RuntimeException(e);
 
             } finally {
-                db.endTransaction();
+                if (!hasTransactionAlready) {
+                    db.endTransaction();
+                }
             }
 
 

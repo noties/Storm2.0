@@ -32,13 +32,15 @@ public class StormParserFactory {
     public <T> StormParser<T> provide(Class<T> cl) throws StormParserException {
         StormParser<?> parser = mCache.get(cl);
         if (parser == null) {
-            final StormInstanceCreator<T> instanceCreator = mInstanceCreatorProvider.provide(cl);
-            if (StormParserProviderApt.lookup(cl)) {
-                parser = PROVIDER_APT.provideParser(cl, instanceCreator, mSerializerProvider);
-            } else {
-                parser = PROVIDER_RUNTIME.provideParser(cl, instanceCreator, mSerializerProvider);
+            synchronized (this) {
+                final StormInstanceCreator<T> instanceCreator = mInstanceCreatorProvider.provide(cl);
+                if (StormParserProviderApt.lookup(cl)) {
+                    parser = PROVIDER_APT.provideParser(cl, instanceCreator, mSerializerProvider);
+                } else {
+                    parser = PROVIDER_RUNTIME.provideParser(cl, instanceCreator, mSerializerProvider);
+                }
+                mCache.put(cl, parser);
             }
-            mCache.put(cl, parser);
         }
         //noinspection unchecked
         return (StormParser<T>) parser;

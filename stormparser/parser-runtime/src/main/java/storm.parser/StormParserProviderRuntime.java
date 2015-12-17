@@ -9,6 +9,7 @@ import java.util.List;
 import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Serialize;
+import storm.annotations.Table;
 import storm.reflect.TypeResolverLight;
 import storm.serializer.StormSerializer;
 import storm.types.StormType;
@@ -24,7 +25,29 @@ class StormParserProviderRuntime implements StormParserProvider {
             StormInstanceCreator<T> instanceCreator,
             StormSerializerProvider serializerProvider
     ) throws StormParserException {
-        return new StormParserRuntime<>(buildColumns(cl), instanceCreator, serializerProvider);
+        return new StormParserRuntime<>(
+                getTableName(cl),
+                buildColumns(cl),
+                instanceCreator,
+                serializerProvider
+        );
+    }
+
+    static String getTableName(Class<?> cl) {
+        final Table table = cl.getAnnotation(Table.class);
+        final String name;
+        if (table == null) {
+            name = null;
+        } else {
+            final String tableValue = table.value();
+            if (tableValue == null
+                    || tableValue.length() == 0) {
+                name = cl.getSimpleName();
+            } else {
+                name = tableValue;
+            }
+        }
+        return name;
     }
 
     static List<StormParserColumn> buildColumns(Class<?> cl) throws StormParserException {

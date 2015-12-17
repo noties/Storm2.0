@@ -18,4 +18,5 @@ public interface StormParser<T> {
     // there will be an exception
     ContentValues toContentValues(T value, boolean putPrimaryKey);
 
+    StormTableMetadata<T> getMetadata();
 }
