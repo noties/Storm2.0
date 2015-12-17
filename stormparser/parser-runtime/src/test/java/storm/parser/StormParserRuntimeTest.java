@@ -18,6 +18,7 @@ import java.util.List;
 import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Serialize;
+import storm.cursormock.StormCursorMock;
 import storm.serializer.StormSerializer;
 import storm.serializer.pack.BooleanIntSerializer;
 import storm.serializer.pack.BooleanStringSerializer;
@@ -94,6 +95,8 @@ public class StormParserRuntimeTest extends TestCase {
         final Test1 initial = new Test1() {{
             id = 2L; someString = "someString"; someFloat = 3.F; someDouble = -.05D; someInt = -88; byteArray = new byte[] {(byte) 1};
         }};
+
+        cursor.moveToFirst();
         final Test1 parsed = parser.fromCursor(cursor);
 
         assertTrue(parsed != null);
@@ -121,6 +124,8 @@ public class StormParserRuntimeTest extends TestCase {
         final Test1 initial = new Test1() {{
             id = 11L; someInt = 15;
         }};
+
+        cursor.moveToFirst();
         final Test1 parsed = parser.fromCursor(cursor);
 
         assertTrue(parsed != null);
@@ -202,6 +207,7 @@ public class StormParserRuntimeTest extends TestCase {
             id = "123"; someBooleanInt = true; someBooleanString = false; someDate = new Date(time);
         }};
 
+        cursor.moveToFirst();
         final Test2 parsed = parser.fromCursor(cursor);
 
         assertTrue(parsed != null);

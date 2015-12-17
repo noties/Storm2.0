@@ -1,4 +1,4 @@
-package storm.parser;
+package storm.cursormock;
 
 import android.content.ContentResolver;
 import android.database.CharArrayBuffer;
@@ -16,20 +16,20 @@ import storm.annotations.Column;
 import storm.types.StormType;
 
 /**
- * Created by Dimitry Ivanov on 13.12.2015.
+ * Created by Dimitry Ivanov on 17.12.2015.
  */
 public class StormCursorMock implements Cursor {
 
-    static class Row {
+    public static class Row {
 
         final Object[] values;
 
-        Row(Object... values) {
+        public Row(Object... values) {
             this.values = values;
         }
     }
 
-    static StormCursorMock newInstance(Class<?> cl, Row... rows) {
+    public static StormCursorMock newInstance(Class<?> cl, Row... rows) {
 
         final Field[] fields = cl.getDeclaredFields();
 
@@ -78,10 +78,10 @@ public class StormCursorMock implements Cursor {
     private final Object[][] mValues;
     private final int mRows;
 
-    private int mPosition;
+    private int mPosition = -1;
     private boolean mIsClosed;
 
-    StormCursorMock(String[] names, Object[][] values) {
+    public StormCursorMock(String[] names, Object[][] values) {
         this.mNames = names;
         this.mValues = values;
         this.mRows = values.length;
@@ -94,56 +94,58 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public int getPosition() {
-        return 0;
+        return mPosition;
     }
 
     @Override
     public boolean move(int offset) {
-        return false;
+        mPosition += offset;
+        return checkPosition();
     }
 
     @Override
     public boolean moveToPosition(int position) {
-        return false;
+        mPosition = position;
+        return checkPosition();
     }
 
     @Override
     public boolean moveToFirst() {
-        if (mRows > 0) {
-            mPosition = 0;
-            return true;
-        }
-        return false;
+        mPosition = 0;
+        return checkPosition();
     }
 
     @Override
     public boolean moveToLast() {
-        return false;
+        mPosition = mRows -1;
+        return checkPosition();
     }
 
     @Override
     public boolean moveToNext() {
-        return (++mPosition < mRows);
+        mPosition++;
+        return checkPosition();
     }
 
     @Override
     public boolean moveToPrevious() {
-        return false;
+        mPosition--;
+        return checkPosition();
     }
 
     @Override
     public boolean isFirst() {
-        return false;
+        return mPosition == 0;
     }
 
     @Override
     public boolean isLast() {
-        return false;
+        return mPosition == mRows - 1;
     }
 
     @Override
     public boolean isBeforeFirst() {
-        return false;
+        return mPosition == -1;
     }
 
     @Override
@@ -198,7 +200,7 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public short getShort(int columnIndex) {
-        return 0;
+        throw new IllegalStateException("short is not supported");
     }
 
     @Override
@@ -258,7 +260,7 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public boolean isNull(int columnIndex) {
-        return false;
+        return mValues[mPosition][columnIndex] == null;
     }
 
     @Override
@@ -330,4 +332,9 @@ public class StormCursorMock implements Cursor {
     public Bundle respond(Bundle extras) {
         return null;
     }
+
+    private boolean checkPosition() {
+        return mPosition > -1 && mPosition < mRows;
+    }
 }
+

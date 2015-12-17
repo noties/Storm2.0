@@ -4,15 +4,12 @@ import java.util.Collection;
 
 import storm.db.Database;
 import storm.db.DatabaseModule;
-import storm.db.pragma.ForeignKeysPragma;
-import storm.db.pragma.PragmasModule;
 import storm.parser.StormInstanceCreator;
 import storm.parser.StormParser;
 import storm.parser.StormParserException;
 import storm.parser.StormParserFactory;
 import storm.query.Query;
 import storm.query.Selection;
-import storm.query.Sorting;
 import storm.scheme.StormSchemeException;
 import storm.scheme.StormSchemeFactory;
 
@@ -20,41 +17,6 @@ import storm.scheme.StormSchemeFactory;
  * Created by Dimitry Ivanov on 30.11.2015.
  */
 public class Storm {
-
-    static {
-        final Storm storm = Storm.newInstance(null)
-                .registerDatabaseModule(PragmasModule.of(ForeignKeysPragma.of(true)))
-                .registerDatabaseModule(null)
-                .registerTableClass((Class<StormObject>) null)
-                .registerInstanceCreator((Class<StormObject>) null, new ReflectionInstanceCreator<StormObject>(null));
-
-        newInstance(null)
-                .query(null, new Selection().equals("col", 23).and().notIn("col", 12, 66));
-
-        newInstance(null)
-                .query(null, "some_col = ?", 77)
-                .orderBy("col", Sorting.ASC)
-                .limit(3)
-                .asList();
-
-        newInstance(null)
-                .delete(null/*SomeTabel.class*/, "somw_col < ?", 9)
-                .execute();
-
-        newInstance(null)
-                .count(null)
-                .equals("col", null)
-                .glob(null, null)
-                .execute();
-
-        newInstance(null)
-                .count(null, "someCol = ?", "someValue")
-                .execute();
-
-        newInstance(null)
-                .count(null, new Selection().glob("glob", "pattern"))
-                .execute();
-    }
 
     public static Storm newInstance(Database.Configuration configuration) {
         return new Storm(configuration);

@@ -5,4 +5,5 @@ dependencies {
     compile project(':stormtypes')
     compile project(':stormserializer')
     compile project(':stormreflect')
+    compile project(':stormcursormock')
 }
