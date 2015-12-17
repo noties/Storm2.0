@@ -20,7 +20,7 @@ class StormDeleteDispatcherImpl implements StormDeleteDispatcher {
             final String[] args = selection != null ? selection.getArguments() : null;
 
             return db.delete(
-                    null,
+                    storm.tableName(table),
                     where,
                     args
             );

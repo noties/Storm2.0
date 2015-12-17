@@ -45,7 +45,7 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
             try {
 
                 final int updated = db.update(
-                        null,
+                        parser.getMetadata().getTableName(),
                         cv,
                         where,
                         args

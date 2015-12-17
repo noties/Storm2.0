@@ -16,14 +16,16 @@ class StormCountDispatcherImpl implements StormCountDispatcher {
     @Override
     public <T extends StormObject> int execute(Storm storm, Class<T> table, Selection selection) {
 
+        final String tableName = storm.tableName(table);
+
         final String statement;
         final String[] args;
 
         if (selection == null) {
-            statement = String.format(QUERY_PATTERN, null);
+            statement = String.format(QUERY_PATTERN, tableName);
             args = null;
         } else {
-            statement = String.format(QUERY_WHERE_PATTERN, null, selection.getStatement());
+            statement = String.format(QUERY_WHERE_PATTERN, tableName, selection.getStatement());
             args = selection.getArguments();
         }
 

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import storm.parser.StormParser;
+import storm.parser.StormTableMetadata;
 
 /**
  * Created by Dimitry Ivanov on 17.12.2015.
@@ -20,14 +21,16 @@ class StormSaveOneDispatcherImpl implements StormSaveOneDispatcher {
         //noinspection unchecked
         final Class<T> table = (Class<T>) value.getClass();
         final StormParser<T> parser = storm.parser(table);
-        final ContentValues cv = parser.toContentValues(value, true); // todo, check if ok
+        final StormTableMetadata<T> metadata = parser.getMetadata();
+
+        final ContentValues cv = parser.toContentValues(value, !metadata.isPrimaryKeyAutoincrement());
 
         final SQLiteDatabase db = storm.database().open();
 
         try {
 
             return db.insert(
-                    null,
+                    metadata.getTableName(),
                     null,
                     cv
             );

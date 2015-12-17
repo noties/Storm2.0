@@ -144,11 +144,16 @@ public class Storm {
     }
 
 
+    <T extends StormObject> String tableName(Class<T> cl) {
+        return parser(cl).getMetadata().getTableName();
+    }
+
+
     public <T extends StormObject> StormQuery<T> query(Class<T> table) {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(null),
+                new Query().select().from(tableName(table)),
                 QUERY_DISPATCHER
         );
     }
@@ -157,7 +162,7 @@ public class Storm {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(null).where(new Selection().raw(selection, args)),
+                new Query().select().from(tableName(table)).where(new Selection().raw(selection, args)),
                 QUERY_DISPATCHER
         );
     }
@@ -166,7 +171,7 @@ public class Storm {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(null).where(selection),
+                new Query().select().from(tableName(table)).where(selection),
                 QUERY_DISPATCHER
         );
     }

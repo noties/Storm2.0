@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteException;
 import java.util.Collection;
 
 import storm.parser.StormParser;
+import storm.parser.StormTableMetadata;
 
 /**
  * Created by Dimitry Ivanov on 17.12.2015.
@@ -29,6 +30,9 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
         //noinspection unchecked
         final Class<T> table = (Class<T>) collection.iterator().next().getClass();
         final StormParser<T> parser = storm.parser(table);
+        final StormTableMetadata<T> metadata = parser.getMetadata();
+
+        final String tableName = metadata.getTableName();
 
         final SQLiteDatabase db = storm.database().open();
 
@@ -49,9 +53,8 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
             try {
                 for (T value: collection) {
 
-                    // todo also, fetch if `isAutoincrement` to not include in ContentValues
-                    cv = parser.toContentValues(value, true);
-                    out[index++] = db.insert(null, null, cv);
+                    cv = parser.toContentValues(value, !metadata.isPrimaryKeyAutoincrement());
+                    out[index++] = db.insert(tableName, null, cv);
                 }
 
                 if (!hasTransactionAlready) {
