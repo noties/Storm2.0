@@ -34,7 +34,7 @@ public class StormCursorMock implements Cursor {
         final Field[] fields = cl.getDeclaredFields();
         if (fields == null
                 || fields.length == 0) {
-            throw new IllegalStateException("Class " + cl.getName() + "` has no fields");
+            throw StormCursorMockException.newInstance("Class `%s` has no fields", cl.getName());
         }
 
         final List<String> names = new ArrayList<>();
@@ -58,7 +58,7 @@ public class StormCursorMock implements Cursor {
         }
 
         if (names.size() == 0) {
-            throw new IllegalStateException("Class `" + cl.getName() + "` has no fields annotated with @Column");
+            throw StormCursorMockException.newInstance("Class `%s` has no fields annotated with @Column", cl.getName());
         }
 
         final String[] outNames = new String[names.size()];
@@ -206,12 +206,12 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public short getShort(int columnIndex) {
-        throw new IllegalStateException("short is not supported");
+        throw StormCursorMockException.newInstance("short type is not supported");
     }
 
     @Override
@@ -245,7 +245,7 @@ public class StormCursorMock implements Cursor {
         final StormType type = StormType.forValue(value.getClass());
 
         if (type == null) {
-            throw new RuntimeException(new NullPointerException());
+            throw StormCursorMockException.newInstance("Could not parse type of a class: `%s`", value.getClass().getName());
         }
 
         switch (type) {
@@ -266,7 +266,7 @@ public class StormCursorMock implements Cursor {
 
         }
 
-        throw new RuntimeException("Could not parse type: " + type);
+        throw StormCursorMockException.newInstance("Could not parse type: %s", type);
     }
 
     @Override
@@ -296,52 +296,52 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public void registerContentObserver(ContentObserver observer) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public void unregisterContentObserver(ContentObserver observer) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public void setNotificationUri(ContentResolver cr, Uri uri) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public Uri getNotificationUri() {
-        return null;
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public boolean getWantsAllOnMoveCalls() {
-        return false;
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public void setExtras(Bundle extras) {
-
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public Bundle getExtras() {
-        return null;
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     @Override
     public Bundle respond(Bundle extras) {
-        return null;
+        throw StormCursorMockException.newInstance("Not implemented");
     }
 
     private boolean checkPosition() {
