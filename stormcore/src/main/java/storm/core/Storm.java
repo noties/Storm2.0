@@ -19,22 +19,17 @@ import storm.scheme.StormSchemeFactory;
 public class Storm {
 
     public static Storm newInstance(Database.Configuration configuration) {
-        return new Storm(configuration);
+        return new Storm(new StormDispatchersImpl(), configuration);
     }
 
-    static final StormQueryDispatcher QUERY_DISPATCHER = new StormQueryDispatcherImpl();
-    static final StormDeleteDispatcher DELETE_DISPATCHER = new StormDeleteDispatcherImpl();
-    static final StormCountDispatcher COUNT_DISPATCHER = new StormCountDispatcherImpl();
-    static final StormSaveOneDispatcher SAVE_ONE_DISPATCHER = new StormSaveOneDispatcherImpl();
-    static final StormSaveManyDispatcher SAVE_MANY_DISPATCHER = new StormSaveManyDispatcherImpl();
-    static final StormFillDispatcher FILL_DISPATCHER = new StormFillDispatcherImpl();
-
+    private final StormDispatchers mDispatchers;
     private final Database mDatabase;
     private final StormSchemeFactory mSchemeFactory;
     private final StormParserFactory mParserFactory;
     private final StormInstanceCreators mInstanceCreators;
 
-    Storm(Database.Configuration configuration) {
+    Storm(StormDispatchers dispatchers, Database.Configuration configuration) {
+        this.mDispatchers = dispatchers;
         this.mDatabase = new Database(configuration);
         this.mInstanceCreators = new StormInstanceCreators();
         this.mSchemeFactory = new StormSchemeFactory();
@@ -116,7 +111,7 @@ public class Storm {
                 this,
                 table,
                 new Query().select().from(tableName(table)),
-                QUERY_DISPATCHER
+                mDispatchers.queryDispatcher()
         );
     }
 
@@ -125,7 +120,7 @@ public class Storm {
                 this,
                 table,
                 new Query().select().from(tableName(table)).where(new Selection().raw(selection, args)),
-                QUERY_DISPATCHER
+                mDispatchers.queryDispatcher()
         );
     }
 
@@ -134,12 +129,17 @@ public class Storm {
                 this,
                 table,
                 new Query().select().from(tableName(table)).where(selection),
-                QUERY_DISPATCHER
+                mDispatchers.queryDispatcher()
         );
     }
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table, Query query) {
-        return new StormQuery<T>(this, table, query, QUERY_DISPATCHER);
+        return new StormQuery<T>(
+                this,
+                table,
+                query,
+                mDispatchers.queryDispatcher()
+        );
     }
 
 
@@ -148,7 +148,7 @@ public class Storm {
                 this,
                 table,
                 new Selection(),
-                COUNT_DISPATCHER
+                mDispatchers.countDispatcher()
         );
     }
 
@@ -157,7 +157,7 @@ public class Storm {
                 this,
                 table,
                 selection,
-                COUNT_DISPATCHER
+                mDispatchers.countDispatcher()
         );
     }
 
@@ -166,7 +166,7 @@ public class Storm {
                 this,
                 table,
                 new Selection().raw(where, args),
-                COUNT_DISPATCHER
+                mDispatchers.countDispatcher()
         );
     }
 
@@ -175,7 +175,7 @@ public class Storm {
         return new StormSaveOne<>(
                 this,
                 value,
-                SAVE_ONE_DISPATCHER
+                mDispatchers.saveOneDispatcher()
         );
     }
 
@@ -183,7 +183,7 @@ public class Storm {
         return new StormSaveMany<>(
                 this,
                 values,
-                SAVE_MANY_DISPATCHER
+                mDispatchers.saveManyDispatcher()
         );
     }
 
@@ -192,7 +192,7 @@ public class Storm {
         return new StormUpdateOne<>(
                 this,
                 value,
-                null
+                mDispatchers.updateOneDispatcher()
         );
     }
 
@@ -200,7 +200,7 @@ public class Storm {
         return new StormUpdateMany<>(
                 this,
                 values,
-                null
+                mDispatchers.updateManyDispatcher()
         );
     }
 
@@ -210,7 +210,7 @@ public class Storm {
                 this,
                 new Selection(),
                 value,
-                FILL_DISPATCHER
+                mDispatchers.fillDispatcher()
         );
     }
 
@@ -219,7 +219,7 @@ public class Storm {
                 this,
                 selection,
                 value,
-                FILL_DISPATCHER
+                mDispatchers.fillDispatcher()
         );
     }
 
@@ -229,7 +229,7 @@ public class Storm {
                 this,
                 table,
                 null,
-                DELETE_DISPATCHER
+                mDispatchers.deleteDispatcher()
         );
     }
 
@@ -238,7 +238,7 @@ public class Storm {
                 this,
                 table,
                 new Selection(),
-                DELETE_DISPATCHER
+                mDispatchers.deleteDispatcher()
         );
     }
 
@@ -247,7 +247,7 @@ public class Storm {
                 this,
                 table,
                 selection,
-                DELETE_DISPATCHER
+                mDispatchers.deleteDispatcher()
         );
     }
 
@@ -256,7 +256,7 @@ public class Storm {
                 this,
                 table,
                 new Selection().raw(where, args),
-                DELETE_DISPATCHER
+                mDispatchers.deleteDispatcher()
         );
     }
 }
