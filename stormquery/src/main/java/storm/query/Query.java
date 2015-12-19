@@ -9,6 +9,11 @@ import java.util.List;
  */
 public class Query implements IStatementBuilder {
 
+    // all columns from the table
+    public static Query allFrom(String table) {
+        return new Query().select().from(table);
+    }
+
     private final StringBuilder mBuilder;
     private final List<String> mArgs;
 

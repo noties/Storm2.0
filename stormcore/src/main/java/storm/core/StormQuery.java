@@ -14,116 +14,113 @@ import storm.query.Sorting;
 /**
  * Created by Dimitry Ivanov on 16.12.2015.
  */
-public class StormQuery<T extends StormObject> {
+@SuppressWarnings("unchecked")
+public class StormQuery<T extends StormObject> extends StormQueryOp {
     
     private final Storm mStorm;
     private final Class<T> mTable;
-    private final Query mQuery;
     private final StormQueryDispatcher mQueryDispatcher;
     
     StormQuery(Storm storm, Class<T> table, Query query, StormQueryDispatcher dispatcher) {
+        super(query);
         this.mStorm = storm;
         this.mTable = table;
-        this.mQuery = query;
         this.mQueryDispatcher = dispatcher;
     }
-
-    public StormQuery<T> select(String... columns) {
-        mQuery.select(columns);
-        return this;
-    }
-
-    public StormQuery<T> where(Selection selection) {
-        mQuery.where(selection);
-        return this;
-    }
-
-    public StormQuery<T> orderBy(String column, Sorting sorting) {
-        mQuery.orderBy(column, sorting);
-        return this;
-    }
-
-    public StormQuery<T> from(String table) {
-        mQuery.from(table);
-        return this;
-    }
-
-    public StormQuery<T> groupBy(String groupBy, String having, Object... havingArgs) {
-        mQuery.groupBy(groupBy, having, havingArgs);
-        return this;
-    }
-
-    public StormQuery<T> join(String table, String column, String... additionalColumns) {
-        mQuery.join(table, column, additionalColumns);
-        return this;
-    }
-
-    public StormQuery<T> limit(long limit) {
-        mQuery.limit(limit);
-        return this;
-    }
-
-    public StormQuery<T> groupEnd() {
-        mQuery.groupEnd();
-        return this;
-    }
-
-    public StormQuery<T> raw(String statement, Object... args) {
-        mQuery.raw(statement, args);
-        return this;
-    }
-
-    public StormQuery<T> from() {
-        mQuery.from();
-        return this;
-    }
-
-    public StormQuery<T> where(String condition, Object... args) {
-        mQuery.where(condition, args);
-        return this;
-    }
-
-    public StormQuery<T> join() {
-        mQuery.join();
-        return this;
-    }
-
-    public StormQuery<T> join(String table, Selection condition) {
-        mQuery.join(table, condition);
-        return this;
-    }
-
-    public StormQuery<T> orderBy(OrderBy first, OrderBy... others) {
-        mQuery.orderBy(first, others);
-        return this;
-    }
-
-    public StormQuery<T> groupStart() {
-        mQuery.groupStart();
-        return this;
-    }
-
-    Query getQuery() {
-        return mQuery;
-    }
-
+    
     public Cursor asCursor(Storm storm, Query query) {
         return mQueryDispatcher.asCursor(storm, query);
     }
 
     public T asOne() {
-        return mQueryDispatcher.asOne(mStorm, mTable, mQuery);
+        return mQueryDispatcher.asOne(mStorm, mTable, getQuery());
     }
 
     public List<T> asList() {
-        return mQueryDispatcher.asList(mStorm, mTable, mQuery);
+        return mQueryDispatcher.asList(mStorm, mTable, getQuery());
     }
 
     public CursorIteratorCached<T> asCachedIterator(int cacheSize) {
-        return mQueryDispatcher.asCachedIterator(mStorm, mTable, mQuery, cacheSize);
+        return mQueryDispatcher.asCachedIterator(mStorm, mTable, getQuery(), cacheSize);
     }
 
     public CursorIterator<T> asIterator() {
-        return mQueryDispatcher.asIterator(mStorm, mTable, mQuery);
+        return mQueryDispatcher.asIterator(mStorm, mTable, getQuery());
+    }
+
+
+    @Override
+    public StormQuery<T> from() {
+        return (StormQuery<T>) super.from();
+    }
+
+    @Override
+    public StormQuery<T> orderBy(OrderBy first, OrderBy... others) {
+        return (StormQuery<T>) super.orderBy(first, others);
+    }
+
+    @Override
+    public StormQuery<T> from(String table) {
+        return (StormQuery<T>) super.from(table);
+    }
+
+    @Override
+    public StormQuery<T> where(Selection selection) {
+        return (StormQuery<T>) super.where(selection);
+    }
+
+    @Override
+    public StormQuery<T> where(String condition, Object... args) {
+        return (StormQuery<T>) super.where(condition, args);
+    }
+
+    @Override
+    public StormQuery<T> join(String table, String column, String... additionalColumns) {
+        return (StormQuery<T>) super.join(table, column, additionalColumns);
+    }
+
+    @Override
+    public StormQuery<T> orderBy(String column, Sorting sorting) {
+        return (StormQuery<T>) super.orderBy(column, sorting);
+    }
+
+    @Override
+    public StormQuery<T> groupEnd() {
+        return (StormQuery<T>) super.groupEnd();
+    }
+
+    @Override
+    public StormQuery<T> raw(String statement, Object... args) {
+        return (StormQuery<T>) super.raw(statement, args);
+    }
+
+    @Override
+    public StormQuery<T> groupStart() {
+        return (StormQuery<T>) super.groupStart();
+    }
+
+    @Override
+    public StormQuery<T> groupBy(String groupBy, String having, Object... havingArgs) {
+        return (StormQuery<T>) super.groupBy(groupBy, having, havingArgs);
+    }
+
+    @Override
+    public StormQuery<T> select(String... columns) {
+        return (StormQuery<T>) super.select(columns);
+    }
+
+    @Override
+    public StormQuery<T> join(String table, Selection condition) {
+        return (StormQuery<T>) super.join(table, condition);
+    }
+
+    @Override
+    public StormQuery<T> limit(long limit) {
+        return (StormQuery<T>) super.limit(limit);
+    }
+
+    @Override
+    public StormQuery<T> join() {
+        return (StormQuery<T>) super.join();
     }
 }

@@ -8,6 +8,14 @@ import java.util.List;
  */
 public class Selection implements IStatementBuilder {
 
+    public static Selection eq(String col, Object arg) {
+        return new Selection().equals(col, arg);
+    }
+
+//    public static Selection custom(String statement, Object... args) {
+//        return new Selection().raw(statement, args);
+//    }
+
     private final StringBuilder mBuilder;
     private final List<String> mArgs;
 

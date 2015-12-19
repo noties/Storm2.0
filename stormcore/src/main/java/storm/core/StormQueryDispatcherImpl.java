@@ -1,7 +1,6 @@
 package storm.core;
 
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Collections;
@@ -91,18 +90,4 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
         );
     }
 
-    private static class CloseDatabaseReferenceObserver extends DataSetObserver {
-
-        final Storm mStorm;
-
-        CloseDatabaseReferenceObserver(Storm storm) {
-            mStorm = storm;
-        }
-
-        @Override
-        public void onInvalidated() {
-            super.onInvalidated();
-            mStorm.database().close();
-        }
-    }
 }

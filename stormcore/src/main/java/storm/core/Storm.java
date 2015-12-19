@@ -1,5 +1,7 @@
 package storm.core;
 
+import android.net.Uri;
+
 import java.util.Collection;
 
 import storm.db.Database;
@@ -47,35 +49,17 @@ public class Storm {
         return this;
     }
 
-    public Storm registerDatabaseModules(DatabaseModule... modules) {
-        mDatabase.registerModules(modules);
-        return this;
-    }
-
     public Storm registerDatabaseModules(Collection<DatabaseModule> modules) {
         mDatabase.registerModules(modules);
         return this;
     }
 
-    public <T extends StormObject> Storm registerTableClass(Class<T> tableClass) {
+    public <T extends StormObject> Storm registerTable(Class<T> tableClass) {
 
         try {
             mDatabase.registerModule(new DatabaseModuleSchemeBridge(mSchemeFactory.provide(tableClass)));
         } catch (StormSchemeException e) {
             throw new RuntimeException(e);
-        }
-
-        return this;
-    }
-
-    public <T extends StormObject> Storm registerTableClasses(Class<T>... tableClasses) {
-
-        for (Class<T> cl: tableClasses) {
-            try {
-                mDatabase.registerModule(new DatabaseModuleSchemeBridge(mSchemeFactory.provide(cl)));
-            } catch (StormSchemeException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         return this;
@@ -90,7 +74,6 @@ public class Storm {
         return mDatabase;
     }
 
-    // todo table: name, notificationUri, isPrimaryKeyAutoincrement, primaryKeySelection
 
     public <T extends StormObject> StormParser<T> parser(Class<T> table) {
         try {
@@ -101,8 +84,12 @@ public class Storm {
     }
 
 
-    <T extends StormObject> String tableName(Class<T> cl) {
-        return parser(cl).getMetadata().getTableName();
+    public <T extends StormObject> String tableName(Class<T> table) {
+        return parser(table).getMetadata().getTableName();
+    }
+
+    public <T extends StormObject> Uri notificationUri(Class<T> table) {
+        return parser(table).getMetadata().getNotificationUri();
     }
 
 
@@ -110,7 +97,7 @@ public class Storm {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(tableName(table)),
+                Query.allFrom(tableName(table)),
                 mDispatchers.queryDispatcher()
         );
     }
@@ -119,7 +106,7 @@ public class Storm {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(tableName(table)).where(new Selection().raw(selection, args)),
+                Query.allFrom(tableName(table)).where(new Selection().raw(selection, args)),
                 mDispatchers.queryDispatcher()
         );
     }
@@ -128,7 +115,7 @@ public class Storm {
         return new StormQuery<T>(
                 this,
                 table,
-                new Query().select().from(tableName(table)).where(selection),
+                Query.allFrom(tableName(table)).where(selection),
                 mDispatchers.queryDispatcher()
         );
     }
@@ -142,6 +129,25 @@ public class Storm {
         );
     }
 
+
+    public StormSimpleQuery simpleQuery() {
+        return new StormSimpleQuery(
+                this,
+                new Query(),
+                mDispatchers.simpleQueryDispatcher()
+        );
+    }
+
+    public StormSimpleQuery simpleQuery(Query query) {
+        return new StormSimpleQuery(
+                this,
+                query,
+                mDispatchers.simpleQueryDispatcher()
+        );
+    }
+
+    // todo notification on insert, update, delete operations
+    // todo change RuntimeExceptions for StormException (add to method signatures?)
 
     public <T extends StormObject> StormCount<T> count(Class<T> table) {
         return new StormCount<>(

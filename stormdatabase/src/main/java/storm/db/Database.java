@@ -9,7 +9,6 @@ import android.net.Uri;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,13 +63,6 @@ public class Database implements Closeable {
     public Database registerModule(DatabaseModule dbModule) {
         synchronized (mMutex) {
             mModules.add(dbModule);
-        }
-        return this;
-    }
-
-    public Database registerModules(DatabaseModule... modules) {
-        synchronized (mMutex) {
-            Collections.addAll(mModules, modules);
         }
         return this;
     }

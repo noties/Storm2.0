@@ -13,6 +13,7 @@ class StormDispatchersImpl implements StormDispatchers {
     private static final StormSaveOneDispatcher SAVE_ONE_DISPATCHER = new StormSaveOneDispatcherImpl();
     private static final StormUpdateManyDispatcher UPDATE_MANY_DISPATCHER = new StormUpdateManyDispatcherImpl();
     private static final StormUpdateOneDispatcher UPDATE_ONE_DISPATCHER = new StormUpdateOneDispatcherImpl();
+    private static final StormSimpleQueryDispatcher SIMPLE_QUERY_DISPATCHER = new StormSimpleQueryDispatcherImpl();
 
     @Override
     public StormCountDispatcher countDispatcher() {
@@ -52,5 +53,10 @@ class StormDispatchersImpl implements StormDispatchers {
     @Override
     public StormUpdateManyDispatcher updateManyDispatcher() {
         return UPDATE_MANY_DISPATCHER;
+    }
+
+    @Override
+    public StormSimpleQueryDispatcher simpleQueryDispatcher() {
+        return SIMPLE_QUERY_DISPATCHER;
     }
 }

@@ -13,5 +13,5 @@ interface StormDispatchers {
     StormSaveOneDispatcher saveOneDispatcher();
     StormUpdateOneDispatcher updateOneDispatcher();
     StormUpdateManyDispatcher updateManyDispatcher();
-
+    StormSimpleQueryDispatcher simpleQueryDispatcher();
 }
