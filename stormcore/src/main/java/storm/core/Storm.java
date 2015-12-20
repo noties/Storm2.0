@@ -49,7 +49,7 @@ public class Storm {
         return this;
     }
 
-    public Storm registerDatabaseModules(Collection<DatabaseModule> modules) {
+    public Storm registerDatabaseModules(Collection<? extends DatabaseModule> modules) {
         mDatabase.registerModules(modules);
         return this;
     }

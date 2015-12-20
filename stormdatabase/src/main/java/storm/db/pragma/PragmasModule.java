@@ -40,7 +40,7 @@ public class PragmasModule extends DatabaseModuleConfiguration {
         }
     }
 
-    private static String createPragmaStatement(Pragma pragma) {
+    static String createPragmaStatement(Pragma pragma) {
         return String.format(PRAGMA_STATEMENT_PATTERN, pragma.getName(), pragma.getValue());
     }
 }

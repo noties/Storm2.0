@@ -3,38 +3,21 @@ package storm.db.pragma;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-public class SynchronousPragma implements Pragma {
+public class SynchronousPragma extends AbsPragma {
 
-    public enum Synchronous {
-
-        OFF     (0),
-        NORMAL  (1),
-        FULL    (2);
-
-        final int mValue;
-
-        Synchronous(int value) {
-            this.mValue = value;
-        }
+    public static SynchronousPragma off() {
+        return new SynchronousPragma("0");
     }
 
-    public static SynchronousPragma of(Synchronous synchronous) {
-        return new SynchronousPragma(String.valueOf(synchronous.mValue));
+    public static SynchronousPragma normal() {
+        return new SynchronousPragma("1");
     }
 
-    private final String mValue;
+    public static SynchronousPragma full() {
+        return new SynchronousPragma("2");
+    }
 
     private SynchronousPragma(String value) {
-        this.mValue = value;
-    }
-
-    @Override
-    public String getName() {
-        return "synchronous";
-    }
-
-    @Override
-    public String getValue() {
-        return mValue;
+        super("synchronous", value);
     }
 }

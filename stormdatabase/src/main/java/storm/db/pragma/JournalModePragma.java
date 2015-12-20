@@ -3,34 +3,33 @@ package storm.db.pragma;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-public class JournalModePragma implements Pragma {
+public class JournalModePragma extends AbsPragma {
 
-    public enum JournalMode {
-        DELETE,
-        TRUNCATE,
-        PERSIST,
-        MEMORY,
-        WAL,
-        OFF
+    public static JournalModePragma delete() {
+        return new JournalModePragma("DELETE");
     }
 
-    public static JournalModePragma of(JournalMode mode) {
-        return new JournalModePragma(mode.name());
+    public static JournalModePragma truncate() {
+        return new JournalModePragma("TRUNCATE");
     }
 
-    private final String mValue;
+    public static JournalModePragma persist() {
+        return new JournalModePragma("PERSIST");
+    }
+
+    public static JournalModePragma memory() {
+        return new JournalModePragma("MEMORY");
+    }
+
+    public static JournalModePragma wal() {
+        return new JournalModePragma("WAL");
+    }
+
+    public static JournalModePragma off() {
+        return new JournalModePragma("OFF");
+    }
 
     private JournalModePragma(String value) {
-        this.mValue = value;
-    }
-
-    @Override
-    public String getName() {
-        return "journal_mode";
-    }
-
-    @Override
-    public String getValue() {
-        return mValue;
+        super("journal_mode", value);
     }
 }

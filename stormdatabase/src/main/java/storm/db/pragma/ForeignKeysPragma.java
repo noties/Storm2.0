@@ -3,25 +3,17 @@ package storm.db.pragma;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-public class ForeignKeysPragma implements Pragma {
+public class ForeignKeysPragma extends AbsPragma {
 
-    public static ForeignKeysPragma of(boolean isEnabled) {
-        return new ForeignKeysPragma(isEnabled ? "1" : "0");
+    public static ForeignKeysPragma off() {
+        return new ForeignKeysPragma("0");
     }
 
-    private final String mValue;
-
-    private ForeignKeysPragma(String value) {
-        this.mValue = value;
+    public static ForeignKeysPragma on() {
+        return new ForeignKeysPragma("1");
     }
 
-    @Override
-    public String getName() {
-        return "foreign_keys";
-    }
-
-    @Override
-    public String getValue() {
-        return mValue;
+    ForeignKeysPragma(String value) {
+        super("foreign_keys", value);
     }
 }

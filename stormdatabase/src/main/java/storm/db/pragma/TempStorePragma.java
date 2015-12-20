@@ -3,38 +3,21 @@ package storm.db.pragma;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-public class TempStorePragma implements Pragma {
+public class TempStorePragma extends AbsPragma {
 
-    public enum TempStore {
-
-        DEFAULT (0),
-        FILE    (1),
-        MEMORY  (2);
-
-        final int mValue;
-
-        TempStore(int value) {
-            this.mValue = value;
-        }
+    public static TempStorePragma def() {
+        return new TempStorePragma("0");
     }
 
-    public static TempStorePragma of(TempStore tempStore) {
-        return new TempStorePragma(String.valueOf(tempStore.mValue));
+    public static TempStorePragma file() {
+        return new TempStorePragma("1");
     }
 
-    private final String mValue;
+    public static TempStorePragma memory() {
+        return new TempStorePragma("2");
+    }
 
     private TempStorePragma(String value) {
-        this.mValue = value;
-    }
-
-    @Override
-    public String getName() {
-        return "temp_store";
-    }
-
-    @Override
-    public String getValue() {
-        return mValue;
+        super("temp_store", value);
     }
 }

@@ -47,6 +47,11 @@ public class Database implements Closeable {
     private int mOpenCount;
 
     public Database(Configuration configuration) {
+
+        if (configuration == null) {
+            throw new NullPointerException("DatabaseCOnfiguration cannot be NULL");
+        }
+
         final Context context = configuration.context.getApplicationContext();
         this.mOpenHelper = new DatabaseOpenHelper(
                 context,
@@ -67,7 +72,7 @@ public class Database implements Closeable {
         return this;
     }
 
-    public Database registerModules(Collection<DatabaseModule> modules) {
+    public Database registerModules(Collection<? extends DatabaseModule> modules) {
         synchronized (mMutex) {
             mModules.addAll(modules);
         }
@@ -77,14 +82,14 @@ public class Database implements Closeable {
     // after obtaining SQLiteDatabase through this call, don't forget to call `Database.close()`
     // the best practice would be try/finally block.
     // don't call `close()` on a SQLiteDatabase object instance
-    public SQLiteDatabase open() {
+    public SQLiteDatabase open() throws DatabaseException {
 
         synchronized (mMutex) {
             if (++mOpenCount == 1) {
                 final List<DatabaseModule> modules = mModules;
                 if (modules.size() == 0) {
                     // indicate that no modules were supplied
-                    throw new IllegalStateException("Called `open` but Database has no registered modules. Did you call `Database.registerModule(s)`?");
+                    throw new DatabaseException("Called `open` but Database has no registered modules. Did you call `Database.registerModule(s)`?");
                 } else {
                     mOpenHelper.setModules(modules);
                 }
@@ -93,7 +98,7 @@ public class Database implements Closeable {
         }
 
         if (!mDatabase.isOpen()) {
-            throw new IllegalStateException("SQLiteDatabase is closed, did you call `SQLiteDatabase.close()` instead of `Database.close()`");
+            throw new DatabaseException("SQLiteDatabase is closed, did you call `SQLiteDatabase.close()` instead of `Database.close()`");
         }
 
         return mDatabase;
