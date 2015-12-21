@@ -29,11 +29,17 @@ class StormSaveOneDispatcherImpl implements StormSaveOneDispatcher {
 
         try {
 
-            return db.insert(
+            final long id = db.insert(
                     metadata.getTableName(),
                     null,
                     cv
             );
+
+            if (id > 0L) {
+                storm.notifyChange(table);
+            }
+
+            return id;
 
         } finally {
             storm.database().close();

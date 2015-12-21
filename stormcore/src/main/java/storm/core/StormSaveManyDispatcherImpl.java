@@ -61,6 +61,10 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
                     db.setTransactionSuccessful();
                 }
 
+                if (index > 0) {
+                    storm.notifyChange(table);
+                }
+
             } catch (SQLiteException e) {
 
                 throw new RuntimeException(e);

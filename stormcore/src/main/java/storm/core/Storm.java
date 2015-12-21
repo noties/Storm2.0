@@ -96,6 +96,9 @@ public class Storm {
         return parser(table).getMetadata().getNotificationUri();
     }
 
+    public <T extends StormObject> void notifyChange(Class<T> table) {
+        mDatabase.notify(notificationUri(table));
+    }
 
     public <T extends StormObject> StormQuery<T> query(Class<T> table) {
         return new StormQuery<T>(

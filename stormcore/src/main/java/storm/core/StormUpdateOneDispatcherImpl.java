@@ -33,12 +33,18 @@ class StormUpdateOneDispatcherImpl implements StormUpdateOneDispatcher {
 
         try {
 
-            return db.update(
+            final int updated = db.update(
                     metadata.getTableName(),
                     parser.toContentValues(value, false),
                     selection.getStatement(),
                     selection.getArguments()
             );
+
+            if (updated > 0) {
+                storm.notifyChange(table);
+            }
+
+            return updated;
 
         } finally {
             storm.database().close();

@@ -67,6 +67,10 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
                     db.setTransactionSuccessful();
                 }
 
+                if (updated > 0) {
+                    storm.notifyChange(table);
+                }
+
             } catch (SQLiteException e) {
                 throw new RuntimeException(e);
             } finally {

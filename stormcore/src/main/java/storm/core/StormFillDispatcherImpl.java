@@ -40,7 +40,11 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
 
         try {
 
-            db.beginTransaction();
+            final boolean hasTransaction = db.inTransaction();
+
+            if (!hasTransaction) {
+                db.beginTransaction();
+            }
 
             try {
 
@@ -51,14 +55,22 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
                         args
                 );
 
-                db.setTransactionSuccessful();
+                if (!hasTransaction) {
+                    db.setTransactionSuccessful();
+                }
+
+                if (updated > 0) {
+                    storm.notifyChange(table);
+                }
 
                 return updated;
 
             } catch (SQLiteException e) {
                 throw new RuntimeException(e);
             } finally {
-                db.endTransaction();
+                if (!hasTransaction) {
+                    db.endTransaction();
+                }
             }
 
         } finally {

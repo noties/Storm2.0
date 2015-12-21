@@ -19,11 +19,17 @@ class StormDeleteDispatcherImpl implements StormDeleteDispatcher {
             final String where  = selection != null ? selection.getStatement() : null;
             final String[] args = selection != null ? selection.getArguments() : null;
 
-            return db.delete(
+            final int deleted = db.delete(
                     storm.tableName(table),
                     where,
                     args
             );
+
+            if (deleted > 0) {
+                storm.notifyChange(table);
+            }
+
+            return deleted;
 
         } finally {
             storm.database().close();
