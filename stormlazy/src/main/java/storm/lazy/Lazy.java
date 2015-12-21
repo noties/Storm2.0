@@ -18,12 +18,10 @@ public class Lazy<T> {
         this.mProvider = provider;
     }
 
-    public T get() {
+    public synchronized T get() {
         if (!mIsProviderCalled) {
-            synchronized (this) {
-                mCachedValue = mProvider.provide();
-                mIsProviderCalled = true;
-            }
+            mCachedValue = mProvider.provide();
+            mIsProviderCalled = true;
         }
         return mCachedValue;
     }
