@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import storm.annotations.PrimaryKey;
+import storm.annotations.Table;
 import storm.serializer.StormSerializer;
 import storm.types.StormType;
 
@@ -20,6 +21,7 @@ import storm.types.StormType;
  */
 class StormParserRuntime<T> implements StormParser<T> {
 
+    private final Class<T> mTable;
     private final String mTableName;
     private final List<StormParserColumn> mColumns;
     private final StormInstanceCreator<T> mInstanceCreator;
@@ -28,11 +30,13 @@ class StormParserRuntime<T> implements StormParser<T> {
     private StormTableMetadata<T> mMetadata;
 
     StormParserRuntime(
+            Class<T> table,
             String tableName,
             List<StormParserColumn> columns,
             StormInstanceCreator<T> instanceCreator,
             StormSerializerProvider serializerProvider
     ) {
+        this.mTable = table;
         this.mTableName = tableName;
         this.mColumns = columns;
         this.mInstanceCreator = instanceCreator;
@@ -277,7 +281,15 @@ class StormParserRuntime<T> implements StormParser<T> {
             isAutoincrement = key.autoincrement();
         }
 
-        final Uri notificationUri = Uri.parse("storm://test_object"); // todo, don't have it now
+        final Uri notificationUri;
+        {
+            final Table table = mTable.getAnnotation(Table.class);
+            if (table == null) {
+                notificationUri = null;
+            } else {
+                notificationUri = StormNotificationUriBuilder.getDefault(mTable, table.notificationUri());
+            }
+        }
 
         return new StormTableMetadataRuntime<>(
                 mTableName,

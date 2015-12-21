@@ -26,6 +26,7 @@ class StormParserProviderRuntime implements StormParserProvider {
             StormSerializerProvider serializerProvider
     ) throws StormParserException {
         return new StormParserRuntime<>(
+                cl,
                 getTableName(cl),
                 buildColumns(cl),
                 instanceCreator,
