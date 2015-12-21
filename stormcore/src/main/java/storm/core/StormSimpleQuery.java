@@ -8,7 +8,7 @@ import storm.query.Sorting;
 /**
  * Created by Dimitry Ivanov on 20.12.2015.
  */
-public class StormSimpleQuery extends StormQueryOp {
+public class StormSimpleQuery extends StormQueryOp implements StormOp {
 
     private final Storm mStorm;
     private final StormSimpleQueryDispatcher mSimpleQueryDispatcher;
@@ -17,6 +17,15 @@ public class StormSimpleQuery extends StormQueryOp {
         super(query);
         mStorm = storm;
         mSimpleQueryDispatcher = simpleQueryDispatcher;
+    }
+
+    @Override
+    public Storm storm() {
+        return mStorm;
+    }
+
+    public StormSimpleQueryDispatcher dispatcher() {
+        return mSimpleQueryDispatcher;
     }
 
     public int asInt() {

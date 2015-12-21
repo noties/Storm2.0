@@ -15,7 +15,7 @@ import storm.query.Sorting;
  * Created by Dimitry Ivanov on 16.12.2015.
  */
 @SuppressWarnings("unchecked")
-public class StormQuery<T extends StormObject> extends StormQueryOp {
+public class StormQuery<T extends StormObject> extends StormQueryOp implements StormOp {
     
     private final Storm mStorm;
     private final Class<T> mTable;
@@ -48,6 +48,7 @@ public class StormQuery<T extends StormObject> extends StormQueryOp {
         return mQueryDispatcher.asIterator(mStorm, mTable, query());
     }
 
+    @Override
     public Storm storm() {
         return mStorm;
     }

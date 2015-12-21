@@ -15,7 +15,7 @@ import storm.query.Query;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormQueryRxStream<T extends StormObject> {
+public class StormQueryRxStream<T extends StormObject> implements StormRxStream {
 
     private final Storm mStorm;
     private final Class<T> mTable;
@@ -32,6 +32,7 @@ public class StormQueryRxStream<T extends StormObject> {
         mOneShot = true;
     }
 
+    @Override
     public StormQueryRxStream<T> subscribeForUpdates() {
         this.mOneShot = false;
         return this;

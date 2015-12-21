@@ -9,12 +9,13 @@ import storm.query.Sorting;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormQueryRx<T extends StormObject> extends StormQuery<T> {
+public class StormQueryRx<T extends StormObject> extends StormQuery<T> implements StormRxOp {
 
     StormQueryRx(StormQuery<T> parent) {
         super(parent.storm(), parent.table(), parent.query(), parent.dispatcher());
     }
 
+    @Override
     public StormQueryRxStream<T> stream() {
         return new StormQueryRxStream<>(this);
     }
