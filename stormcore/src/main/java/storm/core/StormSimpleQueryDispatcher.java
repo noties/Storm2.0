@@ -5,7 +5,7 @@ import storm.query.Query;
 /**
  * Created by Dimitry Ivanov on 20.12.2015.
  */
-public interface StormSimpleQueryDispatcher {
+public interface StormSimpleQueryDispatcher extends StormDispatcher {
 
     int asInt(Storm storm, Query query, int defValue);
     long asLong(Storm storm, Query query, long defValue);

@@ -7,8 +7,11 @@ import java.util.List;
 
 import ru.noties.debug.Debug;
 import ru.noties.debug.out.AndroidLogDebugOutput;
+import rx.Observable;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import storm.db.Database;
+import storm.query.Selection;
 import storm.rx.StormRx;
 
 /**
@@ -81,5 +84,22 @@ public class StormSampleApplication extends Application {
 
         final List<TestObject> list = storm.query(TestObject.class).asList();
         Debug.i("list: %s", list);
+
+        storm.save(new TestObject().setData("saveOne"))
+                .stream()
+                .create()
+                .flatMap(new Func1<Long, Observable<TestObject>>() {
+                    @Override
+                    public Observable<TestObject> call(Long aLong) {
+                        Debug.i("saved one, id: %s", aLong);
+                        return Observable.just(storm.query(TestObject.class, Selection.eq("id", aLong)).asOne());
+                    }
+                })
+                .subscribe(new Action1<TestObject>() {
+                    @Override
+                    public void call(TestObject testObject) {
+                        Debug.i("saveOne object: %s", testObject);
+                    }
+                });
     }
 }

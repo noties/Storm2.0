@@ -58,6 +58,7 @@ public class StormQuery<T extends StormObject> extends StormQueryOp implements S
         return mTable;
     }
 
+    @Override
     public StormQueryDispatcher dispatcher() {
         return mQueryDispatcher;
     }

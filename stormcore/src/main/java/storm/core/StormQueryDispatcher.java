@@ -11,7 +11,7 @@ import storm.query.Query;
 /**
  * Created by Dimitry Ivanov on 16.12.2015.
  */
-public interface StormQueryDispatcher {
+public interface StormQueryDispatcher extends StormDispatcher {
 
     Cursor asCursor(Storm storm, Query query);
 

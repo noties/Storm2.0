@@ -4,7 +4,10 @@ import java.util.Collection;
 
 import storm.core.Storm;
 import storm.core.StormCount;
+import storm.core.StormException;
 import storm.core.StormObject;
+import storm.core.StormSaveMany;
+import storm.core.StormSaveOne;
 import storm.db.Database;
 import storm.db.DatabaseModule;
 import storm.parser.StormInstanceCreator;
@@ -92,5 +95,15 @@ public class StormRx extends Storm {
     @Override
     public <T extends StormObject> StormCountRx<T> count(Class<T> table, String where, Object... args) {
         return new StormCountRx<>(super.count(table, where, args));
+    }
+
+    @Override
+    public <T extends StormObject> StormSaveOneRx<T> save(T value) {
+        return new StormSaveOneRx<>(super.save(value));
+    }
+
+    @Override
+    public <T extends StormObject> StormSaveMany<T> save(Collection<T> values) throws StormException {
+        return super.save(values);
     }
 }

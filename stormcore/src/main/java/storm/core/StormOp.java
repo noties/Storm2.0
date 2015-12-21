@@ -6,4 +6,5 @@ package storm.core;
 public interface StormOp<T> {
     Storm storm();
     Class<T> table();
+    StormDispatcher dispatcher();
 }

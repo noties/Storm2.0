@@ -139,6 +139,7 @@ public class StormCount<T extends StormObject> extends StormSelectionOp implemen
         return mTable;
     }
 
+    @Override
     public StormCountDispatcher dispatcher() {
         return mCountDispatcher;
     }
