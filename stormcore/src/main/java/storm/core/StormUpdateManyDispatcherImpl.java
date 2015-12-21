@@ -72,7 +72,11 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
                 }
 
             } catch (SQLiteException e) {
-                throw new RuntimeException(e);
+                throw StormException.newInstance(
+                        e,
+                        "Exception during `updateMany` operation for a class: `%s`, values: `%s`",
+                        table.getName(), values
+                );
             } finally {
                 if (!hasTransactionAlready) {
                     db.endTransaction();

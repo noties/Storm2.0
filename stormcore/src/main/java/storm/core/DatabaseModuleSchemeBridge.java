@@ -30,7 +30,10 @@ class DatabaseModuleSchemeBridge extends DatabaseModuleScheme {
                 }
             }
         } catch (StormSchemeException e) {
-            throw new RuntimeException(e);
+            throw StormException.newInstance(
+                    e,
+                    "Exception executing `OnCreate` statements"
+            );
         }
     }
 
@@ -46,7 +49,10 @@ class DatabaseModuleSchemeBridge extends DatabaseModuleScheme {
                 }
             }
         } catch (StormSchemeException e) {
-            throw new RuntimeException(e);
+            throw StormException.newInstance(
+                    e,
+                    "Exception executing `onUpgrade` statements"
+            );
         }
     }
 }

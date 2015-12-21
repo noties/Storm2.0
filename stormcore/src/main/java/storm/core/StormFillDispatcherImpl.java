@@ -66,7 +66,11 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
                 return updated;
 
             } catch (SQLiteException e) {
-                throw new RuntimeException(e);
+                throw StormException.newInstance(
+                        e,
+                        "Exception during `fill` operation for a table: `%s`, value: `%s`, contentValues: `%s`",
+                        table.getName(), value, cv
+                );
             } finally {
                 if (!hasTransaction) {
                     db.endTransaction();

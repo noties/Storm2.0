@@ -58,12 +58,12 @@ public class Storm {
         return this;
     }
 
-    public <T extends StormObject> Storm registerTable(Class<T> tableClass) {
+    public <T extends StormObject> Storm registerTable(Class<T> tableClass) throws StormException {
 
         try {
             mDatabase.registerModule(new DatabaseModuleSchemeBridge(mSchemeFactory.provide(tableClass)));
         } catch (StormSchemeException e) {
-            throw new RuntimeException(e);
+            throw StormException.newInstance(e, "Exception obtaining Scheme for a class: `%s`", tableClass.getName());
         }
 
         return this;
@@ -79,11 +79,11 @@ public class Storm {
     }
 
 
-    public <T extends StormObject> StormParser<T> parser(Class<T> table) {
+    public <T extends StormObject> StormParser<T> parser(Class<T> table) throws StormException {
         try {
             return mParserFactory.provide(table);
         } catch (StormParserException e) {
-            throw new RuntimeException(e);
+            throw StormException.newInstance(e, "Exception obtaining Parser for a class: `%s`", table.getName());
         }
     }
 
@@ -153,9 +153,6 @@ public class Storm {
         );
     }
 
-    // todo notification on insert, update, delete operations
-    // todo change RuntimeExceptions for StormException (add to method signatures?)
-
     public <T extends StormObject> StormCount<T> count(Class<T> table) {
         return new StormCount<>(
                 this,
@@ -192,7 +189,7 @@ public class Storm {
         );
     }
 
-    public <T extends StormObject> StormSaveMany<T> save(Collection<T> values) {
+    public <T extends StormObject> StormSaveMany<T> save(Collection<T> values) throws StormException {
         return new StormSaveMany<>(
                 this,
                 values,
@@ -209,7 +206,7 @@ public class Storm {
         );
     }
 
-    public <T extends StormObject> StormUpdateMany<T> update(Collection<T> values) {
+    public <T extends StormObject> StormUpdateMany<T> update(Collection<T> values) throws StormException {
         return new StormUpdateMany<>(
                 this,
                 values,
@@ -218,7 +215,7 @@ public class Storm {
     }
 
 
-    public <T extends StormObject> StormFill<T> fill(T value) {
+    public <T extends StormObject> StormFill<T> fill(T value) throws StormException {
         return new StormFill<>(
                 this,
                 new Selection(),
@@ -227,7 +224,7 @@ public class Storm {
         );
     }
 
-    public <T extends StormObject> StormFill<T> fill(T value, Selection selection) {
+    public <T extends StormObject> StormFill<T> fill(T value, Selection selection) throws StormException {
         return new StormFill<>(
                 this,
                 selection,

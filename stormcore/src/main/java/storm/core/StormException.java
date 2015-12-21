@@ -5,6 +5,14 @@ package storm.core;
  */
 public class StormException extends RuntimeException {
 
+    public static StormException newInstance(String msg, Object... args) {
+        return new StormException(String.format(msg, args));
+    }
+
+    public static StormException newInstance(Throwable cause, String msg, Object... args) {
+        return new StormException(String.format(msg, args), cause);
+    }
+
     public StormException(String detailMessage) {
         super(detailMessage);
     }

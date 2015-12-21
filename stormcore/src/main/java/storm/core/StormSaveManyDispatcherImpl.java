@@ -67,7 +67,11 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
 
             } catch (SQLiteException e) {
 
-                throw new RuntimeException(e);
+                throw StormException.newInstance(
+                        e,
+                        "Exception during `saveMany` operation for a class: `%s`, values: `%s`",
+                        table.getName(), collection
+                );
 
             } finally {
                 if (!hasTransactionAlready) {
