@@ -1,15 +1,10 @@
 package storm.rx;
 
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Handler;
 
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Func0;
 import storm.core.Storm;
 import storm.core.StormObject;
 import storm.core.StormQueryDispatcher;
@@ -21,6 +16,8 @@ import storm.query.Query;
  * Created by Dimitry Ivanov on 21.12.2015.
  */
 public class StormQueryRxStream<T extends StormObject> {
+
+    private static final boolean DEF_ONE_SHOT = true;
 
     private final Storm mStorm;
     private final Class<T> mTable;
@@ -35,86 +32,102 @@ public class StormQueryRxStream<T extends StormObject> {
     }
 
     public Observable<Cursor> asCursor() {
-        return createObservable(mStorm.notificationUri(mTable), new ValueProvider<Cursor>() {
+        return asCursor(DEF_ONE_SHOT);
+    }
+
+    public Observable<Cursor> asCursor(boolean oneShot) {
+
+        final StormRxObservable.ValueProvider<Cursor> provider = new StormRxObservable.ValueProvider<Cursor>() {
             @Override
             public Cursor provide() {
                 return mDispatcher.asCursor(mStorm, mQuery);
             }
-        });
+        };
+
+        if (oneShot) {
+            return StormRxObservable.createOneShot(provider);
+        }
+
+        return StormRxObservable.createStream(mStorm, mTable, provider);
     }
 
     public Observable<T> asOne() {
-        return createObservable(mStorm.notificationUri(mTable), new ValueProvider<T>() {
+        return asOne(DEF_ONE_SHOT);
+    }
+
+    public Observable<T> asOne(boolean oneShot) {
+
+        final StormRxObservable.ValueProvider<T> provider = new StormRxObservable.ValueProvider<T>() {
             @Override
             public T provide() {
                 return mDispatcher.asOne(mStorm, mTable, mQuery);
             }
-        });
+        };
+
+        if (oneShot) {
+            return StormRxObservable.createOneShot(provider);
+        }
+
+        return StormRxObservable.createStream(mStorm, mTable, provider);
     }
 
     public Observable<List<T>> asList() {
-        return createObservable(mStorm.notificationUri(mTable), new ValueProvider<List<T>>() {
+        return asList(DEF_ONE_SHOT);
+    }
+
+    public Observable<List<T>> asList(boolean oneShot) {
+
+        final StormRxObservable.ValueProvider<List<T>> provider = new StormRxObservable.ValueProvider<List<T>>() {
             @Override
             public List<T> provide() {
                 return mDispatcher.asList(mStorm, mTable, mQuery);
             }
-        });
+        };
+
+        if (oneShot) {
+            return StormRxObservable.createOneShot(provider);
+        }
+
+        return StormRxObservable.createStream(mStorm, mTable, provider);
     }
 
     public Observable<CursorIterator<T>> asIterator() {
-        return createObservable(mStorm.notificationUri(mTable), new ValueProvider<CursorIterator<T>>() {
+        return asIterator(DEF_ONE_SHOT);
+    }
+
+    public Observable<CursorIterator<T>> asIterator(boolean oneShot) {
+
+        final StormRxObservable.ValueProvider<CursorIterator<T>> provider = new StormRxObservable.ValueProvider<CursorIterator<T>>() {
             @Override
             public CursorIterator<T> provide() {
                 return mDispatcher.asIterator(mStorm, mTable, mQuery);
             }
-        });
+        };
+
+        if (oneShot) {
+            return StormRxObservable.createOneShot(provider);
+        }
+
+        return StormRxObservable.createStream(mStorm, mTable, provider);
     }
 
-    public Observable<CursorIteratorCached<T>> asCachedIterator(final int cacheSize) {
-        return createObservable(mStorm.notificationUri(mTable), new ValueProvider<CursorIteratorCached<T>>() {
+    public Observable<CursorIteratorCached<T>> asCachedIterator(int cacheSize) {
+        return asCachedIterator(DEF_ONE_SHOT, cacheSize);
+    }
+
+    public Observable<CursorIteratorCached<T>> asCachedIterator(boolean oneShot, final int cacheSize) {
+
+        final StormRxObservable.ValueProvider<CursorIteratorCached<T>> provider = new StormRxObservable.ValueProvider<CursorIteratorCached<T>>() {
             @Override
             public CursorIteratorCached<T> provide() {
                 return mDispatcher.asCachedIterator(mStorm, mTable, mQuery, cacheSize);
             }
-        });
-    }
+        };
 
-    private <V> Observable<V> createObservable(final Uri uri, final ValueProvider<V> provider) {
-        return Observable.defer(new Func0<Observable<V>>() {
-            @Override
-            public Observable<V> call() {
-                return Observable.create(new Observable.OnSubscribe<V>() {
-                    @Override
-                    public void call(final Subscriber<? super V> subscriber) {
+        if (oneShot) {
+            return StormRxObservable.createOneShot(provider);
+        }
 
-                        final ContentObserver observer = new ContentObserver(new Handler()) {
-                            @Override
-                            public void onChange(boolean selfChange) {
-
-                                if (!subscriber.isUnsubscribed()) {
-
-                                    try {
-                                        subscriber.onNext(provider.provide());
-                                    } catch (Throwable t) {
-                                        subscriber.onError(t);
-                                        subscriber.onCompleted();
-                                    }
-
-                                } else {
-                                    mStorm.database().unregisterContentObserver(this);
-                                }
-
-                            }
-                        };
-
-                        mStorm.database().registerContentObserver(uri, observer);
-                    }
-                }).startWith(provider.provide());
-            }
-        });
-    }
-
-    private interface ValueProvider<V> {
-        V provide();
+        return StormRxObservable.createStream(mStorm, mTable, provider);
     }
 }
