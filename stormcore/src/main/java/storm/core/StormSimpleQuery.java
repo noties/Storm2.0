@@ -8,20 +8,28 @@ import storm.query.Sorting;
 /**
  * Created by Dimitry Ivanov on 20.12.2015.
  */
-public class StormSimpleQuery extends StormQueryOp implements StormOp {
+@SuppressWarnings("unchecked")
+public class StormSimpleQuery<T extends StormObject> extends StormQueryOp implements StormOp<T> {
 
     private final Storm mStorm;
+    private final Class<T> mTable;
     private final StormSimpleQueryDispatcher mSimpleQueryDispatcher;
 
-    public StormSimpleQuery(Storm storm, Query query, StormSimpleQueryDispatcher simpleQueryDispatcher) {
+    public StormSimpleQuery(Storm storm, Class<T> table, Query query, StormSimpleQueryDispatcher simpleQueryDispatcher) {
         super(query);
         mStorm = storm;
+        mTable = table;
         mSimpleQueryDispatcher = simpleQueryDispatcher;
     }
 
     @Override
     public Storm storm() {
         return mStorm;
+    }
+
+    @Override
+    public Class<T> table() {
+        return mTable;
     }
 
     public StormSimpleQueryDispatcher dispatcher() {
@@ -77,77 +85,77 @@ public class StormSimpleQuery extends StormQueryOp implements StormOp {
     }
 
     @Override
-    public StormSimpleQuery from() {
-        return (StormSimpleQuery) super.from();
+    public StormSimpleQuery<T> from() {
+        return (StormSimpleQuery<T>) super.from();
     }
 
     @Override
-    public StormSimpleQuery orderBy(OrderBy first, OrderBy... others) {
-        return (StormSimpleQuery) super.orderBy(first, others);
+    public StormSimpleQuery<T> orderBy(OrderBy first, OrderBy... others) {
+        return (StormSimpleQuery<T>) super.orderBy(first, others);
     }
 
     @Override
-    public StormSimpleQuery from(String table) {
-        return (StormSimpleQuery) super.from(table);
+    public StormSimpleQuery<T> from(String table) {
+        return (StormSimpleQuery<T>) super.from(table);
     }
 
     @Override
-    public StormSimpleQuery where(Selection selection) {
-        return (StormSimpleQuery) super.where(selection);
+    public StormSimpleQuery<T> where(Selection selection) {
+        return (StormSimpleQuery<T>) super.where(selection);
     }
 
     @Override
-    public StormSimpleQuery where(String condition, Object... args) {
-        return (StormSimpleQuery) super.where(condition, args);
+    public StormSimpleQuery<T> where(String condition, Object... args) {
+        return (StormSimpleQuery<T>) super.where(condition, args);
     }
 
     @Override
-    public StormSimpleQuery join(String table, String column, String... additionalColumns) {
-        return (StormSimpleQuery) super.join(table, column, additionalColumns);
+    public StormSimpleQuery<T> join(String table, String column, String... additionalColumns) {
+        return (StormSimpleQuery<T>) super.join(table, column, additionalColumns);
     }
 
     @Override
-    public StormSimpleQuery orderBy(String column, Sorting sorting) {
-        return (StormSimpleQuery) super.orderBy(column, sorting);
+    public StormSimpleQuery<T> orderBy(String column, Sorting sorting) {
+        return (StormSimpleQuery<T>) super.orderBy(column, sorting);
     }
 
     @Override
-    public StormSimpleQuery groupEnd() {
-        return (StormSimpleQuery) super.groupEnd();
+    public StormSimpleQuery<T> groupEnd() {
+        return (StormSimpleQuery<T>) super.groupEnd();
     }
 
     @Override
-    public StormSimpleQuery raw(String statement, Object... args) {
-        return (StormSimpleQuery) super.raw(statement, args);
+    public StormSimpleQuery<T> raw(String statement, Object... args) {
+        return (StormSimpleQuery<T>) super.raw(statement, args);
     }
 
     @Override
-    public StormSimpleQuery groupStart() {
-        return (StormSimpleQuery) super.groupStart();
+    public StormSimpleQuery<T> groupStart() {
+        return (StormSimpleQuery<T>) super.groupStart();
     }
 
     @Override
-    public StormSimpleQuery groupBy(String groupBy, String having, Object... havingArgs) {
-        return (StormSimpleQuery) super.groupBy(groupBy, having, havingArgs);
+    public StormSimpleQuery<T> groupBy(String groupBy, String having, Object... havingArgs) {
+        return (StormSimpleQuery<T>) super.groupBy(groupBy, having, havingArgs);
     }
 
     @Override
-    public StormSimpleQuery select(String... columns) {
-        return (StormSimpleQuery) super.select(columns);
+    public StormSimpleQuery<T> select(String... columns) {
+        return (StormSimpleQuery<T>) super.select(columns);
     }
 
     @Override
-    public StormSimpleQuery join(String table, Selection condition) {
-        return (StormSimpleQuery) super.join(table, condition);
+    public StormSimpleQuery<T> join(String table, Selection condition) {
+        return (StormSimpleQuery<T>) super.join(table, condition);
     }
 
     @Override
-    public StormSimpleQuery limit(long limit) {
-        return (StormSimpleQuery) super.limit(limit);
+    public StormSimpleQuery<T> limit(long limit) {
+        return (StormSimpleQuery<T>) super.limit(limit);
     }
 
     @Override
-    public StormSimpleQuery join() {
-        return (StormSimpleQuery) super.join();
+    public StormSimpleQuery<T> join() {
+        return (StormSimpleQuery<T>) super.join();
     }
 }

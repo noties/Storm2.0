@@ -15,7 +15,7 @@ import storm.query.Query;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormQueryRxStream<T extends StormObject> implements StormRxStream {
+public class StormQueryRxStream<T extends StormObject> implements StormRxStreamWithUpdates {
 
     private final Storm mStorm;
     private final Class<T> mTable;

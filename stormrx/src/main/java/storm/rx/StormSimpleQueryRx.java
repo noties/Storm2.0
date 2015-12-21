@@ -1,5 +1,6 @@
 package storm.rx;
 
+import storm.core.StormObject;
 import storm.core.StormSimpleQuery;
 import storm.query.OrderBy;
 import storm.query.Selection;
@@ -8,89 +9,89 @@ import storm.query.Sorting;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormSimpleQueryRx extends StormSimpleQuery implements StormRxOp {
+public class StormSimpleQueryRx<T extends StormObject> extends StormSimpleQuery<T> implements StormRxOp {
 
-    public StormSimpleQueryRx(StormSimpleQuery parent) {
-        super(parent.storm(), parent.query(), parent.dispatcher());
+    public StormSimpleQueryRx(StormSimpleQuery<T> parent) {
+        super(parent.storm(), parent.table(), parent.query(), parent.dispatcher());
     }
 
     @Override
-    public StormSimpleQueryRxStream stream() {
-        return new StormSimpleQueryRxStream(this);
+    public StormSimpleQueryRxStream<T> stream() {
+        return new StormSimpleQueryRxStream<T>(this);
     }
 
     @Override
-    public StormSimpleQueryRx from() {
-        return (StormSimpleQueryRx) super.from();
+    public StormSimpleQueryRx<T> from() {
+        return (StormSimpleQueryRx<T>) super.from();
     }
 
     @Override
-    public StormSimpleQueryRx orderBy(OrderBy first, OrderBy... others) {
-        return (StormSimpleQueryRx) super.orderBy(first, others);
+    public StormSimpleQueryRx<T> orderBy(OrderBy first, OrderBy... others) {
+        return (StormSimpleQueryRx<T>) super.orderBy(first, others);
     }
 
     @Override
-    public StormSimpleQueryRx from(String table) {
-        return (StormSimpleQueryRx) super.from(table);
+    public StormSimpleQueryRx<T> from(String table) {
+        return (StormSimpleQueryRx<T>) super.from(table);
     }
 
     @Override
-    public StormSimpleQueryRx where(Selection selection) {
-        return (StormSimpleQueryRx) super.where(selection);
+    public StormSimpleQueryRx<T> where(Selection selection) {
+        return (StormSimpleQueryRx<T>) super.where(selection);
     }
 
     @Override
-    public StormSimpleQueryRx where(String condition, Object... args) {
-        return (StormSimpleQueryRx) super.where(condition, args);
+    public StormSimpleQueryRx<T> where(String condition, Object... args) {
+        return (StormSimpleQueryRx<T>) super.where(condition, args);
     }
 
     @Override
-    public StormSimpleQueryRx join(String table, String column, String... additionalColumns) {
-        return (StormSimpleQueryRx) super.join(table, column, additionalColumns);
+    public StormSimpleQueryRx<T> join(String table, String column, String... additionalColumns) {
+        return (StormSimpleQueryRx<T>) super.join(table, column, additionalColumns);
     }
 
     @Override
-    public StormSimpleQueryRx orderBy(String column, Sorting sorting) {
-        return (StormSimpleQueryRx) super.orderBy(column, sorting);
+    public StormSimpleQueryRx<T> orderBy(String column, Sorting sorting) {
+        return (StormSimpleQueryRx<T>) super.orderBy(column, sorting);
     }
 
     @Override
-    public StormSimpleQueryRx groupEnd() {
-        return (StormSimpleQueryRx) super.groupEnd();
+    public StormSimpleQueryRx<T> groupEnd() {
+        return (StormSimpleQueryRx<T>) super.groupEnd();
     }
 
     @Override
-    public StormSimpleQueryRx raw(String statement, Object... args) {
-        return (StormSimpleQueryRx) super.raw(statement, args);
+    public StormSimpleQueryRx<T> raw(String statement, Object... args) {
+        return (StormSimpleQueryRx<T>) super.raw(statement, args);
     }
 
     @Override
-    public StormSimpleQueryRx groupStart() {
-        return (StormSimpleQueryRx) super.groupStart();
+    public StormSimpleQueryRx<T> groupStart() {
+        return (StormSimpleQueryRx<T>) super.groupStart();
     }
 
     @Override
-    public StormSimpleQueryRx groupBy(String groupBy, String having, Object... havingArgs) {
-        return (StormSimpleQueryRx) super.groupBy(groupBy, having, havingArgs);
+    public StormSimpleQueryRx<T> groupBy(String groupBy, String having, Object... havingArgs) {
+        return (StormSimpleQueryRx<T>) super.groupBy(groupBy, having, havingArgs);
     }
 
     @Override
-    public StormSimpleQueryRx select(String... columns) {
-        return (StormSimpleQueryRx) super.select(columns);
+    public StormSimpleQueryRx<T> select(String... columns) {
+        return (StormSimpleQueryRx<T>) super.select(columns);
     }
 
     @Override
-    public StormSimpleQueryRx join(String table, Selection condition) {
-        return (StormSimpleQueryRx) super.join(table, condition);
+    public StormSimpleQueryRx<T> join(String table, Selection condition) {
+        return (StormSimpleQueryRx<T>) super.join(table, condition);
     }
 
     @Override
-    public StormSimpleQueryRx limit(long limit) {
-        return (StormSimpleQueryRx) super.limit(limit);
+    public StormSimpleQueryRx<T> limit(long limit) {
+        return (StormSimpleQueryRx<T>) super.limit(limit);
     }
 
     @Override
-    public StormSimpleQueryRx join() {
-        return (StormSimpleQueryRx) super.join();
+    public StormSimpleQueryRx<T> join() {
+        return (StormSimpleQueryRx<T>) super.join();
     }
 }

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import storm.core.Storm;
 import storm.core.StormObject;
-import storm.core.StormSimpleQuery;
 import storm.db.Database;
 import storm.db.DatabaseModule;
 import storm.parser.StormInstanceCreator;
@@ -69,12 +68,12 @@ public class StormRx extends Storm {
 
 
     @Override
-    public StormSimpleQuery simpleQuery() {
-        return new StormSimpleQueryRx(super.simpleQuery());
+    public <T extends StormObject> StormSimpleQueryRx<T> simpleQuery(Class<T> table, String column) {
+        return new StormSimpleQueryRx<T>(super.simpleQuery(table, column));
     }
 
     @Override
-    public StormSimpleQuery simpleQuery(Query query) {
-        return new StormSimpleQueryRx(super.simpleQuery(query));
+    public <T extends StormObject> StormSimpleQueryRx<T> simpleQuery(Class<T> table, Query query) {
+        return new StormSimpleQueryRx<T>(super.simpleQuery(table, query));
     }
 }

@@ -9,31 +9,26 @@ import storm.query.Query;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormSimpleQueryRxStream implements StormRxStream {
+public class StormSimpleQueryRxStream<T extends StormObject> implements StormRxStreamWithUpdates {
 
     private final Storm mStorm;
+    private final Class<T> mTable;
     private final Query mQuery;
     private final StormSimpleQueryDispatcher mDispatcher;
 
     private boolean mOneShot;
-    private Class<? extends StormObject> mTable;
 
-    StormSimpleQueryRxStream(StormSimpleQueryRx query) {
+    StormSimpleQueryRxStream(StormSimpleQueryRx<T> query) {
         mStorm = query.storm();
+        mTable = query.table();
         mQuery = query.query();
         mDispatcher = query.dispatcher();
         mOneShot = true;
     }
 
     @Override
-    public StormSimpleQueryRxStream subscribeForUpdates() {
-        throw new RuntimeException("In order to subscribe for updates for `simpleQuery` operation, " +
-                "one must call `subscribeForUpdates(Class<T extends StormObject>).");
-    }
-
-    public <T extends StormObject> StormSimpleQueryRxStream subscribeForUpdates(Class<T> table) {
+    public StormSimpleQueryRxStream<T> subscribeForUpdates() {
         mOneShot = false;
-        mTable = table;
         return this;
     }
 

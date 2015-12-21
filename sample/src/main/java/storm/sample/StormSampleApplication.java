@@ -29,6 +29,17 @@ public class StormSampleApplication extends Application {
         ));
         storm.registerTable(TestObject.class);
 
+        storm.simpleQuery(TestObject.class, "sum(id)")
+                .stream()
+                .subscribeForUpdates()
+                .asLong()
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        Debug.i("simple query, sum(id): %s", aLong);
+                    }
+                });
+
         storm.query(TestObject.class)
                 .stream()
                 .subscribeForUpdates()

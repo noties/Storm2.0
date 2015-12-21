@@ -127,6 +127,7 @@ public class Storm {
         );
     }
 
+    // Full filled Query object (with tableName)
     public <T extends StormObject> StormQuery<T> query(Class<T> table, Query query) {
         return new StormQuery<T>(
                 this,
@@ -137,17 +138,20 @@ public class Storm {
     }
 
 
-    public StormSimpleQuery simpleQuery() {
-        return new StormSimpleQuery(
+    public <T extends StormObject> StormSimpleQuery<T> simpleQuery(Class<T> table, String column) {
+        return new StormSimpleQuery<T>(
                 this,
-                new Query(),
+                table,
+                new Query().select(column).from(tableName(table)),
                 mDispatchers.simpleQueryDispatcher()
         );
     }
 
-    public StormSimpleQuery simpleQuery(Query query) {
-        return new StormSimpleQuery(
+    // Full filled Query object (with tableName)
+    public <T extends StormObject> StormSimpleQuery<T> simpleQuery(Class<T> table, Query query) {
+        return new StormSimpleQuery<T>(
                 this,
+                table,
                 query,
                 mDispatchers.simpleQueryDispatcher()
         );

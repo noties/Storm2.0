@@ -22,9 +22,7 @@ public class PersonWithOrders implements StormObject {
 
         @Override
         public Double deserialize(Long aLong) {
-            return JoinsSample.sStorm.simpleQuery()
-                    .select("sum(price)")
-                    .from("orders")
+            return JoinsSample.sStorm.simpleQuery(Order.class, "sum(price)")
                     .where(Selection.eq("id", aLong))
                     .asDouble();
         }
