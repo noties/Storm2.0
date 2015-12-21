@@ -6,13 +6,13 @@ import storm.query.Selection;
  * Created by Dimitry Ivanov on 17.12.2015.
  */
 @SuppressWarnings("unchecked")
-public class StormCount<T extends StormObject> extends StormSelectionOp {
+public class StormCount<T extends StormObject> extends StormSelectionOp implements StormOp<T> {
 
     private final Storm mStorm;
     private final Class<T> mTable;
     private final StormCountDispatcher mCountDispatcher;
 
-    StormCount(Storm storm, Class<T> table, Selection selection, StormCountDispatcher countDispatcher) {
+    protected StormCount(Storm storm, Class<T> table, Selection selection, StormCountDispatcher countDispatcher) {
         super(selection);
         mStorm = storm;
         mTable = table;
@@ -20,7 +20,7 @@ public class StormCount<T extends StormObject> extends StormSelectionOp {
     }
 
     public int execute() {
-        return mCountDispatcher.execute(mStorm, mTable, getSelection());
+        return mCountDispatcher.execute(mStorm, mTable, selection());
     }
 
 
@@ -127,5 +127,19 @@ public class StormCount<T extends StormObject> extends StormSelectionOp {
     @Override
     public StormCount<T> notBetween(String col, Number from, Number to) {
         return (StormCount<T>) super.notBetween(col, from, to);
+    }
+
+    @Override
+    public Storm storm() {
+        return mStorm;
+    }
+
+    @Override
+    public Class<T> table() {
+        return mTable;
+    }
+
+    public StormCountDispatcher dispatcher() {
+        return mCountDispatcher;
     }
 }

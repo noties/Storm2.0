@@ -3,6 +3,7 @@ package storm.rx;
 import java.util.Collection;
 
 import storm.core.Storm;
+import storm.core.StormCount;
 import storm.core.StormObject;
 import storm.db.Database;
 import storm.db.DatabaseModule;
@@ -75,5 +76,21 @@ public class StormRx extends Storm {
     @Override
     public <T extends StormObject> StormSimpleQueryRx<T> simpleQuery(Class<T> table, Query query) {
         return new StormSimpleQueryRx<T>(super.simpleQuery(table, query));
+    }
+
+
+    @Override
+    public <T extends StormObject> StormCountRx<T> count(Class<T> table) {
+        return new StormCountRx<>(super.count(table));
+    }
+
+    @Override
+    public <T extends StormObject> StormCountRx<T> count(Class<T> table, Selection selection) {
+        return new StormCountRx<>(super.count(table, selection));
+    }
+
+    @Override
+    public <T extends StormObject> StormCountRx<T> count(Class<T> table, String where, Object... args) {
+        return new StormCountRx<>(super.count(table, where, args));
     }
 }

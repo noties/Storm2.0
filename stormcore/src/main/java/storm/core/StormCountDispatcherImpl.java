@@ -21,7 +21,7 @@ class StormCountDispatcherImpl implements StormCountDispatcher {
         final String statement;
         final String[] args;
 
-        if (selection == null) {
+        if (selection == null || (selection.getStatement() == null && selection.getArguments() == null)) {
             statement = String.format(QUERY_PATTERN, tableName);
             args = null;
         } else {

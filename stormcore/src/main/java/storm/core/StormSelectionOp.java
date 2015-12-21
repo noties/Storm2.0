@@ -13,7 +13,7 @@ class StormSelectionOp {
         mSelection = selection;
     }
     
-    Selection getSelection() {
+    public Selection selection() {
         return mSelection;
     }
 

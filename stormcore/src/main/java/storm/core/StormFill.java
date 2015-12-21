@@ -20,7 +20,7 @@ public class StormFill<T extends StormObject> extends StormSelectionOp {
     }
     
     public int execute() {
-        return mFillDispatcher.fill(mStorm, getSelection(), mValue);
+        return mFillDispatcher.fill(mStorm, selection(), mValue);
     }
 
     @Override

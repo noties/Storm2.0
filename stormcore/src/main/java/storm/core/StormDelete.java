@@ -20,7 +20,7 @@ public class StormDelete<T extends StormObject> extends StormSelectionOp {
     }
 
     public int execute() {
-        return mDeleteDispatcher.execute(mStorm, mTable, getSelection());
+        return mDeleteDispatcher.execute(mStorm, mTable, selection());
     }
     
 

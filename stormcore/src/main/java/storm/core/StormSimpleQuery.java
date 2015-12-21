@@ -15,7 +15,7 @@ public class StormSimpleQuery<T extends StormObject> extends StormQueryOp implem
     private final Class<T> mTable;
     private final StormSimpleQueryDispatcher mSimpleQueryDispatcher;
 
-    public StormSimpleQuery(Storm storm, Class<T> table, Query query, StormSimpleQueryDispatcher simpleQueryDispatcher) {
+    protected StormSimpleQuery(Storm storm, Class<T> table, Query query, StormSimpleQueryDispatcher simpleQueryDispatcher) {
         super(query);
         mStorm = storm;
         mTable = table;

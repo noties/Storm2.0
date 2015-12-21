@@ -40,6 +40,18 @@ public class StormSampleApplication extends Application {
                     }
                 });
 
+        storm.count(TestObject.class)
+                .stream()
+                .subscribeForUpdates()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("count: %s", integer);
+                    }
+                });
+
+
         storm.query(TestObject.class)
                 .stream()
                 .subscribeForUpdates()
