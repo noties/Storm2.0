@@ -137,5 +137,15 @@ public class StormSampleApplication extends Application {
                         Debug.i("updated: %s", integer);
                     }
                 });
+
+        storm.update(Arrays.asList(new TestObject().setId(2L).setData("updated second"), new TestObject().setId(3L).setData("updated third")))
+                .stream()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("updated many: %s", integer);
+                    }
+                });
     }
 }

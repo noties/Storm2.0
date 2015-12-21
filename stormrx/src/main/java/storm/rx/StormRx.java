@@ -128,7 +128,7 @@ public class StormRx extends Storm {
     }
 
     @Override
-    public <T extends StormObject> StormUpdateMany<T> update(Collection<T> values) throws StormException {
-        return super.update(values);
+    public <T extends StormObject> StormUpdateManyRx<T> update(Collection<T> values) throws StormException {
+        return new StormUpdateManyRx<>(super.update(values));
     }
 }

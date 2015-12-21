@@ -7,7 +7,7 @@ import storm.core.StormUpdateOneDispatcher;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormUpdateOneRxStream<T extends StormObject> implements StormRxStream {
+public class StormUpdateOneRxStream<T extends StormObject> implements StormRxStreamSingleValue<Integer> {
 
     private final StormRx mStorm;
     private final T mValue;
@@ -19,6 +19,7 @@ public class StormUpdateOneRxStream<T extends StormObject> implements StormRxStr
         mDispatcher = updateOne.dispatcher();
     }
 
+    @Override
     public Observable<Integer> create() {
 
         final StormRxObservable.ValueProvider<Integer> provider = new StormRxObservable.ValueProvider<Integer>() {

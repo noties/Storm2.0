@@ -8,7 +8,7 @@ import storm.query.Selection;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormCountRxStream<T extends StormObject> implements StormRxStreamWithUpdates {
+public class StormCountRxStream<T extends StormObject> implements StormRxStreamWithUpdates, StormRxStreamSingleValue<Integer> {
 
     private final StormRx mStorm;
     private final Class<T> mTable;
@@ -32,6 +32,7 @@ public class StormCountRxStream<T extends StormObject> implements StormRxStreamW
         return this;
     }
 
+    @Override
     public Observable<Integer> create() {
 
         final StormRxObservable.ValueProvider<Integer> provider = new StormRxObservable.ValueProvider<Integer>() {

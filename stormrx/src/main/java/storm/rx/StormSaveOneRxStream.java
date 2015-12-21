@@ -7,7 +7,7 @@ import storm.core.StormSaveOneDispatcher;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormSaveOneRxStream<T extends StormObject> implements StormRxStream {
+public class StormSaveOneRxStream<T extends StormObject> implements StormRxStreamSingleValue<Long> {
 
     private final StormRx mStorm;
     private final T mValue;
@@ -19,6 +19,7 @@ public class StormSaveOneRxStream<T extends StormObject> implements StormRxStrea
         mDispatcher = saveOne.dispatcher();
     }
 
+    @Override
     public Observable<Long> create() {
         final StormRxObservable.ValueProvider<Long> provider = new StormRxObservable.ValueProvider<Long>() {
             @Override
