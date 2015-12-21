@@ -16,7 +16,7 @@ class StormQueryOp {
         mQuery = query;
     }
 
-    Query getQuery() {
+    public Query query() {
         return mQuery;
     }
 

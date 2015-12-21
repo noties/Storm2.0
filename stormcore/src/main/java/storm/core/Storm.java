@@ -30,6 +30,10 @@ public class Storm {
     private final StormParserFactory mParserFactory;
     private final StormInstanceCreators mInstanceCreators;
 
+    protected Storm (Database.Configuration configuration) {
+        this(new StormDispatchersImpl(), configuration);
+    }
+
     Storm(StormDispatchers dispatchers, Database.Configuration configuration) {
         this.mDispatchers = dispatchers;
         this.mDatabase = new Database(configuration);

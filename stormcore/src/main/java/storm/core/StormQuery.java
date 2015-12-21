@@ -21,7 +21,7 @@ public class StormQuery<T extends StormObject> extends StormQueryOp {
     private final Class<T> mTable;
     private final StormQueryDispatcher mQueryDispatcher;
     
-    StormQuery(Storm storm, Class<T> table, Query query, StormQueryDispatcher dispatcher) {
+    protected StormQuery(Storm storm, Class<T> table, Query query, StormQueryDispatcher dispatcher) {
         super(query);
         this.mStorm = storm;
         this.mTable = table;
@@ -33,19 +33,31 @@ public class StormQuery<T extends StormObject> extends StormQueryOp {
     }
 
     public T asOne() {
-        return mQueryDispatcher.asOne(mStorm, mTable, getQuery());
+        return mQueryDispatcher.asOne(mStorm, mTable, query());
     }
 
     public List<T> asList() {
-        return mQueryDispatcher.asList(mStorm, mTable, getQuery());
+        return mQueryDispatcher.asList(mStorm, mTable, query());
     }
 
     public CursorIteratorCached<T> asCachedIterator(int cacheSize) {
-        return mQueryDispatcher.asCachedIterator(mStorm, mTable, getQuery(), cacheSize);
+        return mQueryDispatcher.asCachedIterator(mStorm, mTable, query(), cacheSize);
     }
 
     public CursorIterator<T> asIterator() {
-        return mQueryDispatcher.asIterator(mStorm, mTable, getQuery());
+        return mQueryDispatcher.asIterator(mStorm, mTable, query());
+    }
+
+    public Storm storm() {
+        return mStorm;
+    }
+
+    public Class<T> table() {
+        return mTable;
+    }
+
+    public StormQueryDispatcher dispatcher() {
+        return mQueryDispatcher;
     }
 
 

@@ -24,7 +24,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public int asInt(int defValue) {
-        return mSimpleQueryDispatcher.asInt(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asInt(mStorm, query(), defValue);
     }
 
     public long asLong() {
@@ -32,7 +32,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public long asLong(long defValue) {
-        return mSimpleQueryDispatcher.asLong(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asLong(mStorm, query(), defValue);
     }
 
     public float asFloat() {
@@ -40,7 +40,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public float asFloat(float defValue) {
-        return mSimpleQueryDispatcher.asFloat(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asFloat(mStorm, query(), defValue);
     }
 
     public double asDouble() {
@@ -48,7 +48,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public double asDouble(double defValue) {
-        return mSimpleQueryDispatcher.asDouble(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asDouble(mStorm, query(), defValue);
     }
 
     public String asString() {
@@ -56,7 +56,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public String asString(String defValue) {
-        return mSimpleQueryDispatcher.asString(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asString(mStorm, query(), defValue);
     }
 
     public byte[] asByteArray() {
@@ -64,7 +64,7 @@ public class StormSimpleQuery extends StormQueryOp {
     }
 
     public byte[] asByteArray(byte[] defValue) {
-        return mSimpleQueryDispatcher.asByteArray(mStorm, getQuery(), defValue);
+        return mSimpleQueryDispatcher.asByteArray(mStorm, query(), defValue);
     }
 
     @Override

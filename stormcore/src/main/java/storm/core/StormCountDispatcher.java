@@ -5,7 +5,7 @@ import storm.query.Selection;
 /**
  * Created by Dimitry Ivanov on 17.12.2015.
  */
-interface StormCountDispatcher {
+public interface StormCountDispatcher {
 
     <T extends StormObject> int execute(Storm storm, Class<T> table, Selection selection);
 }

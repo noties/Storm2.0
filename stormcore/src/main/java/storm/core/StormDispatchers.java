@@ -3,7 +3,7 @@ package storm.core;
 /**
  * Created by Dimitry Ivanov on 18.12.2015.
  */
-interface StormDispatchers {
+public interface StormDispatchers {
 
     StormCountDispatcher countDispatcher();
     StormDeleteDispatcher deleteDispatcher();
@@ -14,4 +14,5 @@ interface StormDispatchers {
     StormUpdateOneDispatcher updateOneDispatcher();
     StormUpdateManyDispatcher updateManyDispatcher();
     StormSimpleQueryDispatcher simpleQueryDispatcher();
+
 }
