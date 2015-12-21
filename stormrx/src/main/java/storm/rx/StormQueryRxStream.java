@@ -21,14 +21,20 @@ public class StormQueryRxStream<T extends StormObject> {
     private final Class<T> mTable;
     private final Query mQuery;
     private final StormQueryDispatcher mDispatcher;
-    private final boolean mOneShot;
 
-    StormQueryRxStream(StormQueryRx<T> query, boolean oneShot) {
+    private boolean mOneShot;
+
+    StormQueryRxStream(StormQueryRx<T> query) {
         mStorm = query.storm();
         mTable = query.table();
         mQuery = query.query();
         mDispatcher = query.dispatcher();
-        this.mOneShot = oneShot;
+        mOneShot = true;
+    }
+
+    public StormQueryRxStream<T> subscribeForUpdates() {
+        this.mOneShot = false;
+        return this;
     }
 
     public Observable<Cursor> asCursor() {

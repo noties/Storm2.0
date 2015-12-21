@@ -31,6 +31,7 @@ public class StormSampleApplication extends Application {
 
         storm.query(TestObject.class)
                 .stream()
+                .subscribeForUpdates()
                 .asList()
                 .subscribe(new Action1<List<TestObject>>() {
                     @Override

@@ -15,16 +15,8 @@ public class StormQueryRx<T extends StormObject> extends StormQuery<T> {
         super(parent.storm(), parent.table(), parent.query(), parent.dispatcher());
     }
 
-    public StormQueryRxStream<T> streamOne() {
-        return stream(true);
-    }
-
     public StormQueryRxStream<T> stream() {
-        return stream(false);
-    }
-
-    StormQueryRxStream<T> stream(boolean oneShot) {
-        return new StormQueryRxStream<>(this, oneShot);
+        return new StormQueryRxStream<>(this);
     }
 
     @Override
