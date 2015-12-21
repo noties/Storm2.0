@@ -1,0 +1,36 @@
+package storm.rx;
+
+import java.util.Collection;
+
+import rx.Observable;
+import storm.core.Storm;
+import storm.core.StormObject;
+import storm.core.StormSaveManyDispatcher;
+
+/**
+ * Created by Dimitry Ivanov on 21.12.2015.
+ */
+public class StormSaveManyRxStream<T extends StormObject> implements StormRxStream {
+
+    private final Storm mStorm;
+    private final Collection<T> mValues;
+    private final StormSaveManyDispatcher mDispatcher;
+
+    StormSaveManyRxStream(StormSaveManyRx<T> saveMany) {
+        mStorm = saveMany.storm();
+        mValues = saveMany.values();
+        mDispatcher = saveMany.dispatcher();
+    }
+
+    public Observable<long[]> create() {
+
+        final StormRxObservable.ValueProvider<long[]> provider = new StormRxObservable.ValueProvider<long[]>() {
+            @Override
+            public long[] provide() {
+                return mDispatcher.save(mStorm, mValues);
+            }
+        };
+
+        return StormRxObservable.createOneShot(provider);
+    }
+}

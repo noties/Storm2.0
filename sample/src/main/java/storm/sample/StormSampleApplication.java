@@ -101,5 +101,15 @@ public class StormSampleApplication extends Application {
                         Debug.i("saveOne object: %s", testObject);
                     }
                 });
+
+        storm.save(Arrays.asList(new TestObject().setData("many1"), new TestObject().setData("many2")))
+                .stream()
+                .create()
+                .subscribe(new Action1<long[]>() {
+                    @Override
+                    public void call(long[] longs) {
+                        Debug.i("savedMany: %s", Arrays.toString(longs));
+                    }
+                });
     }
 }

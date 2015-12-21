@@ -3,11 +3,8 @@ package storm.rx;
 import java.util.Collection;
 
 import storm.core.Storm;
-import storm.core.StormCount;
 import storm.core.StormException;
 import storm.core.StormObject;
-import storm.core.StormSaveMany;
-import storm.core.StormSaveOne;
 import storm.db.Database;
 import storm.db.DatabaseModule;
 import storm.parser.StormInstanceCreator;
@@ -103,7 +100,7 @@ public class StormRx extends Storm {
     }
 
     @Override
-    public <T extends StormObject> StormSaveMany<T> save(Collection<T> values) throws StormException {
-        return super.save(values);
+    public <T extends StormObject> StormSaveManyRx<T> save(Collection<T> values) throws StormException {
+        return new StormSaveManyRx<>(super.save(values));
     }
 }
