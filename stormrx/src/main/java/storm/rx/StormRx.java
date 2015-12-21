@@ -5,6 +5,8 @@ import java.util.Collection;
 import storm.core.Storm;
 import storm.core.StormException;
 import storm.core.StormObject;
+import storm.core.StormUpdateMany;
+import storm.core.StormUpdateOne;
 import storm.db.Database;
 import storm.db.DatabaseModule;
 import storm.parser.StormInstanceCreator;
@@ -118,5 +120,15 @@ public class StormRx extends Storm {
     @Override
     public <T extends StormObject> StormSaveManyRx<T> save(Collection<T> values) throws StormException {
         return new StormSaveManyRx<>(super.save(values));
+    }
+
+    @Override
+    public <T extends StormObject> StormUpdateOneRx<T> update(T value) {
+        return new StormUpdateOneRx<>(super.update(value));
+    }
+
+    @Override
+    public <T extends StormObject> StormUpdateMany<T> update(Collection<T> values) throws StormException {
+        return super.update(values);
     }
 }

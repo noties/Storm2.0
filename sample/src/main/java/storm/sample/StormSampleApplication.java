@@ -4,6 +4,7 @@ import android.app.Application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import ru.noties.debug.Debug;
 import ru.noties.debug.out.AndroidLogDebugOutput;
@@ -46,6 +47,7 @@ public class StormSampleApplication extends Application {
                 .stream()
                 .subscribeForUpdates()
                 .asLong()
+                .debounce(50L, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
@@ -57,6 +59,7 @@ public class StormSampleApplication extends Application {
                 .stream()
                 .subscribeForUpdates()
                 .create()
+                .debounce(50L, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer integer) {
@@ -69,6 +72,7 @@ public class StormSampleApplication extends Application {
                 .stream()
                 .subscribeForUpdates()
                 .asList()
+                .debounce(50L, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<List<TestObject>>() {
                     @Override
                     public void call(List<TestObject> testObjects) {
@@ -121,6 +125,16 @@ public class StormSampleApplication extends Application {
                     @Override
                     public void call(long[] longs) {
                         Debug.i("savedMany: %s", Arrays.toString(longs));
+                    }
+                });
+
+        storm.update(new TestObject().setId(1L).setData("updated first"))
+                .stream()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("updated: %s", integer);
                     }
                 });
     }
