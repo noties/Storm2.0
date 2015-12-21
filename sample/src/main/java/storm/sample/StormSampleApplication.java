@@ -2,6 +2,7 @@ package storm.sample;
 
 import android.app.Application;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,11 +24,26 @@ import storm.rx.StormRx;
  */
 public class StormSampleApplication extends Application {
 
+    // samples todo
+    // pre-fill sample
+    // version migration
+    // pseudo-joins
+    // serializers (with Lazy fields)
+    // custom table for parsing query with join
+    // rx (with notificationSubscriptions)
+    // iterator (with cached)
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         Debug.init(new AndroidLogDebugOutput(true));
+
+        final File currentDbFile = getDatabasePath("test");
+        if (currentDbFile != null
+                && currentDbFile.exists()) {
+            currentDbFile.delete();
+        }
 
         final StormRx storm = StormRx.newInstance(new Database.Configuration(
                 getApplicationContext(),

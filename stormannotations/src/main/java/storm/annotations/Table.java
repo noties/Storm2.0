@@ -13,4 +13,5 @@ import java.lang.annotation.Target;
 public @interface Table {
     String value() default "";
     String notificationUri() default "";
+    boolean isPseudoTable() default false;
 }

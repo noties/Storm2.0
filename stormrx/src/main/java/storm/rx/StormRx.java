@@ -3,8 +3,6 @@ package storm.rx;
 import java.util.Collection;
 
 import storm.core.Storm;
-import storm.core.StormDelete;
-import storm.core.StormDeleteAll;
 import storm.core.StormException;
 import storm.core.StormObject;
 import storm.db.Database;
