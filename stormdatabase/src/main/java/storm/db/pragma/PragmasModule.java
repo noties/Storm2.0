@@ -10,9 +10,9 @@ import storm.db.DatabaseModuleConfiguration;
  */
 public class PragmasModule extends DatabaseModuleConfiguration {
 
-    private static final String PRAGMA_STATEMENT_PATTERN = "PRAGMA %1$s = \'%2$s\'";
+    private static final String PRAGMA_STATEMENT_PATTERN = "PRAGMA %1$s = \'%2$s\';";
 
-    public static PragmasModule of(Pragma... pragmas) {
+    public static PragmasModule newInstance(Pragma... pragmas) {
         return new PragmasModule(pragmas);
     }
 

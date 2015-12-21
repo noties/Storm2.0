@@ -16,7 +16,7 @@ import storm.query.Query;
  */
 public class JoinsSample {
 
-    // it's really bad way of doing this
+    // it's really bad way newInstance doing this
     static Storm sStorm;
 
     public JoinsSample(Context context) {
@@ -25,7 +25,7 @@ public class JoinsSample {
 
     private static Storm createStorm(Context context) {
         return Storm.newInstance(new Database.Configuration(context, "joins_sample", 1))
-                .registerDatabaseModule(PragmasModule.of(ForeignKeysPragma.of(true)))
+                .registerDatabaseModule(PragmasModule.newInstance(ForeignKeysPragma.of(true)))
                 .registerTable(Person.class)
                 .registerTable(Order.class);
     }

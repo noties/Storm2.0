@@ -1,4 +1,4 @@
-package storm.database;
+package storm.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -12,9 +12,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.List;
-
-import storm.db.Database;
-import storm.db.DatabaseException;
 
 /**
  * Created by Dimitry Ivanov on 20.12.2015.

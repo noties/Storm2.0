@@ -13,7 +13,7 @@ public class ForeignKeysPragma extends AbsPragma {
         return new ForeignKeysPragma("1");
     }
 
-    ForeignKeysPragma(String value) {
+    private ForeignKeysPragma(String value) {
         super("foreign_keys", value);
     }
 }

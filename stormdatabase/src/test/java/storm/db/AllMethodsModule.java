@@ -1,8 +1,6 @@
-package storm.database;
+package storm.db;
 
 import android.database.sqlite.SQLiteDatabase;
-
-import storm.db.DatabaseModule;
 
 /**
  * Created by Dimitry Ivanov on 20.12.2015.
