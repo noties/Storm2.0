@@ -8,10 +8,13 @@ import java.util.List;
 import ru.noties.debug.Debug;
 import ru.noties.debug.out.AndroidLogDebugOutput;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import storm.db.Database;
 import storm.query.Selection;
+import storm.rx.StormObservablePreProcessor;
 import storm.rx.StormRx;
 
 /**
@@ -31,6 +34,13 @@ public class StormSampleApplication extends Application {
                 1
         ));
         storm.registerTable(TestObject.class);
+        storm.registerObservablePreprocessor(new StormObservablePreProcessor() {
+            @Override
+            public <V> Observable<V> preProcess(Observable<V> observable) {
+                return observable.observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io());
+            }
+        });
 
         storm.simpleQuery(TestObject.class, "sum(id)")
                 .stream()
@@ -91,14 +101,16 @@ public class StormSampleApplication extends Application {
                 .flatMap(new Func1<Long, Observable<TestObject>>() {
                     @Override
                     public Observable<TestObject> call(Long aLong) {
-                        Debug.i("saved one, id: %s", aLong);
-                        return Observable.just(storm.query(TestObject.class, Selection.eq("id", aLong)).asOne());
+                        Debug.i("saved one, id: %s, thread: %s", aLong, Thread.currentThread());
+                        return storm.query(TestObject.class, Selection.eq("id", aLong))
+                                .stream()
+                                .asOne();
                     }
                 })
                 .subscribe(new Action1<TestObject>() {
                     @Override
                     public void call(TestObject testObject) {
-                        Debug.i("saveOne object: %s", testObject);
+                        Debug.i("saveOne object: %s, thread: %s", testObject, Thread.currentThread());
                     }
                 });
 

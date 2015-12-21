@@ -16,6 +16,11 @@ public class StormQueryRx<T extends StormObject> extends StormQuery<T> implement
     }
 
     @Override
+    public StormRx storm() {
+        return (StormRx) super.storm();
+    }
+
+    @Override
     public StormQueryRxStream<T> stream() {
         return new StormQueryRxStream<>(this);
     }

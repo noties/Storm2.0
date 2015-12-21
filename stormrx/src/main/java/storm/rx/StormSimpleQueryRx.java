@@ -21,6 +21,11 @@ public class StormSimpleQueryRx<T extends StormObject> extends StormSimpleQuery<
     }
 
     @Override
+    public StormRx storm() {
+        return (StormRx) super.storm();
+    }
+
+    @Override
     public StormSimpleQueryRx<T> from() {
         return (StormSimpleQueryRx<T>) super.from();
     }

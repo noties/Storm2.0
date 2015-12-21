@@ -20,8 +20,8 @@ class StormRxObservable {
         V provide();
     }
 
-    static <V> Observable<V> createOneShot(final ValueProvider<V> provider) {
-        return Observable.defer(new Func0<Observable<V>>() {
+    static <V> Observable<V> createOneShot(StormRx storm, final ValueProvider<V> provider) {
+        final Observable<V> observable = Observable.defer(new Func0<Observable<V>>() {
             @Override
             public Observable<V> call() {
                 return Observable.create(new Observable.OnSubscribe<V>() {
@@ -43,10 +43,11 @@ class StormRxObservable {
                 });
             }
         });
+        return storm.observablePreProcessor().preProcess(observable);
     }
 
-    static <V, T extends StormObject> Observable<V> createStream(final Storm storm, final Class<T> table, final ValueProvider<V> provider) {
-        return Observable.defer(new Func0<Observable<V>>() {
+    static <V, T extends StormObject> Observable<V> createStream(final StormRx storm, final Class<T> table, final ValueProvider<V> provider) {
+        final Observable<V> observable = Observable.defer(new Func0<Observable<V>>() {
             @Override
             public Observable<V> call() {
                 return Observable.create(new Observable.OnSubscribe<V>() {
@@ -83,5 +84,6 @@ class StormRxObservable {
                 }).startWith(provider.provide());
             }
         });
+        return storm.observablePreProcessor().preProcess(observable);
     }
 }

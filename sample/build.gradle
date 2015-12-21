@@ -25,5 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile project(':stormcore')
     compile project(':stormrx')
+    compile 'io.reactivex:rxandroid:1.1.0'
     compile 'ru.noties:debug:2.0.1'
 }

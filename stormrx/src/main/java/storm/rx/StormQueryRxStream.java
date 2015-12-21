@@ -5,7 +5,6 @@ import android.database.Cursor;
 import java.util.List;
 
 import rx.Observable;
-import storm.core.Storm;
 import storm.core.StormObject;
 import storm.core.StormQueryDispatcher;
 import storm.iterator.CursorIterator;
@@ -17,7 +16,7 @@ import storm.query.Query;
  */
 public class StormQueryRxStream<T extends StormObject> implements StormRxStreamWithUpdates {
 
-    private final Storm mStorm;
+    private final StormRx mStorm;
     private final Class<T> mTable;
     private final Query mQuery;
     private final StormQueryDispatcher mDispatcher;
@@ -47,7 +46,7 @@ public class StormQueryRxStream<T extends StormObject> implements StormRxStreamW
         };
 
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);
@@ -63,7 +62,7 @@ public class StormQueryRxStream<T extends StormObject> implements StormRxStreamW
         };
 
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);
@@ -79,7 +78,7 @@ public class StormQueryRxStream<T extends StormObject> implements StormRxStreamW
         };
 
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);
@@ -95,7 +94,7 @@ public class StormQueryRxStream<T extends StormObject> implements StormRxStreamW
         };
 
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);
@@ -111,7 +110,7 @@ public class StormQueryRxStream<T extends StormObject> implements StormRxStreamW
         };
 
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);

@@ -16,4 +16,9 @@ public class StormSaveOneRx<T extends StormObject> extends StormSaveOne<T> imple
     public StormSaveOneRxStream<T> stream() {
         return new StormSaveOneRxStream<T>(this);
     }
+
+    @Override
+    public StormRx storm() {
+        return (StormRx) super.storm();
+    }
 }

@@ -18,6 +18,11 @@ public class StormCountRx<T extends StormObject> extends StormCount<T> implement
     }
 
     @Override
+    public StormRx storm() {
+        return (StormRx) super.storm();
+    }
+
+    @Override
     public StormCountRx<T> equals(String col, Object arg) {
         return (StormCountRx<T>) super.equals(col, arg);
     }

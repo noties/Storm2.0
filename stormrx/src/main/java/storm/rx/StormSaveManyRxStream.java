@@ -3,7 +3,6 @@ package storm.rx;
 import java.util.Collection;
 
 import rx.Observable;
-import storm.core.Storm;
 import storm.core.StormObject;
 import storm.core.StormSaveManyDispatcher;
 
@@ -12,7 +11,7 @@ import storm.core.StormSaveManyDispatcher;
  */
 public class StormSaveManyRxStream<T extends StormObject> implements StormRxStream {
 
-    private final Storm mStorm;
+    private final StormRx mStorm;
     private final Collection<T> mValues;
     private final StormSaveManyDispatcher mDispatcher;
 
@@ -31,6 +30,6 @@ public class StormSaveManyRxStream<T extends StormObject> implements StormRxStre
             }
         };
 
-        return StormRxObservable.createOneShot(provider);
+        return StormRxObservable.createOneShot(mStorm, provider);
     }
 }

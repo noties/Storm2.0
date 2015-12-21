@@ -1,7 +1,6 @@
 package storm.rx;
 
 import rx.Observable;
-import storm.core.Storm;
 import storm.core.StormCountDispatcher;
 import storm.core.StormObject;
 import storm.query.Selection;
@@ -11,7 +10,7 @@ import storm.query.Selection;
  */
 public class StormCountRxStream<T extends StormObject> implements StormRxStreamWithUpdates {
 
-    private final Storm mStorm;
+    private final StormRx mStorm;
     private final Class<T> mTable;
     private final Selection mSelection;
     private final StormCountDispatcher mDispatcher;
@@ -43,7 +42,7 @@ public class StormCountRxStream<T extends StormObject> implements StormRxStreamW
         };
         
         if (mOneShot) {
-            return StormRxObservable.createOneShot(provider);
+            return StormRxObservable.createOneShot(mStorm, provider);
         }
 
         return StormRxObservable.createStream(mStorm, mTable, provider);

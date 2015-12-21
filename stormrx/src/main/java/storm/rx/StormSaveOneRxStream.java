@@ -1,7 +1,6 @@
 package storm.rx;
 
 import rx.Observable;
-import storm.core.Storm;
 import storm.core.StormObject;
 import storm.core.StormSaveOneDispatcher;
 
@@ -10,7 +9,7 @@ import storm.core.StormSaveOneDispatcher;
  */
 public class StormSaveOneRxStream<T extends StormObject> implements StormRxStream {
 
-    private final Storm mStorm;
+    private final StormRx mStorm;
     private final T mValue;
     private final StormSaveOneDispatcher mDispatcher;
 
@@ -28,6 +27,6 @@ public class StormSaveOneRxStream<T extends StormObject> implements StormRxStrea
             }
         };
 
-        return StormRxObservable.createOneShot(provider);
+        return StormRxObservable.createOneShot(mStorm, provider);
     }
 }
