@@ -213,6 +213,11 @@ public class Selection implements IStatementBuilder {
         return args;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return mBuilder.length() == 0;
+    }
+
     private static String str(Object what) {
         return String.valueOf(what);
     }

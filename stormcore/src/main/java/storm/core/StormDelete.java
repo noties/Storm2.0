@@ -6,13 +6,13 @@ import storm.query.Selection;
  * Created by Dimitry Ivanov on 17.12.2015.
  */
 @SuppressWarnings("unchecked")
-public class StormDelete<T extends StormObject> extends StormSelectionOp {
+public class StormDelete<T extends StormObject> extends StormSelectionOp implements StormOp<T> {
     
     private final Storm mStorm;
     private final Class<T> mTable;
     private final StormDeleteDispatcher mDeleteDispatcher;
     
-    StormDelete(Storm storm, Class<T> table, Selection selection, StormDeleteDispatcher deleteDispatcher) {
+    protected StormDelete(Storm storm, Class<T> table, Selection selection, StormDeleteDispatcher deleteDispatcher) {
         super(selection);
         mStorm = storm;
         mTable = table;
@@ -127,5 +127,20 @@ public class StormDelete<T extends StormObject> extends StormSelectionOp {
     @Override
     public StormDelete<T> notBetween(String col, Number from, Number to) {
         return (StormDelete<T>) super.notBetween(col, from, to);
+    }
+
+    @Override
+    public Storm storm() {
+        return mStorm;
+    }
+
+    @Override
+    public Class<T> table() {
+        return mTable;
+    }
+
+    @Override
+    public StormDeleteDispatcher dispatcher() {
+        return mDeleteDispatcher;
     }
 }

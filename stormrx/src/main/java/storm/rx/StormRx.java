@@ -3,6 +3,8 @@ package storm.rx;
 import java.util.Collection;
 
 import storm.core.Storm;
+import storm.core.StormDelete;
+import storm.core.StormDeleteAll;
 import storm.core.StormException;
 import storm.core.StormObject;
 import storm.db.Database;
@@ -138,5 +140,25 @@ public class StormRx extends Storm {
     @Override
     public <T extends StormObject> StormFillRx<T> fill(T value, Selection selection) throws StormException {
         return new StormFillRx<>(super.fill(value, selection));
+    }
+
+    @Override
+    public <T extends StormObject> StormDeleteAllRx<T> deleteAll(Class<T> table) {
+        return new StormDeleteAllRx<>(super.deleteAll(table));
+    }
+
+    @Override
+    public <T extends StormObject> StormDeleteRx<T> delete(Class<T> table) {
+        return new StormDeleteRx<>(super.delete(table));
+    }
+
+    @Override
+    public <T extends StormObject> StormDeleteRx<T> delete(Class<T> table, Selection selection) {
+        return new StormDeleteRx<>(super.delete(table, selection));
+    }
+
+    @Override
+    public <T extends StormObject> StormDeleteRx<T> delete(Class<T> table, String where, Object... args) {
+        return new StormDeleteRx<>(super.delete(table, where, args));
     }
 }

@@ -6,4 +6,5 @@ package storm.query;
 public interface IStatementBuilder {
     String getStatement();
     String[] getArguments();
+    boolean isEmpty();
 }

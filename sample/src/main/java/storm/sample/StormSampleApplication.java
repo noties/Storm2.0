@@ -160,5 +160,25 @@ public class StormSampleApplication extends Application {
                         Debug.i("filled: %s", integer);
                     }
                 });
+
+        storm.delete(TestObject.class, Selection.eq("id", 6L))
+                .stream()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("deleted: %s", integer);
+
+                        storm.deleteAll(TestObject.class)
+                                .stream()
+                                .create()
+                                .subscribe(new Action1<Integer>() {
+                                    @Override
+                                    public void call(Integer integer) {
+                                        Debug.i("deleted all: %s", integer);
+                                    }
+                                });
+                    }
+                });
     }
 }

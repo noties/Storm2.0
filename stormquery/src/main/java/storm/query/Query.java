@@ -200,4 +200,9 @@ public class Query implements IStatementBuilder {
         mArgs.toArray(args);
         return args;
     }
+
+    @Override
+    public boolean isEmpty() {
+        return mBuilder.length() == 0;
+    }
 }
