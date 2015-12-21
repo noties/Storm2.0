@@ -6,13 +6,13 @@ import storm.query.Selection;
  * Created by Dimitry Ivanov on 17.12.2015.
  */
 @SuppressWarnings("unchecked")
-public class StormFill<T extends StormObject> extends StormSelectionOp {
+public class StormFill<T extends StormObject> extends StormSelectionOp implements StormOp<T> {
     
     private final Storm mStorm;
     private final T mValue;
     private final StormFillDispatcher mFillDispatcher;
 
-    StormFill(Storm storm, Selection selection, T value, StormFillDispatcher fillDispatcher) {
+    protected StormFill(Storm storm, Selection selection, T value, StormFillDispatcher fillDispatcher) {
         super(selection);
         mStorm = storm;
         mValue = value;
@@ -126,5 +126,24 @@ public class StormFill<T extends StormObject> extends StormSelectionOp {
     @Override
     public StormFill<T> notBetween(String col, Number from, Number to) {
         return (StormFill<T>) super.notBetween(col, from, to);
+    }
+
+    @Override
+    public Storm storm() {
+        return mStorm;
+    }
+
+    @Override
+    public Class<T> table() {
+        return (Class<T>) mValue.getClass();
+    }
+
+    @Override
+    public StormFillDispatcher dispatcher() {
+        return mFillDispatcher;
+    }
+
+    public T value() {
+        return mValue;
     }
 }

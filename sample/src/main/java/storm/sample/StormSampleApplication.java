@@ -147,5 +147,18 @@ public class StormSampleApplication extends Application {
                         Debug.i("updated many: %s", integer);
                     }
                 });
+
+        storm.fill(new TestObject().setData("filled"))
+                .less("id", 6L)
+                .and()
+                .greater("id", 3L)
+                .stream()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("filled: %s", integer);
+                    }
+                });
     }
 }
