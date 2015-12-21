@@ -3,12 +3,13 @@ package storm.parser;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.SparseArray;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import storm.annotations.PrimaryKey;
 import storm.serializer.StormSerializer;
@@ -41,7 +42,7 @@ class StormParserRuntime<T> implements StormParser<T> {
     @Override
     public T fromCursor(Cursor cursor) {
 
-        final SparseArray<String> cursorIndexes = buildCursorIndexes(cursor);
+        final Map<String, Integer> cursorIndexes = buildCursorIndexes(cursor);
 
         if (cursorIndexes == null) {
             return null;
@@ -53,7 +54,7 @@ class StormParserRuntime<T> implements StormParser<T> {
     @Override
     public List<T> fromCursorList(Cursor cursor) {
 
-        final SparseArray<String> cursorIndexes = buildCursorIndexes(cursor);
+        final Map<String, Integer> cursorIndexes = buildCursorIndexes(cursor);
 
         if (cursorIndexes == null) {
             return Collections.emptyList();
@@ -69,11 +70,11 @@ class StormParserRuntime<T> implements StormParser<T> {
         return list;
     }
 
-    private T parse(Cursor cursor, SparseArray<String> cursorIndexes) {
+    private T parse(Cursor cursor, Map<String, Integer> cursorIndexes) {
 
         final T instance = mInstanceCreator.create();
 
-        int cacheValueIndex;
+        Integer cacheValueIndex;
         int cursorIndex;
         int cursorType;
         StormType type;
@@ -82,12 +83,12 @@ class StormParserRuntime<T> implements StormParser<T> {
 
         for (StormParserColumn column: mColumns) {
 
-            cacheValueIndex = cursorIndexes.indexOfValue(column.getName());
-            if (cacheValueIndex < 0) {
+            cacheValueIndex = cursorIndexes.get(column.getName());
+            if (cacheValueIndex == null || cacheValueIndex < 0) {
                 continue;
             }
 
-            cursorIndex = cursorIndexes.keyAt(cacheValueIndex);
+            cursorIndex = cacheValueIndex;
             cursorType  = cursor.getType(cursorIndex);
             type = column.getType();
             field = column.getField();
@@ -229,27 +230,27 @@ class StormParserRuntime<T> implements StormParser<T> {
     }
 
     @Override
-    public StormTableMetadata<T> getMetadata() {
+    public synchronized StormTableMetadata<T> getMetadata() {
         if (mMetadata == null) {
             mMetadata = buildMetadata();
         }
         return mMetadata;
     }
 
-    private static SparseArray<String> buildCursorIndexes(Cursor cursor) {
+    private static Map<String, Integer> buildCursorIndexes(Cursor cursor) {
         final String[] names = cursor.getColumnNames();
         final int length = names != null ? names.length : 0;
         if (length == 0) {
             return null;
         }
 
-        final SparseArray<String> array = new SparseArray<>(length);
+        final Map<String, Integer> map = new HashMap<>(length);
 
         for (int i = 0; i < length; i++) {
-            array.put(i, names[i]);
+            map.put(names[i], i);
         }
 
-        return array;
+        return map;
     }
 
     private StormTableMetadata<T> buildMetadata() {
@@ -276,7 +277,7 @@ class StormParserRuntime<T> implements StormParser<T> {
             isAutoincrement = key.autoincrement();
         }
 
-        final Uri notificationUri = null; // todo, don't have it now
+        final Uri notificationUri = Uri.parse("storm://test_object"); // todo, don't have it now
 
         return new StormTableMetadataRuntime<>(
                 mTableName,

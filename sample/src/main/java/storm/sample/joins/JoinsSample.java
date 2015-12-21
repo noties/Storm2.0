@@ -25,7 +25,7 @@ public class JoinsSample {
 
     private static Storm createStorm(Context context) {
         return Storm.newInstance(new Database.Configuration(context, "joins_sample", 1))
-                .registerDatabaseModule(PragmasModule.newInstance(ForeignKeysPragma.of(true)))
+                .registerDatabaseModule(PragmasModule.newInstance(ForeignKeysPragma.on()))
                 .registerTable(Person.class)
                 .registerTable(Order.class);
     }

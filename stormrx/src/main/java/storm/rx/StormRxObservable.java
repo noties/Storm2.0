@@ -2,7 +2,6 @@ package storm.rx;
 
 import android.database.ContentObserver;
 import android.net.Uri;
-import android.os.Handler;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -58,7 +57,7 @@ class StormRxObservable {
                             return;
                         }
 
-                        final ContentObserver observer = new ContentObserver(new Handler()) {
+                        final ContentObserver observer = new ContentObserver(null) {
                             @Override
                             public void onChange(boolean selfChange) {
 
