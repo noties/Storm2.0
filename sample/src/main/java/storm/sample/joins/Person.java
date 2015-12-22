@@ -1,6 +1,7 @@
 package storm.sample.joins;
 
 import storm.annotations.Column;
+import storm.annotations.NewColumn;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Table;
 import storm.core.StormObject;
@@ -23,6 +24,10 @@ public class Person implements StormObject {
 
     @Column
     private String phoneNumber;
+
+    @NewColumn(2)
+    @Column
+    private String newField;
 
     public long getId() {
         return id;

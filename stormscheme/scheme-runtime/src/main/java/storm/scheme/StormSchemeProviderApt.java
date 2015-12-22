@@ -9,10 +9,7 @@ class StormSchemeProviderApt implements StormSchemeProvider {
 
     static boolean lookup(Class<?> cl) {
         try {
-            Class.forName(StormSchemeAptClassNameBuilder.fullName(
-                    cl.getPackage().getName(),
-                    cl.getSimpleName()
-            ));
+            schemeClass(cl);
             return true;
         } catch (ClassNotFoundException e) {
             return false;
@@ -24,14 +21,18 @@ class StormSchemeProviderApt implements StormSchemeProvider {
 
         Class<?> scheme;
         try {
-            scheme = Class.forName(StormSchemeAptClassNameBuilder.fullName(
-                    cl.getPackage().getName(),
-                    cl.getSimpleName()
-            ));
+            scheme = schemeClass(cl);
         } catch (ClassNotFoundException e) {
             throw new StormSchemeException(e);
         }
 
         return (StormScheme) ReflectionInstanceCreator.newInstance(scheme);
+    }
+
+    static Class<?> schemeClass(Class<?> table) throws ClassNotFoundException {
+        return Class.forName(StormSchemeAptClassNameBuilder.fullName(
+                table.getPackage().getName(),
+                table.getSimpleName()
+        ));
     }
 }

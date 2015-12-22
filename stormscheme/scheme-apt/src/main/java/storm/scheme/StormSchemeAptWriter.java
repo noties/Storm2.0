@@ -2,6 +2,7 @@ package storm.scheme;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.processing.Filer;
@@ -89,12 +90,22 @@ class StormSchemeAptWriter {
     }
 
     private static String generateOnCreateStatementsSourceBlock(Indent indent, StormSchemeTable table) throws StormSchemeException {
+
         final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
         final List<String> statements = generator.onCreate();
 
         final StringBuilder builder = new StringBuilder()
-                .append(indent.increment())
-                .append("return java.util.Arrays.asList(\n")
+                .append(indent.increment());
+
+        if (statements.size() == 1) {
+            builder.append("return java.util.Collections.singletonList(\"")
+                    .append(statements.get(0))
+                    .append("\");\n")
+                    .append(indent.decrement());
+            return builder.toString();
+        }
+
+        builder.append("return java.util.Arrays.asList(\n")
                     .append(indent.increment());
 
         boolean isFirst = true;
@@ -116,94 +127,105 @@ class StormSchemeAptWriter {
 
     private static String generateOnUpgradeStatementsSourceBlock(Indent indent, StormSchemeTable table) {
 
-        final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
+        boolean hasAddedStatements = false;
+        boolean hasAddedIndexes = false;
 
         final int tableVersion = table.getVersionWhenAdded();
 
-        final StringBuilder builder = new StringBuilder()
-                .append(indent.increment())
-                .append("final java.util.List<String> list = new java.util.ArrayList<String>();\n")
-                .append(indent)
-                .append("final java.util.List<String> indexes = new java.util.ArrayList<String>();\n")
-                .append(indent)
-                .append("if (")
-                .append(isUpgradeBoolString(tableVersion))
-                .append(") {\n")
-                .append(indent.increment());
+        final String startedIndent = indent.increment().toString();
+        final String list = "final java.util.List<String> list = new java.util.ArrayList<String>();\n";
+        final String indexes = "final java.util.List<String> indexes = new java.util.ArrayList<String>();\n";
 
-        builder.append("final java.util.List<String> columns = new java.util.ArrayList<String>();\n");
+        final StringBuilder builder = new StringBuilder();
 
-        int columnVersion;
-        for (StormSchemeColumn column: table.getColumns()) {
-            columnVersion = column.getVersionWhenAdded();
-            if (columnVersion == 0) {
-                builder.append(indent)
-                        .append("columns.add(\"")
-                        .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
-                        .append("\");\n");
-                if (column.getIndex() != null) {
+        if (tableVersion != 0) {
+
+            hasAddedStatements = true;
+
+            builder.append(indent)
+                    .append("if (")
+                    .append(isUpgradeBoolString(tableVersion))
+                    .append(") {\n")
+                    .append(indent.increment());
+
+            builder.append("final java.util.List<String> columns = new java.util.ArrayList<String>();\n");
+
+            int columnVersion;
+            for (StormSchemeColumn column: table.getColumns()) {
+                columnVersion = column.getVersionWhenAdded();
+                if (columnVersion == 0) {
                     builder.append(indent)
-                            .append("indexes.add(\"")
-                            .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getColumnName(), column.getIndex()))
+                            .append("columns.add(\"")
+                            .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
                             .append("\");\n");
-                }
-            } else {
-                builder.append(indent)
-                        .append("if (")
-                        .append(isUpgradeBoolString(columnVersion))
-                        .append(") {\n")
-                        .append(indent.increment())
-                        .append("columns.add(\"")
-                        .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
-                        .append("\");\n");
-                if (column.getIndex() != null) {
+                    if (column.getIndex() != null) {
+
+                        builder.append(indent)
+                                .append("indexes.add(\"")
+                                .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getColumnName(), column.getIndex()))
+                                .append("\");\n");
+
+                        hasAddedIndexes = true;
+                    }
+                } else {
                     builder.append(indent)
-                            .append("indexes.add(\"")
-                            .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getColumnName(), column.getIndex()))
+                            .append("if (")
+                            .append(isUpgradeBoolString(columnVersion))
+                            .append(") {\n")
+                            .append(indent.increment())
+                            .append("columns.add(\"")
+                            .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
                             .append("\");\n");
+                    if (column.getIndex() != null) {
+                        builder.append(indent)
+                                .append("indexes.add(\"")
+                                .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getColumnName(), column.getIndex()))
+                                .append("\");\n");
+                    }
+                    builder.append(indent.decrement())
+                            .append("}\n");
                 }
-                builder.append(indent.decrement())
-                        .append("}\n");
             }
+
+            // builder statement
+            builder.append(indent)
+                    .append("if (columns.size() > 0) {\n")
+                    .append(indent.increment())
+                    .append("final java.lang.StringBuilder builder = new java.lang.StringBuilder();\n")
+                    .append(indent)
+                    .append("builder.append(\"")
+                    .append("CREATE TABLE ")
+                    .append(table.getTableName())
+                    .append("(\");\n")
+                    .append(indent)
+                    .append("boolean isFirst = true;\n")
+                    .append(indent)
+                    .append("for (String column: columns) {\n")
+                    .append(indent.increment())
+                    .append("if (isFirst) isFirst = false;\n")
+                    .append(indent)
+                    .append("else builder.append(\", \");\n")
+                    .append(indent)
+                    .append("builder.append(column);\n")
+                    .append(indent.decrement())
+                    .append("}\n")
+                    .append(indent)
+                    .append("builder.append(\");\");\n")
+                    .append(indent)
+                    .append("list.add(builder.toString());\n")
+                    .append(indent.decrement())
+                    .append("}\n");
+
+            // else statement when it's not table upgrade (ALTER TABLE)
+            builder.append(indent.decrement())
+                    .append("} else {\n");
+
+            indent.increment();
         }
-
-        // builder statement
-        builder.append(indent)
-                .append("if (columns.size() > 0) {\n")
-                .append(indent.increment())
-                .append("final java.lang.StringBuilder builder = new java.lang.StringBuilder();\n")
-                .append(indent)
-                .append("builder.append(\"")
-                .append("CREATE TABLE ")
-                .append(table.getTableName())
-                .append("(\");\n")
-                .append(indent)
-                .append("boolean isFirst = true;\n")
-                .append(indent)
-                .append("for (String column: columns) {\n")
-                .append(indent.increment())
-                .append("if (isFirst) isFirst = false;\n")
-                .append(indent)
-                .append("else builder.append(\", \");\n")
-                .append(indent)
-                .append("builder.append(column);\n")
-                .append(indent.decrement())
-                .append("}\n")
-                .append(indent)
-                .append("builder.append(\");\");\n")
-                .append(indent)
-                .append("list.add(builder.toString());\n")
-                .append(indent.decrement())
-                .append("}\n");
-
-        // else statement when it's not table upgrade (ALTER TABLE)
-        builder.append(indent.decrement())
-                .append("} else {\n");
-
-        indent.increment();
 
         for (StormSchemeColumn column: table.getColumns()) {
             if (column.getVersionWhenAdded() > 0) {
+
                 builder.append(indent)
                         .append("if (")
                         .append(isUpgradeBoolString(column.getVersionWhenAdded()))
@@ -212,25 +234,53 @@ class StormSchemeAptWriter {
                         .append("list.add(\"")
                         .append(StormSchemeStatementsGenerator.getAlterTableAddColumnStatement(table.getTableName(), column))
                         .append("\");\n");
+
+                hasAddedStatements = true;
+
                 if (column.getIndex() != null) {
+
                     builder.append(indent)
                             .append("indexes.add(\"")
                             .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getColumnName(), column.getIndex()))
                             .append("\");\n");
+
+                    hasAddedIndexes = true;
                 }
                 builder.append(indent.decrement())
                         .append("}\n");
             }
         }
 
-        builder.append("\n")
-                .append(indent.decrement())
-                .append("}\n")
-                .append(indent)
-                .append("list.addAll(indexes);\n")
-                .append(indent)
-                .append("return list;\n")
+        if (tableVersion != 0) {
+            builder.append(indent.decrement())
+                    .append("}\n");
+        }
+
+        if (hasAddedIndexes) {
+            builder.append(indent)
+                    .append("list.addAll(indexes);\n");
+        }
+
+        final String returnValue;
+        if (hasAddedStatements) {
+            returnValue = "list";
+        } else {
+            returnValue = "null";
+        }
+
+        builder.append(indent)
+                .append("return ")
+                .append(returnValue)
+                .append(";\n")
                 .append(indent.decrement());
+
+        if (hasAddedIndexes) {
+            builder.insert(0, indexes).insert(0, startedIndent);
+        }
+
+        if (hasAddedStatements) {
+            builder.insert(0, list).insert(0, startedIndent);
+        }
 
         return builder.toString();
     }
