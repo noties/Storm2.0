@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
@@ -27,4 +37,6 @@ dependencies {
     compile project(':stormrx')
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'ru.noties:debug:2.0.1'
+
+    apt project(':stormscheme:scheme-apt')
 }

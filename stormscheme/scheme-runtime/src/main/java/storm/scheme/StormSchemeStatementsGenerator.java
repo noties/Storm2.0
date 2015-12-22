@@ -56,8 +56,8 @@ public class StormSchemeStatementsGenerator implements StormScheme {
 
         final UpgradeChecker upgradeChecker = new UpgradeChecker(oldVersion, newVersion);
 
-        // first check if the whole table is new
-        // if it is, when add all the create statements not annotated with NewColumn with version bigger that current `new`
+        // if table is annotated with @NewTable && versionWhenAdded isUpgrade
+        // then create table -> include all fields, that isUpgrade
 
         final String tableName = mTable.getTableName();
         final List<String> list;
@@ -100,7 +100,7 @@ public class StormSchemeStatementsGenerator implements StormScheme {
 
                 if (upgradeChecker.isUpgrade(column.getVersionWhenAdded())) {
 
-                    alterStatements.add(String.format(ALTER_TABLE_PATTERN, tableName, getColumnCreateStatement(column)));
+                    alterStatements.add(getAlterTableAddColumnStatement(tableName, column));
 
                     index = column.getIndex();
                     if (index != null) {
@@ -156,6 +156,10 @@ public class StormSchemeStatementsGenerator implements StormScheme {
         }
 
         return builder.toString();
+    }
+
+    static String getAlterTableAddColumnStatement(String tableName, StormSchemeColumn column) {
+        return String.format(ALTER_TABLE_PATTERN, tableName, getColumnCreateStatement(column));
     }
 
     static String getForeignKeyStatement(StormSchemeForeignKey foreignKey) {

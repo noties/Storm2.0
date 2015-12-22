@@ -16,7 +16,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import storm.db.Database;
 import storm.query.Selection;
-import storm.rx.StormObservablePreProcessor;
+import storm.rx.StormObservablePreprocessor;
 import storm.rx.StormRx;
 
 /**
@@ -51,7 +51,7 @@ public class StormSampleApplication extends Application {
                 1
         ));
         storm.registerTable(TestObject.class);
-        storm.registerObservablePreprocessor(new StormObservablePreProcessor() {
+        storm.registerObservablePreprocessor(new StormObservablePreprocessor() {
             @Override
             public <V> Observable<V> preProcess(Observable<V> observable) {
                 return observable.observeOn(AndroidSchedulers.mainThread())

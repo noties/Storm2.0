@@ -20,7 +20,7 @@ public class StormRx extends Storm {
         return new StormRx(configuration);
     }
 
-    private StormObservablePreProcessor mObservablePreProcessor;
+    private StormObservablePreprocessor mObservablePreprocessor;
 
     private StormRx(Database.Configuration configuration) {
         super(configuration);
@@ -28,8 +28,8 @@ public class StormRx extends Storm {
 
     // note, that if stream is modified after the final storm method (for ex, flatMap, map, etc),
     // schedulers must be set independently (if this preprocessor is used for setting schedulers, of cause)
-    public StormRx registerObservablePreprocessor(StormObservablePreProcessor preprocessor) {
-        mObservablePreProcessor = preprocessor;
+    public StormRx registerObservablePreprocessor(StormObservablePreprocessor preprocessor) {
+        mObservablePreprocessor = preprocessor;
         return this;
     }
 
@@ -55,11 +55,11 @@ public class StormRx extends Storm {
     }
 
 
-    public StormObservablePreProcessor observablePreProcessor() {
-        if (mObservablePreProcessor == null) {
-            return StormObservablePreProcessorNoOp.getInstance();
+    public StormObservablePreprocessor observablePreprocessor() {
+        if (mObservablePreprocessor == null) {
+            return StormObservablePreprocessorNoOp.getInstance();
         }
-        return mObservablePreProcessor;
+        return mObservablePreprocessor;
     }
 
 

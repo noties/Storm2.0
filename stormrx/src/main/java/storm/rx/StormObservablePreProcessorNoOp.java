@@ -5,11 +5,11 @@ import rx.Observable;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-class StormObservablePreProcessorNoOp implements StormObservablePreProcessor {
+class StormObservablePreprocessorNoOp implements StormObservablePreprocessor {
 
-    private static final StormObservablePreProcessor INSTANCE = new StormObservablePreProcessorNoOp();
+    private static final StormObservablePreprocessor INSTANCE = new StormObservablePreprocessorNoOp();
 
-    public static StormObservablePreProcessor getInstance() {
+    public static StormObservablePreprocessor getInstance() {
         return INSTANCE;
     }
 

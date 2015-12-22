@@ -6,7 +6,6 @@ import android.net.Uri;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func0;
-import storm.core.Storm;
 import storm.core.StormObject;
 
 /**
@@ -43,7 +42,7 @@ class StormRxObservable {
                 });
             }
         });
-        return storm.observablePreProcessor().preProcess(observable);
+        return storm.observablePreprocessor().preProcess(observable);
     }
 
     static <V, T extends StormObject> Observable<V> createStream(final StormRx storm, final Class<T> table, final ValueProvider<V> provider) {
@@ -84,6 +83,6 @@ class StormRxObservable {
                 }).startWith(provider.provide());
             }
         });
-        return storm.observablePreProcessor().preProcess(observable);
+        return storm.observablePreprocessor().preProcess(observable);
     }
 }

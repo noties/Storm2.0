@@ -51,13 +51,13 @@ class StormSchemeProviderRuntime implements StormSchemeProvider {
             columns.add(column);
         }
 
+        if (columns.size() == 0) {
+            throw new StormSchemeException("Class `" + cl.getName() + "` has no columns creation statements.");
+        }
+
         if (!hasPrimaryKey) {
             throw new StormSchemeException("Class `" + cl.getName() + "` has no primary key." +
                     " Field must be annotated with @PrimaryKey");
-        }
-
-        if (columns.size() == 0) {
-            throw new StormSchemeException("Class `" + cl.getName() + "` has no columns creation statements.");
         }
 
         final int versionWhenAdded;
