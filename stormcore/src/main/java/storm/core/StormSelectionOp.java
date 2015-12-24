@@ -17,6 +17,11 @@ class StormSelectionOp {
         return mSelection;
     }
 
+    // this method brings a bit of readability, but it does nothing & could be easily omitted
+    public StormSelectionOp where() {
+        return this;
+    }
+
     public StormSelectionOp equals(String col, Object arg) {
         //noinspection ResultOfMethodCallIgnored
         mSelection.equals(col, arg);

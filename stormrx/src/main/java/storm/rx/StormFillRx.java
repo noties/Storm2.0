@@ -23,6 +23,11 @@ public class StormFillRx<T extends StormObject> extends StormFill<T> implements 
     }
 
     @Override
+    public StormFillRx<T> where() {
+        return (StormFillRx<T>) super.where();
+    }
+
+    @Override
     public StormFillRx<T> equals(String col, Object arg) {
         return (StormFillRx<T>) super.equals(col, arg);
     }

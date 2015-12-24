@@ -49,7 +49,7 @@ public class Database implements Closeable {
     public Database(Configuration configuration) {
 
         if (configuration == null) {
-            throw new NullPointerException("DatabaseCOnfiguration cannot be NULL");
+            throw new NullPointerException("DatabaseConfiguration cannot be NULL");
         }
 
         final Context context = configuration.context.getApplicationContext();

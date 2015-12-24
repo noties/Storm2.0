@@ -37,6 +37,6 @@ dependencies {
     compile project(':stormrx')
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'ru.noties:debug:2.0.1'
-
     apt project(':stormscheme:scheme-apt')
+    compile 'com.google.code.gson:gson:2.5'
 }

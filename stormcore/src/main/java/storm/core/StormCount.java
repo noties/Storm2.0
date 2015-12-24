@@ -23,6 +23,10 @@ public class StormCount<T extends StormObject> extends StormSelectionOp implemen
         return mCountDispatcher.execute(mStorm, mTable, selection());
     }
 
+    @Override
+    public StormCount<T> where() {
+        return (StormCount<T>) super.where();
+    }
 
     @Override
     public StormCount<T> equals(String col, Object arg) {

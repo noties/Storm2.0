@@ -24,6 +24,11 @@ public class StormFill<T extends StormObject> extends StormSelectionOp implement
     }
 
     @Override
+    public StormFill<T> where() {
+        return (StormFill<T>) super.where();
+    }
+
+    @Override
     public StormFill<T> equals(String col, Object arg) {
         return (StormFill<T>) super.equals(col, arg);
     }

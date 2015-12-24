@@ -1,4 +1,4 @@
-package storm.sample;
+package storm.sample.rx;
 
 import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
@@ -9,7 +9,7 @@ import storm.core.StormObject;
  * Created by Dimitry Ivanov on 21.12.2015.
  */
 @Table
-public class TestObject implements StormObject {
+public class RxSampleItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
@@ -22,7 +22,7 @@ public class TestObject implements StormObject {
         return id;
     }
 
-    public TestObject setId(long id) {
+    public RxSampleItem setId(long id) {
         this.id = id;
         return this;
     }
@@ -31,7 +31,7 @@ public class TestObject implements StormObject {
         return data;
     }
 
-    public TestObject setData(String data) {
+    public RxSampleItem setData(String data) {
         this.data = data;
         return this;
     }

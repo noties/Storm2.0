@@ -23,6 +23,11 @@ public class StormDeleteRx<T extends StormObject> extends StormDelete<T> impleme
     }
 
     @Override
+    public StormDeleteRx<T> where() {
+        return (StormDeleteRx<T>) super.where();
+    }
+
+    @Override
     public StormDeleteRx<T> equals(String col, Object arg) {
         return (StormDeleteRx<T>) super.equals(col, arg);
     }

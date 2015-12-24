@@ -22,7 +22,11 @@ public class StormDelete<T extends StormObject> extends StormSelectionOp impleme
     public int execute() {
         return mDeleteDispatcher.execute(mStorm, mTable, selection());
     }
-    
+
+    @Override
+    public StormDelete<T> where() {
+        return (StormDelete<T>) super.where();
+    }
 
     @Override
     public StormDelete<T> equals(String col, Object arg) {

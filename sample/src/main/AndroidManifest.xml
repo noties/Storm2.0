@@ -16,6 +16,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".prefill.PreFillSampleActivity" />
+        <activity android:name=".rx.RxSampleActivity" />
+
     </application>
 
 </manifest>
