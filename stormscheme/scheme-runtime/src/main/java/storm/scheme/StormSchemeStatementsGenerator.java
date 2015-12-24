@@ -9,7 +9,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 09.12.2015.
  */
-public class StormSchemeStatementsGenerator implements StormScheme {
+class StormSchemeStatementsGenerator implements StormScheme {
 
     private static final String CREATE_TABLE_PATTERN = "CREATE TABLE %1$s(%2$s);";
     private static final String CREATE_INDEX_PATTERN = "CREATE INDEX %1$s ON %2$s(%3$s %4$s);";

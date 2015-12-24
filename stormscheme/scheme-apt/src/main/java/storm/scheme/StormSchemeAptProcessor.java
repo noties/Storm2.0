@@ -55,32 +55,37 @@ public class StormSchemeAptProcessor extends AbstractProcessor implements Logger
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         boolean result = false;
         for (TypeElement annotation : annotations) {
-            try {
-                final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
+            final Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
 
-                if (elements == null
-                        || elements.size() == 0) {
-                    log(Diagnostic.Kind.NOTE, "No elements annotated with @%s", annotation);
+            if (elements == null
+                    || elements.size() == 0) {
+                log(Diagnostic.Kind.NOTE, "No elements annotated with @%s", annotation);
+                continue;
+            }
+
+            for (Element element: elements) {
+                if (!(element instanceof TypeElement)) {
+                    log(Diagnostic.Kind.WARNING, "Element annotated with @Table, but it's not of type Type, %s", element);
                     continue;
                 }
 
-                for (Element element: elements) {
-                    if (!(element instanceof TypeElement)) {
-                        log(Diagnostic.Kind.WARNING, "Element annotated with @Table, but it's not of type Type, %s", element);
-                        continue;
-                    }
-
+                try {
                     result |= process((TypeElement) element);
+                } catch (Throwable t) {
+                    log(Diagnostic.Kind.ERROR, "Exception during processing annotation: `%s`, element: `%s`, exception: %s", annotation, element, t);
                 }
-            } catch (Throwable t) {
-                log(Diagnostic.Kind.ERROR, "Exception during processing annotation: `%s`, exception: %s", annotation, t);
             }
         }
         return result;
     }
 
     private boolean process(TypeElement element) throws Throwable {
+
         final StormSchemeTable table = mParser.table(element);
+        if (table == null) {
+            return true;
+        }
+
         final String packageName = mParser.packageName(element);
         final String className = StormSchemeAptClassNameBuilder.className(element.getSimpleName().toString());
         mWriter.write(packageName, className, table);

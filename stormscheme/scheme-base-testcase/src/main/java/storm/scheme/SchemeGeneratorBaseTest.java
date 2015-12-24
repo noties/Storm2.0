@@ -26,7 +26,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
     public abstract StormScheme getScheme(Class<?> cl);
 
     @Table
-    private static class Test1 {
+    static class Test1 {
         @Column
         @PrimaryKey(autoincrement = true)
         long id;
@@ -39,7 +39,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
 
 
     @Table("custom_name")
-    private static class Test2 {
+    static class Test2 {
 
         @Column
         @PrimaryKey
@@ -59,7 +59,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
     }
 
     @Table
-    private static class Test3 {
+    static class Test3 {
 
         @Column
         @PrimaryKey
@@ -84,7 +84,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
 
 
     @Table("fourth")
-    private static class Test4 {
+    static class Test4 {
 
         private static abstract class DateDoubleSerializer implements StormSerializer<Date, Double> {}
 
@@ -116,7 +116,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
     }
 
     @Table
-    private static class Test5 {
+    static class Test5 {
         @Column
         @PrimaryKey
         long id;
@@ -147,7 +147,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
 
     @Table("name")
     @NewTable(2)
-    private static class Test6 {
+    static class Test6 {
         @Column
         @PrimaryKey
         long id;

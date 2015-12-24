@@ -154,23 +154,24 @@ public class SchemeParserRuntimeTest extends TestCase {
 
     private static class TableNoAnnotation {}
 
-    @Table
+    // we will use `pseudotable` to skip annotation processing for this
+    @Table(isPseudoTable = true)
     private static class TableNoFields {}
 
-    @Table
+    @Table(isPseudoTable = true)
     private static class TableWithoutPrimaryKey {
 
         @Column
         int someInt;
     }
 
-    @Table
+    @Table(isPseudoTable = true)
     private static class TablePrimaryKeyNoColumn {
         @PrimaryKey
         long id;
     }
 
-    @Table("some_table_name")
+    @Table(value = "some_table_name", isPseudoTable = true)
     private static class TableWithName {
         @PrimaryKey
         long id;
@@ -229,7 +230,7 @@ public class SchemeParserRuntimeTest extends TestCase {
         Void v;
     }
 
-    @Table
+    @Table(isPseudoTable = true)
     private static class TableNormal {
 
         @Column

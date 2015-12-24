@@ -3,4 +3,5 @@ apply from: '../../common-java.gradle'
 dependencies {
     compile 'junit:junit:4.12'
     compile project(':stormscheme:scheme-runtime')
+    compile project(':stormscheme:scheme-apt')
 }
