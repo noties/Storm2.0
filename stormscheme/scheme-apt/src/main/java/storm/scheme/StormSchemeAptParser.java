@@ -52,7 +52,7 @@ class StormSchemeAptParser {
 
         final Table table = type.getAnnotation(Table.class);
         // pseudo tables are used for parsing only, they have no db schema
-        if (table.isPseudoTable()) {
+        if (!table.generateScheme()) {
             return null;
         }
 
