@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import storm.sample.prefill.PreFillSampleActivity;
 import storm.sample.rx.RxSampleActivity;
+import storm.sample.versioning.VersioningSampleActivity;
 
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
@@ -19,7 +20,8 @@ public class MainActivity extends Activity {
 
     private static final Class<?>[] SAMPLES = new Class<?>[] {
             PreFillSampleActivity.class,
-            RxSampleActivity.class
+            RxSampleActivity.class,
+            VersioningSampleActivity.class
     };
 
     @Override
@@ -35,7 +37,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        final ListAdapter adapter = new ArrayAdapter<Class<?>>(
+        final ListAdapter adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 SAMPLES
