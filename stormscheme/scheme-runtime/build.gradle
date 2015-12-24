@@ -5,4 +5,6 @@ dependencies {
     compile project(':stormtypes')
     compile project(':stormserializer')
     compile project(':stormreflect')
+
+    testCompile project(':stormscheme:scheme-base-testcase')
 }

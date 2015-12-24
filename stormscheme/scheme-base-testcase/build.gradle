@@ -1,6 +1,6 @@
 apply from: '../../common-java.gradle'
 
 dependencies {
+    compile 'junit:junit:4.12'
     compile project(':stormscheme:scheme-runtime')
-    testCompile project(':stormscheme:scheme-base-testcase')
 }
