@@ -20,7 +20,7 @@ import storm.annotations.Table;
 /**
  * Created by Dimitry Ivanov on 21.12.2015.
  */
-public class StormSchemeAptProcessor extends AbstractProcessor implements Logger {
+public class StormSchemeAptProcessor extends AbstractProcessor {
 
     private StormSchemeAptParser mParser;
     private StormSchemeAptWriter mWriter;
@@ -46,7 +46,7 @@ public class StormSchemeAptProcessor extends AbstractProcessor implements Logger
         final Filer filer = processingEnv.getFiler();
 
         mParser = new StormSchemeAptParser(types, elements);
-        mWriter = new StormSchemeAptWriter(elements, filer, this);
+        mWriter = new StormSchemeAptWriter(elements, filer);
 
         mMessager = processingEnv.getMessager();
     }
@@ -92,7 +92,6 @@ public class StormSchemeAptProcessor extends AbstractProcessor implements Logger
         return true;
     }
 
-    @Override
     public void log(Diagnostic.Kind level, String msg, Object... args) {
         mMessager.printMessage(level, String.format(msg, args));
     }
