@@ -73,6 +73,7 @@ public class StormSchemeAptProcessor extends AbstractProcessor {
                     result |= process((TypeElement) element);
                 } catch (Throwable t) {
                     log(Diagnostic.Kind.ERROR, "Exception during processing annotation: `%s`, element: `%s`, exception: %s", annotation, element, t);
+                    t.printStackTrace();
                 }
             }
         }
