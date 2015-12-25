@@ -1,5 +1,7 @@
 package storm.core;
 
+import java.util.List;
+
 import storm.query.Selection;
 
 /**
@@ -7,6 +9,6 @@ import storm.query.Selection;
  */
 public interface StormFillDispatcher extends StormDispatcher {
 
-    <T extends StormObject> int fill(Storm storm, Selection selection, T value);
+    <T extends StormObject> int fill(Storm storm, Selection selection, List<String> columns, boolean isInclude, T value);
 
 }

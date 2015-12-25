@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import java.util.List;
+import java.util.Set;
+
 import storm.parser.StormParser;
 import storm.query.Selection;
 
@@ -13,7 +16,7 @@ import storm.query.Selection;
 class StormFillDispatcherImpl implements StormFillDispatcher {
 
     @Override
-    public <T extends StormObject> int fill(Storm storm, Selection selection, T value) {
+    public <T extends StormObject> int fill(Storm storm, Selection selection, List<String> columns, boolean isInclude, T value) {
 
         if (value == null) {
             throw new NullPointerException("Cannot fill with NULL value");
@@ -34,7 +37,17 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
         final Class<T> table = (Class<T>) value.getClass();
         final StormParser<T> parser = storm.parser(table);
 
-        final ContentValues cv = parser.toContentValues(value, false);
+        // default behavior would be
+        // if there is no columns rules - put all except primary key
+        // else put all & filter based on columns rules
+
+        final ContentValues cv;
+        if (columns == null
+                || columns.size() == 0) {
+            cv = parser.toContentValues(value, false);
+        } else {
+            cv = filterValues(parser.toContentValues(value, true), columns, isInclude);
+        }
 
         final SQLiteDatabase db = storm.database().open();
 
@@ -80,5 +93,23 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
         } finally {
             storm.database().close();
         }
+    }
+
+    private ContentValues filterValues(ContentValues cv, List<String> columns, boolean isInclude) {
+
+        // exclude columns from list
+        if (!isInclude) {
+            for (String column: columns) {
+                cv.remove(column);
+            }
+        } else { // include columns only from list
+            for (String key: cv.keySet()) {
+                if (!columns.contains(key)) {
+                    cv.remove(key);
+                }
+            }
+        }
+
+        return cv;
     }
 }

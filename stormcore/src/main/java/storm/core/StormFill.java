@@ -1,5 +1,9 @@
 package storm.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import storm.query.Selection;
 
 /**
@@ -12,6 +16,10 @@ public class StormFill<T extends StormObject> extends StormSelectionOp implement
     private final T mValue;
     private final StormFillDispatcher mFillDispatcher;
 
+    private List<String> mColumns;
+    private boolean mIsInclude;
+
+
     protected StormFill(Storm storm, Selection selection, T value, StormFillDispatcher fillDispatcher) {
         super(selection);
         mStorm = storm;
@@ -20,7 +28,29 @@ public class StormFill<T extends StormObject> extends StormSelectionOp implement
     }
     
     public int execute() {
-        return mFillDispatcher.fill(mStorm, selection(), mValue);
+        return mFillDispatcher.fill(mStorm, selection(), mColumns, mIsInclude, mValue);
+    }
+
+    public StormFill<T> includeColumns(String first, String... others) {
+        mColumns = addColumns(first, others);
+        mIsInclude = true;
+        return this;
+    }
+
+    public StormFill<T> excludeColumns(String first, String... others) {
+        mColumns = addColumns(first, others);
+        mIsInclude = false;
+        return this;
+    }
+
+    List<String> addColumns(String first, String... others) {
+        final List<String> list = new ArrayList<>();
+        list.add(first);
+        if (others != null
+                && others.length > 0) {
+            Collections.addAll(list, others);
+        }
+        return list;
     }
 
     @Override
@@ -150,5 +180,13 @@ public class StormFill<T extends StormObject> extends StormSelectionOp implement
 
     public T value() {
         return mValue;
+    }
+
+    public List<String> columns() {
+        return mColumns;
+    }
+
+    public boolean isInclude() {
+        return mIsInclude;
     }
 }
