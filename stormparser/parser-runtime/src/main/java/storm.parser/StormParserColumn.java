@@ -1,29 +1,28 @@
 package storm.parser;
 
-import java.lang.reflect.Field;
-
 import storm.types.StormType;
 
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-class StormParserColumn {
+class StormParserColumn<ELEMENT, TYPE> {
 
     private String mName;
     private StormType mStormType;
 
     private boolean mIsPrimaryKey;
+    private boolean mIsAutoIncrement;
 
-    private Class<?> mSerializerType;
+    private TYPE mSerializerType;
 
-    private Field mField;
+    private ELEMENT mElement;
 
     public String getName() {
         return mName;
     }
 
-    public Field getField() {
-        return mField;
+    public ELEMENT getElement() {
+        return mElement;
     }
 
     public StormType getType() {
@@ -34,32 +33,41 @@ class StormParserColumn {
         return mIsPrimaryKey;
     }
 
-    public Class<?> getSerializerType() {
+    public boolean isAutoIncrement() {
+        return mIsAutoIncrement;
+    }
+
+    public TYPE getSerializerType() {
         return mSerializerType;
     }
 
-    public StormParserColumn setName(String name) {
+    public StormParserColumn<ELEMENT, TYPE> setName(String name) {
         mName = name;
         return this;
     }
 
-    public StormParserColumn setStormType(StormType stormType) {
+    public StormParserColumn<ELEMENT, TYPE> setStormType(StormType stormType) {
         mStormType = stormType;
         return this;
     }
 
-    public StormParserColumn setIsPrimaryKey(boolean isPrimaryKey) {
+    public StormParserColumn<ELEMENT, TYPE> setIsPrimaryKey(boolean isPrimaryKey) {
         mIsPrimaryKey = isPrimaryKey;
         return this;
     }
 
-    public StormParserColumn setSerializerType(Class<?> serializerType) {
+    public StormParserColumn<ELEMENT, TYPE> setIsAutoIncrement(boolean isAutoIncrement) {
+        mIsAutoIncrement = isAutoIncrement;
+        return this;
+    }
+
+    public StormParserColumn<ELEMENT, TYPE> setSerializerType(TYPE serializerType) {
         mSerializerType = serializerType;
         return this;
     }
 
-    public StormParserColumn setField(Field field) {
-        mField = field;
+    public StormParserColumn<ELEMENT, TYPE> setElement(ELEMENT element) {
+        mElement = element;
         return this;
     }
 }

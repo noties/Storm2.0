@@ -33,6 +33,8 @@ public interface StormSchemeType<MAIN, ELEMENT, TYPE> {
     TYPE getSerializerType(Serialize serialize)
             throws SerializerNotOfTypeException, SerializerWrongTypeArgumentsException, SerializerTypeNotSqliteType;
 
+    // todo, maybe we need only one method for this
+    // throwing exception if @Table is NULL & then checking if have `generateScheme` is strange
     boolean isMainValid(MAIN main);
     boolean shouldGenerateScheme(MAIN main);
 }
