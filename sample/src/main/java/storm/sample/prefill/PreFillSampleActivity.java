@@ -26,24 +26,24 @@ public class PreFillSampleActivity extends BaseActivity {
 
         final Storm storm = Storm.newInstance(new Database.Configuration(getApplicationContext(), "pre-fill.db", 1));
 
-        storm.registerTable(PrefillItem.class);
+        storm.registerTable(PreFillItem.class);
 
         // prefilling will be done only on database creation
-        storm.registerDatabaseModule(new StormPrefillDatabaseModule<PrefillItem>(storm, PrefillItem.class, new StormPrefillDatabaseModule.PrefillProvider<List<PrefillItem>>() {
+        storm.registerDatabaseModule(new StormPrefillDatabaseModule<PreFillItem>(storm, PreFillItem.class, new StormPrefillDatabaseModule.PrefillProvider<List<PreFillItem>>() {
             @Override
-            public List<PrefillItem> provide() {
+            public List<PreFillItem> provide() {
                 final int size = 3;
-                final List<PrefillItem> items = new ArrayList<>(size);
+                final List<PreFillItem> items = new ArrayList<>(size);
                 for (int i = 1; i <= size; i++) {
-                    items.add(new PrefillItem("simple_key_" + i, String.valueOf(i)));
+                    items.add(new PreFillItem("simple_key_" + i, String.valueOf(i)));
                 }
                 return items;
             }
         }));
 
-        storm.registerDatabaseModule(new StormPrefillDatabaseModule<PrefillItem>(storm, PrefillItem.class, new StormPrefillDatabaseModule.PrefillProvider<List<PrefillItem>>() {
+        storm.registerDatabaseModule(new StormPrefillDatabaseModule<PreFillItem>(storm, PreFillItem.class, new StormPrefillDatabaseModule.PrefillProvider<List<PreFillItem>>() {
             @Override
-            public List<PrefillItem> provide() {
+            public List<PreFillItem> provide() {
 
                 InputStream inputStream = null;
 
@@ -62,7 +62,7 @@ public class PreFillSampleActivity extends BaseActivity {
                 final InputStreamReader reader = new InputStreamReader(inputStream);
 
                 try {
-                    final List<PrefillItem> list = gson.fromJson(new InputStreamReader(inputStream), new TypeToken<List<PrefillItem>>(){}.getType());
+                    final List<PreFillItem> list = gson.fromJson(new InputStreamReader(inputStream), new TypeToken<List<PreFillItem>>(){}.getType());
                     if (list == null) {
                         //noinspection unchecked
                         return Collections.EMPTY_LIST;
@@ -85,7 +85,7 @@ public class PreFillSampleActivity extends BaseActivity {
 
         Debug.i("Initialized Storm. Calling `query`");
 
-        final List<PrefillItem> items = storm.query(PrefillItem.class).asList();
+        final List<PreFillItem> items = storm.query(PreFillItem.class).asList();
 
         Debug.i("Query returned: %s", items);
 

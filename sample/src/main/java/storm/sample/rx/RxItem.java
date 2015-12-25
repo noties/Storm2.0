@@ -11,7 +11,7 @@ import storm.core.StormObject;
  * Created by Dimitry Ivanov on 21.12.2015.
  */
 @Table
-class RxSampleItem implements StormObject {
+class RxItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
@@ -29,7 +29,7 @@ class RxSampleItem implements StormObject {
         return id;
     }
 
-    public RxSampleItem setId(long id) {
+    public RxItem setId(long id) {
         this.id = id;
         return this;
     }
@@ -38,7 +38,7 @@ class RxSampleItem implements StormObject {
         return data;
     }
 
-    public RxSampleItem setData(String data) {
+    public RxItem setData(String data) {
         this.data = data;
         return this;
     }
@@ -47,7 +47,7 @@ class RxSampleItem implements StormObject {
         return column;
     }
 
-    public RxSampleItem setColumn(String column) {
+    public RxItem setColumn(String column) {
         this.column = column;
         return this;
     }

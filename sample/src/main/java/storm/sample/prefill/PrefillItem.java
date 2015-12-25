@@ -9,7 +9,7 @@ import storm.core.StormObject;
  * Created by Dimitry Ivanov on 24.12.2015.
  */
 @Table
-class PrefillItem implements StormObject {
+class PreFillItem implements StormObject {
 
     @PrimaryKey
     @Column
@@ -18,11 +18,11 @@ class PrefillItem implements StormObject {
     @Column
     private String value;
 
-    public PrefillItem() {
+    public PreFillItem() {
 
     }
 
-    public PrefillItem(String key, String value) {
+    public PreFillItem(String key, String value) {
         this.key = key;
         this.value = value;
     }
@@ -31,7 +31,7 @@ class PrefillItem implements StormObject {
         return key;
     }
 
-    public PrefillItem setKey(String key) {
+    public PreFillItem setKey(String key) {
         this.key = key;
         return this;
     }
@@ -40,7 +40,7 @@ class PrefillItem implements StormObject {
         return value;
     }
 
-    public PrefillItem setValue(String value) {
+    public PreFillItem setValue(String value) {
         this.value = value;
         return this;
     }
