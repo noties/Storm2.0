@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import storm.core.Storm;
 import storm.core.StormException;
+import storm.core.StormFill;
 import storm.core.StormObject;
 import storm.db.Database;
 import storm.db.DatabaseModule;
@@ -138,6 +139,11 @@ public class StormRx extends Storm {
     @Override
     public <T extends StormObject> StormFillRx<T> fill(T value, Selection selection) throws StormException {
         return new StormFillRx<>(super.fill(value, selection));
+    }
+
+    @Override
+    public <T extends StormObject> StormFillRx<T> fill(T value, String selection, Object... args) throws StormException {
+        return new StormFillRx<>(super.fill(value, selection, args));
     }
 
     @Override
