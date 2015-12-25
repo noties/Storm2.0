@@ -28,8 +28,8 @@ public class StormQuery<T extends StormObject> extends StormQueryOp implements S
         this.mQueryDispatcher = dispatcher;
     }
     
-    public Cursor asCursor(Storm storm, Query query) {
-        return mQueryDispatcher.asCursor(storm, query);
+    public Cursor asCursor() {
+        return mQueryDispatcher.asCursor(mStorm, query());
     }
 
     public T asOne() {
