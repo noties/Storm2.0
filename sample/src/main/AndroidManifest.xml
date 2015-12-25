@@ -20,6 +20,7 @@
         <activity android:name=".prefill.PreFillSampleActivity" />
         <activity android:name=".rx.RxSampleActivity" />
         <activity android:name=".versioning.VersioningSampleActivity" />
+        <activity android:name=".iterator.IteratorSampleActivity" />
 
     </application>
 
