@@ -23,6 +23,16 @@ public class StormFillRx<T extends StormObject> extends StormFill<T> implements 
     }
 
     @Override
+    public StormFillRx<T> includeColumns(String first, String... others) {
+        return (StormFillRx<T>) super.includeColumns(first, others);
+    }
+
+    @Override
+    public StormFillRx<T> excludeColumns(String first, String... others) {
+        return (StormFillRx<T>) super.excludeColumns(first, others);
+    }
+
+    @Override
     public StormFillRx<T> where() {
         return (StormFillRx<T>) super.where();
     }
