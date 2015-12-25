@@ -97,19 +97,23 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
 
     private ContentValues filterValues(ContentValues cv, List<String> columns, boolean isInclude) {
 
+        final ContentValues out;
+
         // exclude columns from list
         if (!isInclude) {
             for (String column: columns) {
                 cv.remove(column);
             }
+            out = cv;
         } else { // include columns only from list
+            out = new ContentValues(cv);
             for (String key: cv.keySet()) {
                 if (!columns.contains(key)) {
-                    cv.remove(key);
+                    out.remove(key);
                 }
             }
         }
 
-        return cv;
+        return out;
     }
 }

@@ -3,6 +3,7 @@ package storm.sample.rx;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import ru.noties.debug.Debug;
@@ -35,7 +36,7 @@ public class RxSampleActivity extends BaseActivity {
             }
         }
 
-        final StormRx storm = StormRx.newInstance(new Database.Configuration(getApplicationContext(), DB_NAME, 1));
+        final StormRx storm = StormRx.newInstance(new Database.Configuration(getApplicationContext(), DB_NAME, 2));
         storm.registerTable(RxSampleItem.class);
 
         // we could register `preprocessor` for every observable that StormRx will produce
@@ -46,7 +47,7 @@ public class RxSampleActivity extends BaseActivity {
             @Override
             public <V> Observable<V> preProcess(Observable<V> observable) {
                 return observable.observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io());
+                        .subscribeOn(Schedulers.from(Executors.newSingleThreadExecutor()));
             }
         });
 
@@ -174,6 +175,19 @@ public class RxSampleActivity extends BaseActivity {
                     @Override
                     public void call(Integer integer) {
                         Debug.i("Filled count: %s", integer);
+                    }
+                });
+
+        storm.fill(new RxSampleItem().setColumn("filled_column").setData("filled_data"))
+                .includeColumns("column", "data")
+                .stream()
+                .create()
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        Debug.i("Filled all rows with column `column` as `filled_column`: %s", integer);
+                        final List<RxSampleItem> filled = storm.query(RxSampleItem.class).asList();
+                        Debug.i("Items: %s", filled);
                     }
                 });
 

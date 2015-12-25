@@ -1,6 +1,8 @@
 package storm.sample.rx;
 
 import storm.annotations.Column;
+import storm.annotations.Default;
+import storm.annotations.NewColumn;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Table;
 import storm.core.StormObject;
@@ -17,6 +19,11 @@ class RxSampleItem implements StormObject {
 
     @Column
     private String data;
+
+    @Column
+    @NewColumn(2)
+    @Default("def") // it's always good to have @Default for new columns
+    private String column;
 
     public long getId() {
         return id;
@@ -36,11 +43,21 @@ class RxSampleItem implements StormObject {
         return this;
     }
 
+    public String getColumn() {
+        return column;
+    }
+
+    public RxSampleItem setColumn(String column) {
+        this.column = column;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "TestObject{" +
+        return "RxSampleItem{" +
                 "id=" + id +
                 ", data='" + data + '\'' +
+                ", column='" + column + '\'' +
                 '}';
     }
 }

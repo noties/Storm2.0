@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import storm.sample.basic.BasicSampleActivity;
 import storm.sample.prefill.PreFillSampleActivity;
 import storm.sample.rx.RxSampleActivity;
 import storm.sample.versioning.VersioningSampleActivity;
@@ -19,6 +20,7 @@ import storm.sample.versioning.VersioningSampleActivity;
 public class MainActivity extends Activity {
 
     private static final Class<?>[] SAMPLES = new Class<?>[] {
+            BasicSampleActivity.class,
             PreFillSampleActivity.class,
             RxSampleActivity.class,
             VersioningSampleActivity.class

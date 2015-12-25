@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".basic.BasicSampleActivity" />
         <activity android:name=".prefill.PreFillSampleActivity" />
         <activity android:name=".rx.RxSampleActivity" />
         <activity android:name=".versioning.VersioningSampleActivity" />

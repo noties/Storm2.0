@@ -203,7 +203,14 @@ public class BasicSampleActivity extends BaseActivity {
 
         final int rowsAffectedByFillOperation4 = storm.fill(fillItem, "id = ?", 82L).execute();
 
-        // todo, `includeColumns`, `excludeColumns`
+        // also fill operations might include or exclude columns
+        final int fillInclude = storm.fill(fillItem)
+                .includeColumns("text")
+                .execute();
+
+        final int fillExclude = storm.fill(fillItem)
+                .excludeColumns("id", "real")
+                .execute();
 
 
         // #################
