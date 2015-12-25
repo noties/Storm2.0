@@ -11,15 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.noties.debug.Debug;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import storm.core.StormPrefillDatabaseModule;
 import storm.db.Database;
 import storm.db.DatabaseModuleAdapter;
 import storm.iterator.CursorIterator;
 import storm.iterator.CursorIteratorCached;
 import storm.query.Sorting;
+import storm.rx.StormObservablePreprocessor;
 import storm.rx.StormRx;
 import storm.sample.BaseActivity;
 
@@ -49,7 +52,15 @@ public class IteratorSampleActivity extends BaseActivity {
         }
 
         final StormRx stormRx = StormRx.newInstance(new Database.Configuration(getApplicationContext(), "iterator.db", 2))
-                .registerTable(IteratorItem.class);
+                .registerTable(IteratorItem.class)
+                .registerObservablePreprocessor(new StormObservablePreprocessor() {
+                    @Override
+                    public <V> Observable<V> preProcess(Observable<V> observable) {
+                        return observable.observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io());
+                    }
+                });
+
         stormRx.registerDatabaseModule(new ReCreateOnUpgradeModule());
         stormRx.registerDatabaseModule(new StormPrefillDatabaseModule<IteratorItem>(stormRx, IteratorItem.class, new PreFillModule()));
 
@@ -57,8 +68,7 @@ public class IteratorSampleActivity extends BaseActivity {
                 .orderBy("id", Sorting.DESC)
                 .stream()
                 .subscribeForUpdates() // loader functionality
-                .asCachedIterator(30)
-                .observeOn(AndroidSchedulers.mainThread())
+                .asCachedIterator(30) // number of items in cache
                 .subscribe(new Action1<CursorIteratorCached<IteratorItem>>() {
                     @Override
                     public void call(CursorIteratorCached<IteratorItem> iteratorItems) {

@@ -55,7 +55,7 @@ public class StormRx extends Storm {
         return (StormRx) super.registerInstanceCreator(table, instanceCreator);
     }
 
-
+    // todo, find out whether or not it's completely useless
     public StormObservablePreprocessor observablePreprocessor() {
         if (mObservablePreprocessor == null) {
             return StormObservablePreprocessorNoOp.getInstance();
