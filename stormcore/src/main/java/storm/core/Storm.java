@@ -237,6 +237,15 @@ public class Storm {
         );
     }
 
+    public <T extends StormObject> StormFill<T> fill(T value, String selection, Object... args) throws StormException {
+        return new StormFill<>(
+                this,
+                new Selection().raw(selection, args),
+                value,
+                mDispatchers.fillDispatcher()
+        );
+    }
+
 
     public <T extends StormObject> StormDeleteAll<T> deleteAll(Class<T> table) {
         return new StormDeleteAll<>(

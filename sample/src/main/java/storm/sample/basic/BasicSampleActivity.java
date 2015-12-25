@@ -201,6 +201,8 @@ public class BasicSampleActivity extends BaseActivity {
         final int rowsAffectedByFillOperation3 = storm.fill(fillItem, Selection.eq("text", "some_text"))
                 .execute();
 
+        final int rowsAffectedByFillOperation4 = storm.fill(fillItem, "id = ?", 82L).execute();
+
         // todo, `includeColumns`, `excludeColumns`
 
 
