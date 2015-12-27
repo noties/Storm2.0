@@ -27,7 +27,7 @@ public class BasicSampleActivity extends BaseActivity {
         // note, that you should manage instances of Storm by yourself (aka storing it somewhere to access)
         // also, there might be as much storm instances as one wish
         // ideally, each Storm instance manages one database
-        final Storm storm = Storm.newInstance(new Database.Configuration(getApplicationContext(), "basic.db", 1))
+        final Storm storm = Storm.newInstance(new Database.Configuration(getApplicationContext(), "basic.db", 2))
                 .registerTable(BasicItem.class);
 
         // all registrations must be done before executing any of the operations
