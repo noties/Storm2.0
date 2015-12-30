@@ -1,13 +1,14 @@
 apply from: '../../common-java.gradle'
+apply from: '../../common-all-dependencies.gradle'
 
 dependencies {
 
-    compile "${GROUP}:$STORM_ANNOTATIONS:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_TYPES:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_SERIALIZER:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_REFLECT:${VERSION_NAME}"
-
-    compile "${GROUP}:$STORM_SCHEME_RUNTIME:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_SCHEME_APT:${VERSION_NAME}"
-
+    compileModules(delegate,
+            STORM_ANNOTATIONS,
+            STORM_TYPES,
+            STORM_SERIALIZER,
+            STORM_REFLECT,
+            STORM_SCHEME_RUNTIME,
+            STORM_SCHEME_APT
+    )
 }

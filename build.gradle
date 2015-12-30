@@ -30,4 +30,5 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete fileTree(dir: "${rootProject.projectDir}${File.separator}.m2")
 }

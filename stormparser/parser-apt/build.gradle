@@ -1,6 +1,8 @@
 apply from: '../../common-java.gradle'
-apply from: '../../common-java-local-publishing.gradle'
+apply from: '../../common-java-publishing.gradle'
+apply from: '../../common-all-dependencies.gradle'
 
 dependencies {
-    compile "${GROUP}:$STORM_PARSER_RUNTIME:${VERSION_NAME}@jar"
+
+    compileModules(delegate, STORM_PARSER_RUNTIME)
 }

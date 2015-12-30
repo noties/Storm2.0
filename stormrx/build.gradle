@@ -1,16 +1,19 @@
 apply from: '../common-android.gradle'
-apply from: '../common-android-local-publishing.gradle'
+apply from: '../common-android-publishing.gradle'
+apply from: '../common-all-dependencies.gradle'
 
 dependencies {
 
-    compile "${GROUP}:$STORM_DATABASE:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_ITERATOR:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_QUERY:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_REFLECT:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_SCHEME_RUNTIME:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_PARSER_RUNTIME:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_LAZY:${VERSION_NAME}"
-
-    compile "${GROUP}:$STORM_CORE:${VERSION_NAME}"
     compile 'io.reactivex:rxjava:1.1.0'
+
+    compileModules(delegate,
+            STORM_DATABASE,
+            STORM_ITERATOR,
+            STORM_QUERY,
+            STORM_REFLECT,
+            STORM_SCHEME_RUNTIME,
+            STORM_PARSER_RUNTIME,
+            STORM_LAZY,
+            STORM_CORE
+    )
 }

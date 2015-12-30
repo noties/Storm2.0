@@ -1,2 +1,2 @@
 apply from: '../common-android.gradle'
-apply from: '../common-android-local-publishing.gradle'
+apply from: '../common-android-publishing.gradle'

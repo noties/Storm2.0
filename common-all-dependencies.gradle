@@ -1,0 +1,17 @@
+
+def compileModules(Object dependencies, String... modules) {
+    for (String module: modules) {
+        dependencies.compile "${GROUP}:$module:${VERSION_NAME}@jar"
+    }
+}
+
+def testCompileModules(Object dependencies, String... modules) {
+    for (String module: modules) {
+        dependencies.testCompile "${GROUP}:$module:${VERSION_NAME}@jar"
+    }
+}
+
+ext {
+    compileModules = this.&compileModules
+    testCompileModules = this.&testCompileModules
+}

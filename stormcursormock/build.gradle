@@ -1,9 +1,11 @@
 apply from: '../common-android.gradle'
-apply from: '../common-android-local-publishing.gradle'
+apply from: '../common-android-publishing.gradle'
+apply from: '../common-all-dependencies.gradle'
 
 dependencies {
 
-    compile "${GROUP}:$STORM_ANNOTATIONS:${VERSION_NAME}"
-    compile "${GROUP}:$STORM_TYPES:${VERSION_NAME}"
-
+    compileModules(delegate,
+            STORM_ANNOTATIONS,
+            STORM_TYPES
+    )
 }
