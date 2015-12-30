@@ -1,0 +1,10 @@
+apply plugin: 'maven'
+
+version = VERSION_NAME
+group = GROUP
+
+uploadArchives {
+    repositories {
+        add project.repositories.localRepo
+    }
+}

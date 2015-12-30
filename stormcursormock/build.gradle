@@ -1,6 +1,9 @@
 apply from: '../common-android.gradle'
+apply from: '../common-android-local-publishing.gradle'
 
 dependencies {
-    compile project(':stormannotations')
-    compile project(':stormtypes')
+
+    compile "${GROUP}:$STORM_ANNOTATIONS:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_TYPES:${VERSION_NAME}"
+
 }

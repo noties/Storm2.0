@@ -2,6 +2,11 @@ package storm.parser;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import java.util.Date;
 
 import storm.annotations.Column;
@@ -9,10 +14,13 @@ import storm.annotations.Column;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
+@RunWith(RobolectricTestRunner.class)
+@Config(manifest = Config.NONE)
 public class StormParserProviderRuntimeTest extends TestCase {
 
     private static class NoFields {}
 
+    @Test
     public void testNoFields() {
         try {
             provide(NoFields.class);
@@ -33,6 +41,7 @@ public class StormParserProviderRuntimeTest extends TestCase {
         String notAnnotated;
     }
 
+    @Test
     public void testNoSuitableFields() {
         try {
             provide(NoSuitableFields.class);
@@ -48,6 +57,7 @@ public class StormParserProviderRuntimeTest extends TestCase {
         Date mDate;
     }
 
+    @Test
     public void testBadStormTypeClass() {
         try {
             provide(BadStormTypeClass.class);
@@ -63,6 +73,7 @@ public class StormParserProviderRuntimeTest extends TestCase {
         long someLong;
     }
 
+    @Test
     public void testNormal() {
         try {
             provide(NormalClass.class);

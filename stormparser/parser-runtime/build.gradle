@@ -1,10 +1,14 @@
 apply from: '../../common-android.gradle'
+apply from: '../../common-android-local-publishing.gradle'
 
 dependencies {
-    compile project(':stormannotations')
-    compile project(':stormtypes')
-    compile project(':stormserializer')
-    compile project(':stormreflect')
 
-    testCompile project(':stormcursormock')
+    compile "${GROUP}:$STORM_ANNOTATIONS:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_TYPES:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_SERIALIZER:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_REFLECT:${VERSION_NAME}"
+
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'junit:junit:4.12'
+    testCompile "${GROUP}:$STORM_CURSOR_MOCK:${VERSION_NAME}"
 }

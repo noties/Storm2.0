@@ -1,10 +1,11 @@
 apply from: '../../common-java.gradle'
+apply from: '../../common-java-local-publishing.gradle'
 
 dependencies {
-    compile project(':stormannotations')
-    compile project(':stormtypes')
-    compile project(':stormserializer')
-    compile project(':stormreflect')
 
-    testCompile project(':stormscheme:scheme-base-testcase')
+    compile "${GROUP}:$STORM_ANNOTATIONS:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_TYPES:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_SERIALIZER:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_REFLECT:${VERSION_NAME}"
+
 }

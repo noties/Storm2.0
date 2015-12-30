@@ -15,8 +15,19 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        repositories {
+            flatDir {
+                name 'localRepo'
+                dirs "${rootProject.projectDir}${File.separator}.m2"
+            }
+        }
+    }
+
+    task buildUpload() {
+        dependsOn 'build', 'uploadArchives'
     }
 }
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

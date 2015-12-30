@@ -1,1 +1,21 @@
-include ':sample', ':stormannotations', ':stormquery', ':stormdatabase', ':stormiterator', ':stormparser:parser-apt', ':stormparser:parser-runtime', ':stormscheme:scheme-apt', ':stormscheme:scheme-runtime', ':stormcore', ':stormlazy', ':stormtypes', ':stormserializer', ':stormreflect', ':stormcursormock', ':stormrx', ':stormscheme:scheme-base-testcase'
+include ':sample', ':stormannotations', ':stormquery', ':stormdatabase', ':stormiterator'
+include ':stormparser:parser-apt', ':stormparser:parser-runtime', ':stormscheme:scheme-apt', ':stormscheme:scheme-runtime'
+include ':stormcore', ':stormlazy', ':stormtypes', ':stormserializer', ':stormreflect', ':stormcursormock'
+include ':stormrx', ':stormscheme:scheme-test'
+
+project(':stormannotations').name = STORM_ANNOTATIONS
+project(':stormquery').name = STORM_QUERY
+project(':stormdatabase').name = STORM_DATABASE
+project(':stormiterator').name = STORM_ITERATOR
+project(':stormparser:parser-apt').name = STORM_PARSER_APT
+project(':stormparser:parser-runtime').name = STORM_PARSER_RUNTIME
+project(':stormscheme:scheme-apt').name = STORM_SCHEME_APT
+project(':stormscheme:scheme-runtime').name = STORM_SCHEME_RUNTIME
+project(':stormcore').name = STORM_CORE
+project(':stormlazy').name = STORM_LAZY
+project(':stormtypes').name = STORM_TYPES
+project(':stormserializer').name = STORM_SERIALIZER
+project(':stormreflect').name = STORM_REFLECT
+project(':stormcursormock').name = STORM_CURSOR_MOCK
+project(':stormrx').name = STORM_RX
+

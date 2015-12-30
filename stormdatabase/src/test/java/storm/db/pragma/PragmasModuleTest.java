@@ -86,9 +86,9 @@ public class PragmasModuleTest extends TestCase {
 
         // Robolectric fails for `auto_vacuum` & `journal_mode`
         final Pragma[] pragmas = new Pragma[] {
-                AutoVacuumPragma.incremental(),
+//                AutoVacuumPragma.incremental(),
                 ForeignKeysPragma.on(),
-                JournalModePragma.memory(),
+//                JournalModePragma.memory(),
                 LockingModePragma.exclusive(),
                 SynchronousPragma.off(),
                 TempStorePragma.memory()

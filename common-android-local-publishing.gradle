@@ -1,0 +1,21 @@
+apply plugin: 'maven'
+
+task jar(type: Jar) {
+    from 'build/intermediates/classes/release'
+    exclude '**/BuildConfig.class'
+    exclude '**/R.class'
+}
+
+artifacts {
+    archives jar
+}
+
+version = VERSION_NAME
+group = GROUP
+
+uploadArchives {
+    repositories {
+        add project.repositories.localRepo
+    }
+}
+

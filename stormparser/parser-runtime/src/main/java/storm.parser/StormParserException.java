@@ -9,6 +9,10 @@ public class StormParserException extends Exception {
         return new StormParserException(String.format(msg, args));
     }
 
+    public StormParserException(Throwable throwable) {
+        super(throwable);
+    }
+
     public StormParserException(String detailMessage) {
         super(detailMessage);
     }

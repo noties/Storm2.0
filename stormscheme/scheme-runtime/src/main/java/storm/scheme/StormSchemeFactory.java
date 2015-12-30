@@ -8,7 +8,7 @@ public class StormSchemeFactory {
     private static final StormSchemeProvider PROVIDER_APT = new StormSchemeProviderApt();
     private static final StormSchemeProvider PROVIDER_RUNTIME = new StormSchemeProviderRuntime();
 
-
+    // todo, scheme add `recreateOnUpgrade` key to @Table annotation
     public StormSchemeFactory() {
 
     }

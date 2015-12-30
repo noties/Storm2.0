@@ -1,6 +1,16 @@
 apply from: '../common-android.gradle'
+apply from: '../common-android-local-publishing.gradle'
 
 dependencies {
-    compile project(':stormcore')
+
+    compile "${GROUP}:$STORM_DATABASE:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_ITERATOR:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_QUERY:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_REFLECT:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_SCHEME_RUNTIME:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_PARSER_RUNTIME:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_LAZY:${VERSION_NAME}"
+
+    compile "${GROUP}:$STORM_CORE:${VERSION_NAME}"
     compile 'io.reactivex:rxjava:1.1.0'
 }
