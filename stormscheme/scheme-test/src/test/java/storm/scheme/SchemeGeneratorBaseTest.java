@@ -181,6 +181,47 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
         );
     }
 
+    @Table(recreateOnUpgrade = true)
+    private static class RecreateOnUpgradeColumn {
+        @Column
+        @PrimaryKey
+        String someString;
+
+        @Column
+        long someLong;
+
+        @NewColumn(2)
+        @Column
+        int someNew;
+    }
+
+    public void test7() {
+        assertSchemeOnUpdate(
+                RecreateOnUpgradeColumn.class,
+                0,
+                2,
+                "DROP TABLE RecreateOnUpgrade IF EXISTS;",
+                "CREATE TABLE RecreateOnUpgrade(someString TEXT PRIMARY KEY, someLong INTEGER, someNew INTEGER);"
+        );
+    }
+
+    @Table(recreateOnUpgrade = true)
+    private static class RecreateOnUpgradeTable {
+        @Column
+        @PrimaryKey
+        int someInt;
+    }
+
+    public void test8() {
+        assertSchemeOnUpdate(
+                RecreateOnUpgradeTable.class,
+                0,
+                2,
+                "DROP TABLE RecreateOnUpgradeTable IF EXISTS;",
+                "CREATE TABLE RecreateOnUpgradeTable(someInt INTEGER PRIMARY KEY);"
+        );
+    }
+
     private void assertSchemeOnCreate(Class<?> cl, String... createStatements) {
 
         final StormScheme scheme = getScheme(cl);

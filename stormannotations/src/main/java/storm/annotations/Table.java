@@ -15,4 +15,5 @@ public @interface Table {
     String notificationUri() default "";
     boolean generateScheme() default true;
     boolean generateParser() default true;
+    boolean recreateOnUpgrade() default false;
 }
