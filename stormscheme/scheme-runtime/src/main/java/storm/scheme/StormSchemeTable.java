@@ -9,12 +9,19 @@ class StormSchemeTable {
 
     private final String mTableName;
     private final List<StormSchemeColumn> mColumns;
+    private final int mVersionWhenAdded;
+    private final boolean mIsRecreateOnUpgrade;
 
-    private int mVersionWhenAdded;
-
-    public StormSchemeTable(String tableName, List<StormSchemeColumn> columns) {
+    public StormSchemeTable(
+            String tableName,
+            List<StormSchemeColumn> columns,
+            int versionWhenAdded,
+            boolean isRecreateOnUpgrade
+    ) {
         mTableName = tableName;
         mColumns = columns;
+        mVersionWhenAdded = versionWhenAdded;
+        mIsRecreateOnUpgrade = isRecreateOnUpgrade;
     }
 
     public String getTableName() {
@@ -29,8 +36,11 @@ class StormSchemeTable {
         return mVersionWhenAdded;
     }
 
-    public StormSchemeTable setVersionWhenAdded(int versionWhenAdded) {
-        mVersionWhenAdded = versionWhenAdded;
-        return this;
+    public boolean isRecreateOnUpgrade() {
+        return mIsRecreateOnUpgrade;
+    }
+
+    public StormSchemeTable setColumns(List<StormSchemeColumn> columns) {
+        return new StormSchemeTable(mTableName, columns, mVersionWhenAdded, mIsRecreateOnUpgrade);
     }
 }

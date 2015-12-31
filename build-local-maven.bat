@@ -4,7 +4,3 @@ call gradlew.bat cursor-mock:buildUpload --configure-on-demand
 call gradlew.bat stormparser:parser-runtime:buildUpload stormparser:parser-apt:buildUpload --configure-on-demand
 call gradlew.bat core:buildUpload --configure-on-demand
 call gradlew.bat rx:buildUpload --configure-on-demand
-
-echo Press any key to exit...
-pause >nul
-exit

@@ -14,9 +14,11 @@ class StormSchemeStatementsGenerator implements StormScheme {
     private static final String CREATE_TABLE_PATTERN = "CREATE TABLE %1$s(%2$s);";
     private static final String CREATE_INDEX_PATTERN = "CREATE INDEX %1$s ON %2$s(%3$s %4$s);";
 
-    private static final String ALTER_TABLE_PATTERN = "ALTER TABLE %1$s ADD COLUMN %2$s";
+    private static final String ALTER_TABLE_PATTERN = "ALTER TABLE %1$s ADD COLUMN %2$s;";
 
     private static final String REFERENCES_PATTERN = "REFERENCES %1$s(%2$s)";
+
+    private static final String DROP_TABLE_PATTERN = "DROP TABLE %1$s IF EXISTS;";
 
     private final StormSchemeTable mTable;
 
@@ -53,6 +55,15 @@ class StormSchemeStatementsGenerator implements StormScheme {
 
     @Override
     public List<String> onUpgrade(int oldVersion, int newVersion) throws StormSchemeException {
+
+        // if table is marked as `recreateOnUpgrade` then we have to exec DROP & then full ON CREATE
+        // it really doesn't matter what version we have
+        if (mTable.isRecreateOnUpgrade()) {
+            final List<String> onCreate = onCreate();
+            // insert at first position
+            onCreate.add(0, String.format(DROP_TABLE_PATTERN, mTable.getTableName()));
+            return onCreate;
+        }
 
         final UpgradeChecker upgradeChecker = new UpgradeChecker(oldVersion, newVersion);
 

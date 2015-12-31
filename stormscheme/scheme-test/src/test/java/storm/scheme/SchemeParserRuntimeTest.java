@@ -25,6 +25,9 @@ import storm.types.StormType;
  */
 public class SchemeParserRuntimeTest extends TestCase {
 
+    private static final StormSchemeParser PARSER = new StormSchemeParser();
+    private static final StormSchemeTypeRuntime TYPE = new StormSchemeTypeRuntime();
+
     public void testTableNoAnnotation() {
         try {
             new StormSchemeProviderRuntime().provide(TableNoAnnotation.class);
@@ -62,8 +65,10 @@ public class SchemeParserRuntimeTest extends TestCase {
     }
 
     public void testTableName() {
+
         try {
-            assertEquals(StormSchemeProviderRuntime.getTableName(TableWithName.class), "some_table_name");
+            final StormSchemeTable table = PARSER.getTable(TYPE, TableWithName.class);
+            assertEquals(table.getTableName(), "some_table_name");
         } catch (StormSchemeException e) {
             assertTrue(false);
         }
@@ -72,7 +77,7 @@ public class SchemeParserRuntimeTest extends TestCase {
     public void testIgnoreTransient() {
         try {
             final Field field = ClassWithTransientField.class.getDeclaredField("someField");
-            assertFalse(StormSchemeProviderRuntime.isFieldShouldBeParsed(field));
+            assertFalse(TYPE.shouldParseElement(field));
         } catch (NoSuchFieldException e) {
             assertTrue(false);
         }
@@ -85,8 +90,7 @@ public class SchemeParserRuntimeTest extends TestCase {
 
         for (Field f: fields) {
             try {
-                StormSchemeProviderRuntime.parseType(f);
-                assertTrue(false);
+                PARSER.parseType(TYPE, f.getDeclaringClass(), f);
             } catch (StormSchemeException e) {
                 assertTrue(true);
             }
@@ -97,7 +101,7 @@ public class SchemeParserRuntimeTest extends TestCase {
         try {
             final Field f = ParseTypeWrongSerializer.class.getDeclaredField("someLong");
             try {
-                StormSchemeProviderRuntime.parseType(f);
+                PARSER.parseType(TYPE, f.getDeclaringClass(), f);
                 assertTrue(false);
             } catch (StormSchemeException e) {
                 assertTrue(true);
@@ -136,7 +140,7 @@ public class SchemeParserRuntimeTest extends TestCase {
         final Field[] fields = cl.getDeclaredFields();
         for (Field f: fields) {
             try {
-                assertEquals(expected, StormSchemeProviderRuntime.parseType(f));
+                assertEquals(expected, PARSER.parseType(TYPE, f.getDeclaringClass(), f));
             } catch (StormSchemeException e) {
                 assertTrue(false);
             }

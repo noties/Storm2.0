@@ -111,7 +111,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
         assertSchemeOnUpdate(
                 Test4.class,
                 0, 2,
-                "ALTER TABLE fourth ADD COLUMN " + secondColumn
+                "ALTER TABLE fourth ADD COLUMN " + secondColumn + ";"
         );
     }
 
@@ -177,7 +177,7 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
                 Test6.class,
                 2,
                 3,
-                "ALTER TABLE name ADD COLUMN some_double REAL DEFAULT 0.0"
+                "ALTER TABLE name ADD COLUMN some_double REAL DEFAULT 0.0;"
         );
     }
 
@@ -200,8 +200,8 @@ public abstract class SchemeGeneratorBaseTest extends TestCase {
                 RecreateOnUpgradeColumn.class,
                 0,
                 2,
-                "DROP TABLE RecreateOnUpgrade IF EXISTS;",
-                "CREATE TABLE RecreateOnUpgrade(someString TEXT PRIMARY KEY, someLong INTEGER, someNew INTEGER);"
+                "DROP TABLE RecreateOnUpgradeColumn IF EXISTS;",
+                "CREATE TABLE RecreateOnUpgradeColumn(someString TEXT PRIMARY KEY, someLong INTEGER, someNew INTEGER);"
         );
     }
 

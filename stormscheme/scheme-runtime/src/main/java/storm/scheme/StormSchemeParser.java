@@ -32,7 +32,7 @@ class StormSchemeParser {
             return null;
         }
 
-        final String tableName = getTableName(type, main);
+        final StormSchemeTable table = getTable(type, main);
 
         final List<ELEMENT> elements = type.getElements(main);
         if (elements == null
@@ -65,14 +65,7 @@ class StormSchemeParser {
                     " Field must be annotated with @PrimaryKey", main);
         }
 
-        final int tableVersionWhenAdded;
-        {
-            final NewTable newTable = type.getMainAnnotation(main, NewTable.class);
-            tableVersionWhenAdded = newTable != null ? newTable.value() : 0;
-        }
-
-        return new StormSchemeTable(tableName, columns)
-                .setVersionWhenAdded(tableVersionWhenAdded);
+        return table.setColumns(columns);
     }
 
     <MAIN, ELEMENT, TYPE> String getTableName(StormSchemeType<MAIN, ELEMENT, TYPE> type, MAIN main) throws StormSchemeException {
@@ -83,6 +76,34 @@ class StormSchemeParser {
         } else {
             return tableValue;
         }
+    }
+
+    <MAIN, ELEMENT, TYPE> StormSchemeTable getTable(StormSchemeType<MAIN, ELEMENT, TYPE> type, MAIN main) throws StormSchemeException {
+
+        final Table table = type.getMainAnnotation(main, Table.class);
+
+        final String tableName;
+        {
+            final String tableValue = table.value();
+            if (tableValue == null || tableValue.length() == 0) {
+                tableName = type.getMainSimpleName(main);
+            } else {
+                tableName = tableValue;
+            }
+        }
+
+        final boolean isRecreateOnUpgrade;
+        {
+            isRecreateOnUpgrade = table.recreateOnUpgrade();
+        }
+
+        final int versionWhenAdded;
+        {
+            final NewTable newTable = type.getMainAnnotation(main, NewTable.class);
+            versionWhenAdded = newTable != null ? newTable.value() : 0;
+        }
+
+        return new StormSchemeTable(tableName, null, versionWhenAdded, isRecreateOnUpgrade);
     }
 
     private <MAIN, ELEMENT, TYPE> StormSchemeColumn parseColumn(
