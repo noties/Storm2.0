@@ -126,7 +126,35 @@ class StormSchemeAptWriter {
         return builder.toString();
     }
 
-    private static String generateOnUpgradeStatementsSourceBlock(Indent indent, StormSchemeTable table) {
+    private static String generateOnUpgradeStatementsSourceBlock(Indent indent, StormSchemeTable table) throws StormSchemeException {
+
+        final StringBuilder builder = new StringBuilder();
+
+        if (table.isRecreateOnUpgrade()) {
+            final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
+            builder.append(indent.increment())
+                    .append("return java.util.Arrays.asList(\n")
+                    .append(indent.increment())
+                    .append("\"DROP TABLE ")
+                    .append(table.getTableName())
+                    .append(" IF EXISTS;\"");
+
+            for (String statement: generator.onCreate()) {
+                builder.append(",\n")
+                        .append(indent)
+                        .append("\"")
+                        .append(statement)
+                        .append("\"");
+            }
+
+            builder.append("\n")
+                    .append(indent.decrement())
+                    .append(");\n")
+                    .append(indent.decrement());
+
+            return builder.toString();
+
+        }
 
         boolean hasAddedStatements = false;
         boolean hasAddedIndexes = false;
@@ -136,8 +164,6 @@ class StormSchemeAptWriter {
         final String startedIndent = indent.increment().toString();
         final String list = "final java.util.List<String> list = new java.util.ArrayList<String>();\n";
         final String indexes = "final java.util.List<String> indexes = new java.util.ArrayList<String>();\n";
-
-        final StringBuilder builder = new StringBuilder();
 
         if (tableVersion != 0) {
 
