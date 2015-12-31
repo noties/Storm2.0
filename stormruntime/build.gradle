@@ -1,0 +1,40 @@
+apply from: '../common-android.gradle'
+apply from: '../common-android-publishing.gradle'
+apply from: '../common-all-dependencies.gradle'
+
+dependencies {
+
+    compileModules(delegate,
+//            STORM_DATABASE,
+//            STORM_ITERATOR,
+//            STORM_QUERY,
+//            STORM_REFLECT,
+//            STORM_SCHEME_RUNTIME,
+//            STORM_PARSER_RUNTIME,
+//            STORM_LAZY,
+            STORM_CORE,
+            STORM_ANNOTATIONS,
+            STORM_TYPES,
+            STORM_SERIALIZER
+    )
+}
+
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
+        return; // Skip debug builds.
+    }
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    //Include Java classes
+    task.from variant.javaCompile.destinationDir
+    task.exclude '**/BuildConfig.class'
+    task.exclude '**/R.class'
+    //Include dependent jars with some exceptions
+    task.from configurations.compile.findAll {
+        it.getName() != 'android.jar' && !it.getName().startsWith('junit') && !it.getName().startsWith('hamcrest')
+    }.collect {
+        it.isDirectory() ? it : zipTree(it)
+    }
+    artifacts.add('archives', task);
+}

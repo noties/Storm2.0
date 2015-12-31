@@ -14,5 +14,3 @@ dependencies {
             STORM_LAZY
     )
 }
-
-// todo fat jar artifact

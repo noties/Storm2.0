@@ -33,7 +33,7 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:23.1.1'
 
-    compile "${GROUP}:$STORM_CORE:${VERSION_NAME}"
+    compile "${GROUP}:$STORM_RUNTIME:${VERSION_NAME}"
     compile "${GROUP}:$STORM_RX:${VERSION_NAME}"
 
     apt "$GROUP:$STORM_SCHEME_APT:$VERSION_NAME"
