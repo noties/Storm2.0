@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
  */
-class StormParserTable<ELEMENT, TYPE> {
+public class StormParserTable<ELEMENT, TYPE> {
 
     private final String mTableName;
     private final List<StormParserColumn<ELEMENT, TYPE>> mColumns;

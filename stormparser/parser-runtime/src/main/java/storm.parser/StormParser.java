@@ -1,22 +1,18 @@
 package storm.parser;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-
-import java.util.List;
+import storm.parser.converter.StormConverter;
+import storm.parser.converter.StormConverterException;
+import storm.parser.metadata.StormMetadata;
+import storm.parser.scheme.StormScheme;
+import storm.parser.scheme.StormSchemeException;
 
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
 public interface StormParser<T> {
 
-    T fromCursor(Cursor cursor);
-    List<T> fromCursorList(Cursor cursor);
+    StormScheme scheme() throws StormSchemeException;
+    StormConverter<T> converter() throws StormConverterException;
+    StormMetadata<T> metadata();
 
-    // if this ContentValues would be used to update existing row
-    // and if primary key would be included in this ContentValues
-    // there will be an exception
-    ContentValues toContentValues(T value, boolean putPrimaryKey);
-
-    StormTableMetadata<T> getMetadata();
 }

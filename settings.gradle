@@ -1,4 +1,4 @@
-include ':sample', ':stormannotations', ':stormquery', ':stormdatabase', ':stormiterator', ':stormruntime'
+include ':sample', ':stormannotations', ':stormquery', ':stormdatabase', ':stormiterator', ':stormruntime', ':stormparser:parser-test'
 include ':stormparser:parser-apt', ':stormparser:parser-runtime', ':stormscheme:scheme-apt', ':stormscheme:scheme-runtime'
 include ':stormcore', ':stormlazy', ':stormtypes', ':stormserializer', ':stormreflect', ':stormcursormock'
 include ':stormrx', ':stormscheme:scheme-test', ':stormruntime'

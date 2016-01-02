@@ -32,7 +32,7 @@ class StormParserProviderApt implements StormParserProvider {
     }
 
     static Class<?> createAptClass(Class<?> cl) throws ClassNotFoundException {
-        return Class.forName(StormParserAptClassNameBuilder.parserFullName(
+        return Class.forName(StormParserAptClassNameBuilder2.parserFullName(
                 cl.getPackage().getName(),
                 cl.getSimpleName()
         ));

@@ -1,4 +1,4 @@
-package storm.parser;
+package storm.parser.metadata;
 
 /**
  * Created by Dimitry Ivanov on 17.12.2015.

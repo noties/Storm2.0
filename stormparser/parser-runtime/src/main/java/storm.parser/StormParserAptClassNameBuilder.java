@@ -1,39 +1,11 @@
 package storm.parser;
 
 /**
- * Created by Dimitry Ivanov on 27.12.2015.
+ * Created by Dimitry Ivanov on 02.01.2016.
  */
-class StormParserAptClassNameBuilder {
+public interface StormParserAptClassNameBuilder {
 
-    private StormParserAptClassNameBuilder() {}
+    String fullName(String pkg, String cl);
+    String className(String cl);
 
-    private static final String PARSER_CLASS_NAME   = "%s_StormParser";
-    private static final String PARSER_FULL_NAME    = "%s." + PARSER_CLASS_NAME;
-
-    private static final String METADATA_CLASS_NAME = "%s_Metadata";
-    private static final String METADATA_FULL_NAME  = "%s." + METADATA_CLASS_NAME;
-
-    static String parserFullName(String packageName, String className) {
-        return String.format(
-                PARSER_FULL_NAME,
-                packageName,
-                className
-        );
-    }
-
-    static String parserClassName(String className) {
-        return String.format(PARSER_CLASS_NAME, className);
-    }
-
-    static String metadataFullName(String packageName, String className) {
-        return String.format(
-                METADATA_FULL_NAME,
-                packageName,
-                className
-        );
-    }
-
-    static String metadataClassName(String className) {
-        return String.format(METADATA_CLASS_NAME, className);
-    }
 }

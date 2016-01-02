@@ -11,8 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import storm.annotations.PrimaryKey;
 import storm.annotations.Table;
+import storm.parser.metadata.StormMetadata;
+import storm.parser.metadata.StormTableMetadataRuntime;
 import storm.serializer.StormSerializer;
 import storm.types.StormType;
 
@@ -26,7 +27,7 @@ class StormParserRuntime<T> implements StormParser<T> {
     private final StormInstanceCreator<T> mInstanceCreator;
     private final StormSerializerProvider mSerializerProvider;
 
-    private StormTableMetadata<T> mMetadata;
+    private StormMetadata<T> mMetadata;
 
     StormParserRuntime(
             Class<T> aClass,
@@ -233,7 +234,7 @@ class StormParserRuntime<T> implements StormParser<T> {
     }
 
     @Override
-    public synchronized StormTableMetadata<T> getMetadata() {
+    public synchronized StormMetadata<T> getMetadata() {
         if (mMetadata == null) {
             mMetadata = buildMetadata();
         }
@@ -256,7 +257,7 @@ class StormParserRuntime<T> implements StormParser<T> {
         return map;
     }
 
-    private StormTableMetadata<T> buildMetadata() {
+    private StormMetadata<T> buildMetadata() {
 
         final StormParserColumn<Field, Class<?>> primaryKey;
         {

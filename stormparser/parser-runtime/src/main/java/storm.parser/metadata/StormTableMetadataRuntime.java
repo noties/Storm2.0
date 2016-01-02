@@ -1,13 +1,16 @@
-package storm.parser;
+package storm.parser.metadata;
 
 import android.net.Uri;
 
 import java.lang.reflect.Field;
 
+import storm.parser.metadata.PrimaryKeySelection;
+import storm.parser.metadata.StormMetadata;
+
 /**
  * Created by Dimitry Ivanov on 17.12.2015.
  */
-class StormTableMetadataRuntime<T> implements StormTableMetadata<T> {
+class StormTableMetadataRuntime<T> implements StormMetadata<T> {
 
     private final String mTableName;
     private final boolean mIsPrimaryKeyAutoincrement;
@@ -30,12 +33,12 @@ class StormTableMetadataRuntime<T> implements StormTableMetadata<T> {
     }
 
     @Override
-    public String getTableName() {
+    public String tableName() {
         return mTableName;
     }
 
     @Override
-    public Uri getNotificationUri() {
+    public Uri notificationUri() {
         return mNotificationUri;
     }
 
@@ -45,7 +48,7 @@ class StormTableMetadataRuntime<T> implements StormTableMetadata<T> {
     }
 
     @Override
-    public PrimaryKeySelection getPrimaryKeySelection(T value) {
+    public PrimaryKeySelection primaryKeySelection(T value) {
         try {
             final Object primaryKeyValue = mPrimaryKeyField.get(value);
             return new PrimaryKeySelection(mPrimaryKeyName, primaryKeyValue);

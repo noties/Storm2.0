@@ -1,16 +1,14 @@
 apply from: '../../common-android.gradle'
-apply from: '../../common-android-publishing.gradle'
 apply from: '../../common-all-dependencies.gradle'
 
 dependencies {
-
     compileModules(delegate,
             STORM_ANNOTATIONS,
             STORM_TYPES,
             STORM_SERIALIZER,
-            STORM_REFLECT,
-            STORM_LAZY
+            STORM_PARSER_RUNTIME,
+            STORM_PARSER_APT,
+            STORM_CURSOR_MOCK,
+            STORM_REFLECT
     )
-
-    testCompileModules(delegate, STORM_CURSOR_MOCK)
 }

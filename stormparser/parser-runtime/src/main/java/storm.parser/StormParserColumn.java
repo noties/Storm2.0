@@ -5,7 +5,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-class StormParserColumn<ELEMENT, TYPE> {
+public class StormParserColumn<ELEMENT, TYPE> {
 
     private String mName;
     private StormType mStormType;
