@@ -10,7 +10,7 @@ import storm.parser.metadata.StormMetadata;
 /**
  * Created by Dimitry Ivanov on 17.12.2015.
  */
-class StormTableMetadataRuntime<T> implements StormMetadata<T> {
+class StormMetadataRuntime<T> implements StormMetadata<T> {
 
     private final String mTableName;
     private final boolean mIsPrimaryKeyAutoincrement;
@@ -18,7 +18,7 @@ class StormTableMetadataRuntime<T> implements StormMetadata<T> {
     private final String mPrimaryKeyName;
     private final Field mPrimaryKeyField;
 
-    StormTableMetadataRuntime(
+    StormMetadataRuntime(
             String tableName,
             boolean isPrimaryKeyAutoincrement,
             Uri notificationUri,

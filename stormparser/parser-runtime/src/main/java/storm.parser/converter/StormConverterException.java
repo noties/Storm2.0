@@ -7,7 +7,7 @@ import storm.parser.StormParserException;
  */
 public class StormConverterException extends StormParserException {
 
-    static StormConverterException newInstance(String msg, Object... args) {
+    public static StormConverterException newInstance(String msg, Object... args) {
         return new StormConverterException(String.format(msg, args));
     }
 

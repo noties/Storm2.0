@@ -1,39 +1,44 @@
 package storm.parser;
 
-import storm.lazy.Lazy;
 import storm.parser.converter.StormConverter;
-import storm.parser.converter.StormConverterException;
 import storm.parser.metadata.StormMetadata;
 import storm.parser.scheme.StormScheme;
-import storm.parser.scheme.StormSchemeException;
 
 /**
  * Created by Dimitry Ivanov on 02.01.2016.
  */
 class StormParserImpl<T> implements StormParser<T> {
 
-    private final Lazy<StormScheme> mSchemeLazy;
-    private final Lazy<StormConverter<T>> mConverterLazy;
-    private final Lazy<StormMetadata<T>> mMetadataLazy;
+    private final ParserLazy<StormScheme, StormParserException> mSchemeLazy;
+    private final ParserLazy<StormConverter<T>, StormParserException> mConverterLazy;
+    private final ParserLazy<StormMetadata<T>, StormParserException> mMetadataLazy;
 
-    StormParserImpl(Lazy<StormScheme> schemeLazy, Lazy<StormConverter<T>> converterLazy, Lazy<StormMetadata<T>> metadataLazy) {
+    StormParserImpl(
+            ParserLazy<StormScheme, StormParserException> schemeLazy,
+            ParserLazy<StormConverter<T>, StormParserException> converterLazy,
+            ParserLazy<StormMetadata<T>, StormParserException> metadataLazy
+    ) {
         mSchemeLazy = schemeLazy;
         mConverterLazy = converterLazy;
         mMetadataLazy = metadataLazy;
     }
 
     @Override
-    public StormScheme scheme() throws StormSchemeException {
+    public StormScheme scheme() throws StormParserException {
         return mSchemeLazy.get();
     }
 
     @Override
-    public StormConverter<T> converter() throws StormConverterException {
+    public StormConverter<T> converter() throws StormParserException {
         return mConverterLazy.get();
     }
 
     @Override
     public StormMetadata<T> metadata() {
-        return mMetadataLazy.get();
+        try {
+            return mMetadataLazy.get();
+        } catch (StormParserException e) {
+            throw new RuntimeException("Unexpected throw of StormParserException", e);
+        }
     }
 }

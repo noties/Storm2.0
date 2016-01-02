@@ -1,4 +1,4 @@
-package storm.parser;
+package storm.parser.metadata;
 
 import android.net.Uri;
 

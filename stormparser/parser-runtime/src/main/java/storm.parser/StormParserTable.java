@@ -5,21 +5,27 @@ import java.util.List;
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
  */
-public class StormParserTable<ELEMENT, TYPE> {
+public class StormParserTable<MAIN, ELEMENT, TYPE> {
 
+    private final MAIN mMain;
     private final String mTableName;
     private final List<StormParserColumn<ELEMENT, TYPE>> mColumns;
 
-    StormParserTable(String tableName, List<StormParserColumn<ELEMENT, TYPE>> columns) {
+    StormParserTable(MAIN main, String tableName, List<StormParserColumn<ELEMENT, TYPE>> columns) {
+        this.mMain = main;
         mTableName = tableName;
         mColumns = columns;
     }
 
-    String getTableName() {
+    public String getTableName() {
         return mTableName;
     }
 
-    List<StormParserColumn<ELEMENT, TYPE>> getColumns() {
+    public MAIN getMain() {
+        return mMain;
+    }
+
+    public List<StormParserColumn<ELEMENT, TYPE>> getElements() {
         return mColumns;
     }
 }

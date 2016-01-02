@@ -12,10 +12,10 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
  */
-class StormParserGenericParser {
+class StormParserTableParser {
 
-    <MAIN, ELEMENT, TYPE> StormParserTable<ELEMENT, TYPE> parseTable(
-            StormParserType<MAIN, ELEMENT, TYPE> type,
+    <MAIN, ELEMENT, TYPE> StormParserTable<MAIN, ELEMENT, TYPE> parseTable(
+            StormParserHelper<MAIN, ELEMENT, TYPE> type,
             MAIN main
     ) throws StormParserException {
 
@@ -34,11 +34,11 @@ class StormParserGenericParser {
             }
         }
 
-        return new StormParserTable<ELEMENT, TYPE>(tableName, parseColumns(type, main));
+        return new StormParserTable<MAIN, ELEMENT, TYPE>(main, tableName, parseColumns(type, main));
     }
 
     <MAIN, ELEMENT, TYPE> List<StormParserColumn<ELEMENT, TYPE>> parseColumns(
-            StormParserType<MAIN, ELEMENT, TYPE> type,
+            StormParserHelper<MAIN, ELEMENT, TYPE> type,
             MAIN main
     ) throws StormParserException {
 
@@ -67,7 +67,7 @@ class StormParserGenericParser {
     }
 
     <MAIN, ELEMENT, TYPE> StormParserColumn<ELEMENT, TYPE> parserColumn(
-            StormParserType<MAIN, ELEMENT, TYPE> type,
+            StormParserHelper<MAIN, ELEMENT, TYPE> type,
             MAIN main,
             ELEMENT element
     ) throws StormParserException {
@@ -127,7 +127,7 @@ class StormParserGenericParser {
     }
 
     <MAIN, ELEMENT, TYPE> StormType parseType(
-            StormParserType<MAIN, ELEMENT, TYPE> type,
+            StormParserHelper<MAIN, ELEMENT, TYPE> type,
             MAIN main,
             ELEMENT element
     ) throws StormParserException {

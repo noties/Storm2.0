@@ -1,8 +1,7 @@
-package storm.parser;
+package storm.parser.converter;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -11,31 +10,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import storm.annotations.Table;
-import storm.parser.metadata.StormMetadata;
-import storm.parser.metadata.StormTableMetadataRuntime;
+import storm.parser.StormParserColumn;
+import storm.parser.StormParserTable;
 import storm.serializer.StormSerializer;
 import storm.types.StormType;
 
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
  */
-class StormParserRuntime<T> implements StormParser<T> {
+class StormConverterRuntime<T> implements StormConverter<T> {
 
-    private final Class<T> mClass;
-    private final StormParserTable<Field, Class<?>> mTable;
-    private final StormInstanceCreator<T> mInstanceCreator;
-    private final StormSerializerProvider mSerializerProvider;
+    private final StormParserTable<Class<?>, Field, Class<?>> mTable;
+    private final StormConverterInstanceCreator<T> mInstanceCreator;
+    private final StormConverterSerializerProvider mSerializerProvider;
 
-    private StormMetadata<T> mMetadata;
-
-    StormParserRuntime(
-            Class<T> aClass,
-            StormParserTable<Field, Class<?>> table,
-            StormInstanceCreator<T> instanceCreator,
-            StormSerializerProvider serializerProvider
+    StormConverterRuntime(
+            StormParserTable<Class<?>, Field, Class<?>> table,
+            StormConverterInstanceCreator<T> instanceCreator,
+            StormConverterSerializerProvider serializerProvider
     ) {
-        this.mClass = aClass;
         this.mTable = table;
         this.mInstanceCreator = instanceCreator;
         this.mSerializerProvider = serializerProvider;
@@ -83,7 +76,7 @@ class StormParserRuntime<T> implements StormParser<T> {
         Field field;
         Class<?> serializerClass;
 
-        for (StormParserColumn<Field, Class<?>> column: mTable.getColumns()) {
+        for (StormParserColumn<Field, Class<?>> column: mTable.getElements()) {
 
             cacheValueIndex = cursorIndexes.get(column.getName());
             if (cacheValueIndex == null || cacheValueIndex < 0) {
@@ -158,7 +151,7 @@ class StormParserRuntime<T> implements StormParser<T> {
     @Override
     public ContentValues toContentValues(T instance, boolean putPrimaryKey) {
 
-        final List<StormParserColumn<Field, Class<?>>> columns = mTable.getColumns();
+        final List<StormParserColumn<Field, Class<?>>> columns = mTable.getElements();
 
         final int outValuesLength = putPrimaryKey ? columns.size() : columns.size() - 1;
         final ContentValues cv = new ContentValues(outValuesLength);
@@ -233,14 +226,6 @@ class StormParserRuntime<T> implements StormParser<T> {
         return cv;
     }
 
-    @Override
-    public synchronized StormMetadata<T> getMetadata() {
-        if (mMetadata == null) {
-            mMetadata = buildMetadata();
-        }
-        return mMetadata;
-    }
-
     private static Map<String, Integer> buildCursorIndexes(Cursor cursor) {
         final String[] names = cursor.getColumnNames();
         final int length = names != null ? names.length : 0;
@@ -257,42 +242,42 @@ class StormParserRuntime<T> implements StormParser<T> {
         return map;
     }
 
-    private StormMetadata<T> buildMetadata() {
-
-        final StormParserColumn<Field, Class<?>> primaryKey;
-        {
-            StormParserColumn<Field, Class<?>> out = null;
-            for (StormParserColumn<Field, Class<?>> column: mTable.getColumns()) {
-                if (column.isPrimaryKey()) {
-                    out = column;
-                    break;
-                }
-            }
-            primaryKey = out;
-        }
-
-        if (primaryKey == null) {
-            throw new RuntimeException("Table `" + mTable.getTableName() + "` has no primary key");
-        }
-
-        final boolean isAutoincrement = primaryKey.isAutoIncrement();
-
-        final Uri notificationUri;
-        {
-            final Table table = mClass.getAnnotation(Table.class);
-            if (table == null) {
-                notificationUri = null;
-            } else {
-                notificationUri = StormNotificationUriBuilder.getDefault(mClass, table.notificationUri());
-            }
-        }
-
-        return new StormTableMetadataRuntime<>(
-                mTable.getTableName(),
-                isAutoincrement,
-                notificationUri,
-                primaryKey.getName(),
-                primaryKey.getElement()
-        );
-    }
+//    private StormMetadata<T> buildMetadata() {
+//
+//        final StormParserColumn<Field, Class<?>> primaryKey;
+//        {
+//            StormParserColumn<Field, Class<?>> out = null;
+//            for (StormParserColumn<Field, Class<?>> column: mTable.getElements()) {
+//                if (column.isPrimaryKey()) {
+//                    out = column;
+//                    break;
+//                }
+//            }
+//            primaryKey = out;
+//        }
+//
+//        if (primaryKey == null) {
+//            throw new RuntimeException("Table `" + mTable.getTableName() + "` has no primary key");
+//        }
+//
+//        final boolean isAutoincrement = primaryKey.isAutoIncrement();
+//
+//        final Uri notificationUri;
+//        {
+//            final Table table = mClass.getAnnotation(Table.class);
+//            if (table == null) {
+//                notificationUri = null;
+//            } else {
+//                notificationUri = StormNotificationUriBuilder.getDefault(mClass, table.notificationUri());
+//            }
+//        }
+//
+//        return new StormTableMetadataRuntime<>(
+//                mTable.getTableName(),
+//                isAutoincrement,
+//                notificationUri,
+//                primaryKey.getName(),
+//                primaryKey.getElement()
+//        );
+//    }
 }

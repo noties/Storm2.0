@@ -15,7 +15,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
  */
-class StormParserTypeRuntime implements StormParserType<Class<?>, Field, Class<?>> {
+class StormParserHelperRuntime implements StormParserHelper<Class<?>, Field, Class<?>> {
 
     @Override
     public <A extends Annotation> A getMainAnnotation(Class<?> aClass, Class<A> type) {

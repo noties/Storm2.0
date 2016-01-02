@@ -11,8 +11,8 @@ import storm.parser.scheme.StormSchemeException;
  */
 public interface StormParser<T> {
 
-    StormScheme scheme() throws StormSchemeException;
-    StormConverter<T> converter() throws StormConverterException;
+    StormScheme scheme() throws StormParserException;
+    StormConverter<T> converter() throws StormParserException;
     StormMetadata<T> metadata();
 
 }

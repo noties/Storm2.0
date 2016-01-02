@@ -9,7 +9,7 @@ import storm.types.StormType;
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
  */
-interface StormParserType<MAIN, ELEMENT, TYPE> {
+interface StormParserHelper<MAIN, ELEMENT, TYPE> {
 
     <A extends Annotation> A getMainAnnotation(MAIN main, Class<A> type);
     <A extends Annotation> A getElementAnnotation(ELEMENT element, Class<A> type);

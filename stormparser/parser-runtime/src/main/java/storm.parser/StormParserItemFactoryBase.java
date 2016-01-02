@@ -5,11 +5,11 @@ import storm.reflect.ReflectionInstanceCreator;
 /**
  * Created by Dimitry Ivanov on 02.01.2016.
  */
-public abstract class StormParserItemProviderBase<I extends StormParserItem> implements StormParserItemProvider<I> {
+public abstract class StormParserItemFactoryBase<I extends StormParserItem> implements StormParserItemFactory<I> {
 
     private final StormParserAptClassNameBuilder mAptNameBuilder;
 
-    public StormParserItemProviderBase(StormParserAptClassNameBuilder aptClassNameBuilder) {
+    public StormParserItemFactoryBase(StormParserAptClassNameBuilder aptClassNameBuilder) {
         this.mAptNameBuilder = aptClassNameBuilder;
     }
 
