@@ -43,7 +43,7 @@ public class StormParserFactory {
         return (StormParser<T>) parser;
     }
 
-    private synchronized <T> StormParser<T> parser(Class<T> cl) throws StormParserException {
+    private <T> StormParser<T> parser(Class<T> cl) {
 
         final Class<T> model = cl;
 

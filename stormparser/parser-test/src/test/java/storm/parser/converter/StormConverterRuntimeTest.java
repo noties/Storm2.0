@@ -1,4 +1,4 @@
-package storm.parser;
+package storm.parser.converter;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -19,6 +19,14 @@ import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Serialize;
 import storm.cursormock.StormCursorMock;
+import storm.parser.ParserAssert;
+import storm.parser.StormParser;
+import storm.parser.StormParserException;
+import storm.parser.StormParserFactory;
+import storm.parser.StormParserItem;
+import storm.parser.StormParserItemFactoryBase;
+import storm.parser.StormParserTable;
+import storm.parser.TestReflectionInstanceCreator;
 import storm.serializer.StormSerializer;
 import storm.serializer.pack.BooleanIntSerializer;
 import storm.serializer.pack.BooleanStringSerializer;
@@ -29,7 +37,7 @@ import storm.serializer.pack.DateLongSerializer;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class StormParserRuntimeTest extends TestCase {
+public class StormConverterRuntimeTest extends TestCase {
 
     private static class Test1 {
 
@@ -86,7 +94,7 @@ public class StormParserRuntimeTest extends TestCase {
     @Test
     public void test1_1() {
 
-        final StormParser<Test1> parser = getParser(Test1.class, null);
+        final StormConverter<Test1> converter = getConverter(Test1.class);
         final Cursor cursor = StormCursorMock.newInstance(
                 Test1.class,
                 new StormCursorMock.Row(2L, "someString", 3.F, -.05D, -88, new byte[]{(byte) 1})
@@ -97,13 +105,13 @@ public class StormParserRuntimeTest extends TestCase {
         }};
 
         cursor.moveToFirst();
-        final Test1 parsed = parser.fromCursor(cursor);
+        final Test1 parsed = converter.fromCursor(cursor);
 
         assertTrue(parsed != null);
         assertTrue(parsed.equals(initial));
 
-        final ContentValues cvWith = parser.toContentValues(initial, true);
-        final ContentValues cvWithout = parser.toContentValues(initial, false);
+        final ContentValues cvWith = converter.toContentValues(initial, true);
+        final ContentValues cvWithout = converter.toContentValues(initial, false);
 
         assertTrue(cvWith.size() == 6);
         assertTrue(cvWithout.size() == 5);
@@ -115,7 +123,7 @@ public class StormParserRuntimeTest extends TestCase {
     @Test
     public void test1_2() {
 
-        final StormParser<Test1> parser = getParser(Test1.class, null);
+        final StormConverter<Test1> converter = getConverter(Test1.class);
         final Cursor cursor = StormCursorMock.newInstance(
                 Test1.class,
                 new StormCursorMock.Row(11L, null, null, null, 15, null)
@@ -126,13 +134,13 @@ public class StormParserRuntimeTest extends TestCase {
         }};
 
         cursor.moveToFirst();
-        final Test1 parsed = parser.fromCursor(cursor);
+        final Test1 parsed = converter.fromCursor(cursor);
 
         assertTrue(parsed != null);
         assertTrue(parsed.equals(initial));
 
-        final ContentValues cvWith = parser.toContentValues(initial, true);
-        final ContentValues cvWithout = parser.toContentValues(initial, false);
+        final ContentValues cvWith = converter.toContentValues(initial, true);
+        final ContentValues cvWithout = converter.toContentValues(initial, false);
 
         assertTrue(cvWith.size() == 6);
         assertTrue(cvWithout.size() == 5);
@@ -188,13 +196,7 @@ public class StormParserRuntimeTest extends TestCase {
 
     @Test
     public void test2() {
-        final StormParser<Test2> parser = getParser(Test2.class, new StormSerializerProvider() {
-            @Override
-            public <IN, OUT> StormSerializer<IN, OUT> provide(Class<IN> cl) {
-                //noinspection unchecked
-                return (StormSerializer<IN, OUT>) storm.reflect.ReflectionInstanceCreator.newInstance(cl);
-            }
-        });
+        final StormConverter<Test2> converter = getConverter(Test2.class);
 
         final long time = System.currentTimeMillis();
 
@@ -208,13 +210,13 @@ public class StormParserRuntimeTest extends TestCase {
         }};
 
         cursor.moveToFirst();
-        final Test2 parsed = parser.fromCursor(cursor);
+        final Test2 parsed = converter.fromCursor(cursor);
 
         assertTrue(parsed != null);
         assertTrue(parsed.equals(initial));
 
-        final ContentValues cvWith = parser.toContentValues(initial, true);
-        final ContentValues cvWithout = parser.toContentValues(initial, false);
+        final ContentValues cvWith = converter.toContentValues(initial, true);
+        final ContentValues cvWithout = converter.toContentValues(initial, false);
 
         assertContentValuesNotNull(cvWith, "id", "someBooleanInt", "someBooleanString", "someDate");
         assertContentValuesNotNull(cvWithout, "someBooleanInt", "someBooleanString", "someDate");
@@ -245,7 +247,7 @@ public class StormParserRuntimeTest extends TestCase {
     @Test
     public void test3_1() {
 
-        final StormParser<Test3> parser = getParser(Test3.class, null);
+        final StormConverter<Test3> converter = getConverter(Test3.class);
 
         final Cursor cursor = StormCursorMock.newInstance(
                 Test3.class,
@@ -261,18 +263,19 @@ public class StormParserRuntimeTest extends TestCase {
         }
 
         cursor.moveToFirst();
-        final List<Test3> parsed = parser.fromCursorList(cursor);
+        final List<Test3> parsed = converter.fromCursorList(cursor);
 
         assertTrue(initial.equals(parsed));
     }
 
-    static <T> StormParser<T> getParser(Class<T> cl, StormSerializerProvider serializerProvider) {
+    static <T> StormConverter<T> getConverter(Class<T> cl) {
+
+        // as it's runtime test, assert, that there is no apt generated class;
+        ParserAssert.assertNoApt(cl, StormConverterAptClassNameBuilder.getInstance());
+
         try {
-            return new StormParserProviderRuntime().provideParser(
-                    cl,
-                    new ReflectionInstanceCreator<T>(cl),
-                    serializerProvider
-            );
+            return new StormParserFactory(new TestReflectionInstanceCreator())
+                    .provide(cl).converter();
         } catch (StormParserException e) {
             throw new RuntimeException(e);
         }
@@ -303,20 +306,6 @@ public class StormParserRuntimeTest extends TestCase {
     private void assertContentValuesNotNull(ContentValues cv, String... notNullKeys) {
         for (String key: notNullKeys) {
             assertTrue(String.format("Asserting not null key `%s` in `%s`", key, cv), cv.get(key) != null);
-        }
-    }
-
-    private static class ReflectionInstanceCreator<T> implements StormInstanceCreator<T> {
-
-        final Class<T> mClass;
-
-        ReflectionInstanceCreator(Class<T> cl) {
-            this.mClass = cl;
-        }
-
-        @Override
-        public T create() {
-            return storm.reflect.ReflectionInstanceCreator.newInstance(mClass);
         }
     }
 }

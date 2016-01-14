@@ -85,7 +85,7 @@ class StormSchemeRuntime implements StormScheme {
 
             int versionWhenAdded;
 
-            for (StormSchemeColumn column: mTable.getElements()) {
+            for (StormParserColumn<Field, Class<?>> column: mTable.getElements()) {
 
                 versionWhenAdded = column.getVersionWhenAdded();
 
@@ -98,7 +98,7 @@ class StormSchemeRuntime implements StormScheme {
 
                     index = column.getIndex();
                     if (index != null) {
-                        indexStatements.add(getColumnIndexStatement(tableName, column.getColumnName(), index));
+                        indexStatements.add(getColumnIndexStatement(tableName, column.getName(), index));
                     }
                 }
 
@@ -110,7 +110,7 @@ class StormSchemeRuntime implements StormScheme {
 
             final List<String> alterStatements = new ArrayList<>();
 
-            for (StormSchemeColumn column: mTable.getElements()) {
+            for (StormParserColumn<Field, Class<?>> column: mTable.getElements()) {
 
                 if (upgradeChecker.isUpgrade(column.getVersionWhenAdded())) {
 
@@ -118,7 +118,7 @@ class StormSchemeRuntime implements StormScheme {
 
                     index = column.getIndex();
                     if (index != null) {
-                        alterStatements.add(getColumnIndexStatement(tableName, column.getColumnName(), index));
+                        alterStatements.add(getColumnIndexStatement(tableName, column.getName(), index));
                     }
                 }
             }
@@ -154,9 +154,9 @@ class StormSchemeRuntime implements StormScheme {
             builder.append(" NOT NULL");
         }
 
-        if (!isTextEmpty(column.getDefaultValue())) {
+        if (!isTextEmpty(column.getDefValue())) {
             builder.append(" DEFAULT ")
-                    .append(column.getDefaultValue());
+                    .append(column.getDefValue());
         }
 
         if (column.isUnique()) {

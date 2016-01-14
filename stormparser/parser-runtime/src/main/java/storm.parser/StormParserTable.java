@@ -10,11 +10,15 @@ public class StormParserTable<MAIN, ELEMENT, TYPE> {
     private final MAIN mMain;
     private final String mTableName;
     private final List<StormParserColumn<ELEMENT, TYPE>> mColumns;
+    private final int mVersionWhenAdded;
+    private final boolean mIsRecreateOnUpgrade;
 
-    StormParserTable(MAIN main, String tableName, List<StormParserColumn<ELEMENT, TYPE>> columns) {
+    StormParserTable(MAIN main, String tableName, List<StormParserColumn<ELEMENT, TYPE>> columns, int versionWhenAdded, boolean isRecreateOnUpgrade) {
         this.mMain = main;
-        mTableName = tableName;
-        mColumns = columns;
+        this.mTableName = tableName;
+        this.mColumns = columns;
+        this.mVersionWhenAdded = versionWhenAdded;
+        this.mIsRecreateOnUpgrade = isRecreateOnUpgrade;
     }
 
     public String getTableName() {
@@ -27,5 +31,13 @@ public class StormParserTable<MAIN, ELEMENT, TYPE> {
 
     public List<StormParserColumn<ELEMENT, TYPE>> getElements() {
         return mColumns;
+    }
+
+    public int getVersionWhenAdded() {
+        return mVersionWhenAdded;
+    }
+
+    public boolean isRecreateOnUpgrade() {
+        return mIsRecreateOnUpgrade;
     }
 }

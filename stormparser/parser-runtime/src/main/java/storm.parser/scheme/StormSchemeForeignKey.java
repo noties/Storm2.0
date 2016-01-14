@@ -3,7 +3,7 @@ package storm.parser.scheme;
 /**
  * Created by Dimitry Ivanov on 09.12.2015.
  */
-class StormSchemeForeignKey {
+public class StormSchemeForeignKey {
 
     private final String mParentTable;
     private final String mParentColumn;

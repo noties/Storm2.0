@@ -68,9 +68,32 @@ class StormParserHelperRuntime implements StormParserHelper<Class<?>, Field, Cla
     }
 
     @Override
-    public Class<?> getSerializeType(Serialize serialize) {
-        final Class<?>[] typeArgs = TypeResolverLight.resolveRawArguments(StormSerializer.class, serialize.value());
-        return typeArgs[1];
+    public Class<?> getSerializeType(Serialize serialize)
+            throws SerializerNotOfTypeException, SerializerTypeNotSqliteType, SerializerWrongTypeArgumentsException {
+
+        // obtain serializer class
+        final Class<?> serializerClass = serialize.value();
+
+        // check if it implements `StormSerializer`
+        if (!StormSerializer.class.isAssignableFrom(serializerClass)) {
+            throw new SerializerNotOfTypeException();
+        }
+
+        // obtain type parameters & check them
+        // IN should be of field's type & OUT should SQLite supported type
+        final Class<?>[] typeParams = TypeResolverLight.resolveRawArguments(StormSerializer.class, serializerClass);
+        if (TypeResolverLight.Unknown.class.equals(typeParams[0])
+                || TypeResolverLight.Unknown.class.equals(typeParams[1])) {
+            throw new SerializerWrongTypeArgumentsException();
+        }
+
+        // now, check if OUT is supported
+        final StormType type = StormType.forValue(typeParams[1]);
+        if (type == null) {
+            throw new SerializerTypeNotSqliteType();
+        }
+
+        return typeParams[1];
     }
 
     @Override

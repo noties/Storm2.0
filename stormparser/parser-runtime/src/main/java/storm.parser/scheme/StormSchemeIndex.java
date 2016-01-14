@@ -3,7 +3,7 @@ package storm.parser.scheme;
 /**
  * Created by Dimitry Ivanov on 09.12.2015.
  */
-class StormSchemeIndex {
+public class StormSchemeIndex {
 
     private final String mIndexName;
     private final String mSorting;

@@ -11,6 +11,10 @@ import storm.types.StormType;
  */
 interface StormParserHelper<MAIN, ELEMENT, TYPE> {
 
+    class SerializerNotOfTypeException extends Exception {}
+    class SerializerTypeNotSqliteType extends Exception {}
+    class SerializerWrongTypeArgumentsException extends Exception {}
+
     <A extends Annotation> A getMainAnnotation(MAIN main, Class<A> type);
     <A extends Annotation> A getElementAnnotation(ELEMENT element, Class<A> type);
 
@@ -23,7 +27,9 @@ interface StormParserHelper<MAIN, ELEMENT, TYPE> {
 
     StormType getType(TYPE type);
 
-    TYPE getSerializeType(Serialize serialize);
+    TYPE getSerializeType(Serialize serialize)
+            throws SerializerNotOfTypeException, SerializerTypeNotSqliteType, SerializerWrongTypeArgumentsException;
+
     TYPE getSerializeValue(Serialize serialize);
 
     TYPE getElementType(ELEMENT element);
