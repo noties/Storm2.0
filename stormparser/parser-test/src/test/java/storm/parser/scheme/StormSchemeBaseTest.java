@@ -21,7 +21,7 @@ import storm.serializer.StormSerializer;
 /**
  * Created by Dimitry Ivanov on 22.12.2015.
  */
-public abstract class SchemeGeneratorBaseTest extends TestCase {
+public abstract class StormSchemeBaseTest extends TestCase {
 
     public abstract StormScheme getScheme(Class<?> cl);
 

@@ -11,7 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PrimaryKey {
-
-    String value() default "";
     boolean autoincrement() default false;
 }

@@ -11,9 +11,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Table {
+
     String value() default "";
     String notificationUri() default "";
+
     boolean generateScheme() default true;
     boolean generateParser() default true;
+    boolean generateMetadata() default true;
+
     boolean recreateOnUpgrade() default false;
 }

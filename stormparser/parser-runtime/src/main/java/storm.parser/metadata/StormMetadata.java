@@ -9,6 +9,8 @@ import storm.parser.StormParserItem;
  */
 public interface StormMetadata<T> extends StormParserItem<T> {
 
+    // primary key cannot have serializer
+
     String tableName();
     Uri notificationUri();
     boolean isPrimaryKeyAutoincrement();
