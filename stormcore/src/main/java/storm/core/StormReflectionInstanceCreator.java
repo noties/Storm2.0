@@ -1,15 +1,15 @@
 package storm.core;
 
-import storm.parser.StormInstanceCreator;
+import storm.parser.converter.StormConverterInstanceCreator;
 
 /**
  * Created by Dimitry Ivanov on 16.12.2015.
  */
-public class ReflectionInstanceCreator<T> implements StormInstanceCreator<T> {
+public class StormReflectionInstanceCreator<T> implements StormConverterInstanceCreator<T> {
 
     final Class<T> mClass;
 
-    public ReflectionInstanceCreator(Class<T> aClass) {
+    public StormReflectionInstanceCreator(Class<T> aClass) {
         mClass = aClass;
     }
 

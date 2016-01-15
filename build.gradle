@@ -32,3 +32,21 @@ task clean(type: Delete) {
     delete rootProject.buildDir
     delete fileTree(dir: "${rootProject.projectDir}${File.separator}.m2")
 }
+
+// gradle exec -Pprj= -Ptsks=task1,task2,task3
+task exec() {
+
+    if (!project.hasProperty("prj") || !project.hasProperty("tsks")) {
+        return
+    }
+
+    final def prj = project.getProperty("prj")
+    final def tasks = project.getProperty("tsks").toString().split(',')
+
+    final def toExec = []
+    for (def task: tasks) {
+        toExec.add("$prj:$task")
+    }
+
+    dependsOn toExec
+}

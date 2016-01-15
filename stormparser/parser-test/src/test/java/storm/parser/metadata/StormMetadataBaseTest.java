@@ -22,7 +22,9 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
     @Table
     private static class TableNoName {
-        @Column long id;
+        @PrimaryKey
+        @Column
+        long id;
     }
 
     @Test
@@ -33,7 +35,9 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
     @Table("my_table_name")
     private static class TableWithName {
-        @Column long id;
+        @PrimaryKey
+        @Column
+        long id;
     }
 
     @Test
@@ -44,7 +48,9 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
     @Table
     private static class UriDefaultClass {
-        @Column long id;
+        @PrimaryKey
+        @Column
+        long id;
     }
 
     @Test
@@ -58,7 +64,9 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
     @Table(notificationUri = "custom://uri")
     private static class UriCustomClass {
-        @Column long id;
+        @PrimaryKey
+        @Column
+        long id;
     }
 
     @Test

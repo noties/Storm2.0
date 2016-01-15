@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 import storm.db.DatabaseModuleScheme;
-import storm.scheme.StormScheme;
-import storm.scheme.StormSchemeException;
+import storm.parser.scheme.StormScheme;
+import storm.parser.scheme.StormSchemeException;
 
 /**
  * Created by Dimitry Ivanov on 14.12.2015.

@@ -39,6 +39,8 @@ import storm.serializer.pack.DateLongSerializer;
 @Config(manifest = Config.NONE)
 public abstract class StormConverterBaseTest extends TestCase {
 
+    abstract <T> StormConverter<T> getConverter(Class<T> cl);
+
     private static class Test1 {
 
         @Override
@@ -267,8 +269,6 @@ public abstract class StormConverterBaseTest extends TestCase {
 
         assertTrue(initial.equals(parsed));
     }
-
-    abstract <T> StormConverter<T> getConverter(Class<T> cl);
 
     private void assertContentValuesNull(ContentValues cv, String... nullKeys) {
 

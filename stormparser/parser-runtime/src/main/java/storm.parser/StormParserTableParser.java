@@ -30,11 +30,13 @@ class StormParserTableParser {
 
         final String tableName;
         final boolean isRecreateOnUpgrade;
+        final String customNotificationUri;
         {
             final Table table = helper.getMainAnnotation(main, Table.class);
             if (table == null) {
                 tableName = null;
                 isRecreateOnUpgrade = false;
+                customNotificationUri = null;
             } else {
                 final String tableValue = table.value();
                 if (tableValue == null || tableValue.length() == 0) {
@@ -43,6 +45,7 @@ class StormParserTableParser {
                     tableName = tableValue;
                 }
                 isRecreateOnUpgrade = table.recreateOnUpgrade();
+                customNotificationUri = table.notificationUri();
             }
         }
 
@@ -56,7 +59,14 @@ class StormParserTableParser {
             }
         }
 
-        return new StormParserTable<MAIN, ELEMENT, TYPE>(main, tableName, parseColumns(helper, main), versionWhenAdded, isRecreateOnUpgrade);
+        return new StormParserTable<MAIN, ELEMENT, TYPE>(
+                main,
+                tableName,
+                parseColumns(helper, main),
+                versionWhenAdded,
+                isRecreateOnUpgrade,
+                customNotificationUri
+        );
     }
 
     <MAIN, ELEMENT, TYPE> List<StormParserColumn<ELEMENT, TYPE>> parseColumns(
@@ -74,7 +84,7 @@ class StormParserTableParser {
         StormParserColumn<ELEMENT, TYPE> column;
 
         for (ELEMENT element: elements) {
-            column = parserColumn(helper, main, element);
+            column = parseColumn(helper, main, element);
             if (column != null) {
                 columns.add(column);
             }
@@ -88,7 +98,7 @@ class StormParserTableParser {
         return columns;
     }
 
-    <MAIN, ELEMENT, TYPE> StormParserColumn<ELEMENT, TYPE> parserColumn(
+    <MAIN, ELEMENT, TYPE> StormParserColumn<ELEMENT, TYPE> parseColumn(
             StormParserHelper<MAIN, ELEMENT, TYPE> helper,
             MAIN main,
             ELEMENT element

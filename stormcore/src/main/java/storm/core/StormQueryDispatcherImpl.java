@@ -10,7 +10,7 @@ import storm.iterator.CursorIterator;
 import storm.iterator.CursorIteratorBaseImpl;
 import storm.iterator.CursorIteratorCached;
 import storm.iterator.CursorIteratorCachedImpl;
-import storm.parser.StormParser;
+import storm.parser.converter.StormConverter;
 import storm.query.Query;
 
 /**
@@ -38,8 +38,8 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
         try {
 
             if (cursor.moveToFirst()) {
-                final StormParser<T> parser = storm.parser(table);
-                return parser.fromCursor(cursor);
+                final StormConverter<T> converter = storm.converter(table);
+                return converter.fromCursor(cursor);
             }
 
         } finally {
@@ -62,9 +62,9 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
                 return Collections.emptyList();
             }
 
-            final StormParser<T> parser = storm.parser(table);
+            final StormConverter<T> converter = storm.converter(table);
 
-            return parser.fromCursorList(cursor);
+            return converter.fromCursorList(cursor);
 
         } finally {
             cursor.close();
@@ -76,7 +76,7 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
         final Cursor cursor = asCursor(storm, query);
         return new CursorIteratorBaseImpl<>(
                 cursor,
-                new CursorIteratorParserBridge<>(storm.parser(table))
+                new CursorIteratorParserBridge<>(storm.converter(table))
         );
     }
 
@@ -85,7 +85,7 @@ class StormQueryDispatcherImpl implements StormQueryDispatcher {
         final Cursor cursor = asCursor(storm, query);
         return new CursorIteratorCachedImpl<>(
                 cursor,
-                new CursorIteratorParserBridge<>(storm.parser(table)),
+                new CursorIteratorParserBridge<>(storm.converter(table)),
                 cacheSize
         );
     }

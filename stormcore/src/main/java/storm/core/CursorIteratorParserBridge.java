@@ -3,21 +3,21 @@ package storm.core;
 import android.database.Cursor;
 
 import storm.iterator.CursorIteratorParser;
-import storm.parser.StormParser;
+import storm.parser.converter.StormConverter;
 
 /**
  * Created by Dimitry Ivanov on 16.12.2015.
  */
 class CursorIteratorParserBridge<T extends StormObject> implements CursorIteratorParser<T> {
 
-    final StormParser<T> mParser;
+    final StormConverter<T> mConverter;
 
-    CursorIteratorParserBridge(StormParser<T> parser) {
-        mParser = parser;
+    CursorIteratorParserBridge(StormConverter<T> converter) {
+        mConverter = converter;
     }
 
     @Override
     public T parse(Cursor cursor) {
-        return mParser.fromCursor(cursor);
+        return mConverter.fromCursor(cursor);
     }
 }

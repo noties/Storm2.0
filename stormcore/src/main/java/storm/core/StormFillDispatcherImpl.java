@@ -5,9 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import java.util.List;
-import java.util.Set;
 
-import storm.parser.StormParser;
+import storm.parser.converter.StormConverter;
 import storm.query.Selection;
 
 /**
@@ -35,7 +34,7 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
 
         //noinspection unchecked
         final Class<T> table = (Class<T>) value.getClass();
-        final StormParser<T> parser = storm.parser(table);
+        final StormConverter<T> converter = storm.converter(table);
 
         // default behavior would be
         // if there is no columns rules - put all except primary key
@@ -44,9 +43,9 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
         final ContentValues cv;
         if (columns == null
                 || columns.size() == 0) {
-            cv = parser.toContentValues(value, false);
+            cv = converter.toContentValues(value, false);
         } else {
-            cv = filterValues(parser.toContentValues(value, true), columns, isInclude);
+            cv = filterValues(converter.toContentValues(value, true), columns, isInclude);
         }
 
         final SQLiteDatabase db = storm.database().open();
@@ -62,7 +61,7 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
             try {
 
                 final int updated = db.update(
-                        parser.getMetadata().getTableName(),
+                        storm.metadata(table).tableName(),
                         cv,
                         where,
                         args

@@ -5,9 +5,10 @@ import android.database.sqlite.SQLiteException;
 
 import java.util.Collection;
 
-import storm.parser.PrimaryKeySelection;
 import storm.parser.StormParser;
-import storm.parser.StormTableMetadata;
+import storm.parser.converter.StormConverter;
+import storm.parser.metadata.PrimaryKeySelection;
+import storm.parser.metadata.StormMetadata;
 import storm.query.Selection;
 
 /**
@@ -25,9 +26,10 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
         //noinspection unchecked
         final Class<T> table = (Class<T>) values.iterator().next().getClass();
         final StormParser<T> parser = storm.parser(table);
-        final StormTableMetadata<T> metadata = parser.getMetadata();
+        final StormMetadata<T> metadata = parser.metadata();
+        final StormConverter<T> converter = storm.converter(table, parser);
 
-        final String tableName = metadata.getTableName();
+        final String tableName = metadata.tableName();
 
         final SQLiteDatabase db = storm.database().open();
 
@@ -48,7 +50,7 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
 
                 for (T value: values) {
 
-                    primaryKeySelection = metadata.getPrimaryKeySelection(value);
+                    primaryKeySelection = metadata.primaryKeySelection(value);
                     selection = new Selection().equals(
                             primaryKeySelection.getPrimaryKeyName(),
                             primaryKeySelection.getPrimaryKeyValue()
@@ -56,7 +58,7 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
 
                     updated += db.update(
                             tableName,
-                            parser.toContentValues(value, false),
+                            converter.toContentValues(value, false),
                             selection.getStatement(),
                             selection.getArguments()
                     );

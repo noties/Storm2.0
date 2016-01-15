@@ -6,14 +6,16 @@ import java.util.Collection;
 
 import storm.db.Database;
 import storm.db.DatabaseModule;
-import storm.parser.StormInstanceCreator;
 import storm.parser.StormParser;
 import storm.parser.StormParserException;
 import storm.parser.StormParserFactory;
+import storm.parser.converter.StormConverter;
+import storm.parser.converter.StormConverterInstanceCreator;
+import storm.parser.converter.StormConverterInstanceCreatorProvider;
+import storm.parser.metadata.StormMetadata;
+import storm.parser.scheme.StormScheme;
 import storm.query.Query;
 import storm.query.Selection;
-import storm.scheme.StormSchemeException;
-import storm.scheme.StormSchemeFactory;
 
 /**
  * Created by Dimitry Ivanov on 30.11.2015.
@@ -26,7 +28,7 @@ public class Storm {
 
     private final StormDispatchers mDispatchers;
     private final Database mDatabase;
-    private final StormSchemeFactory mSchemeFactory;
+//    private final StormSchemeFactory mSchemeFactory;
     private final StormParserFactory mParserFactory;
     private final StormInstanceCreators mInstanceCreators;
 
@@ -38,12 +40,16 @@ public class Storm {
         this.mDispatchers = dispatchers;
         this.mDatabase = new Database(configuration);
         this.mInstanceCreators = new StormInstanceCreators();
-        this.mSchemeFactory = new StormSchemeFactory();
-        this.mParserFactory = new StormParserFactory(new StormParserFactory.InstanceCreatorProvider() {
+        this.mParserFactory = new StormParserFactory(new StormConverterInstanceCreatorProvider() {
             @Override
-            public <T> StormInstanceCreator<T> provide(Class<T> cl) {
-                //noinspection unchecked
-                return (StormInstanceCreator<T>) mInstanceCreators.get((Class<StormObject>) cl);
+            public <T> StormConverterInstanceCreator<T> provide(final Class<T> aClass) {
+                return new StormConverterInstanceCreator<T>() {
+                    @Override
+                    public T create() {
+                        //noinspection unchecked
+                        return (T) mInstanceCreators.get((Class<StormObject>) aClass);
+                    }
+                };
             }
         });
     }
@@ -60,16 +66,12 @@ public class Storm {
 
     public <T extends StormObject> Storm registerTable(Class<T> tableClass) throws StormException {
 
-        try {
-            mDatabase.registerModule(new DatabaseModuleSchemeBridge(mSchemeFactory.provide(tableClass)));
-        } catch (StormSchemeException e) {
-            throw StormException.newInstance(e, "Exception obtaining Scheme for a class: `%s`", tableClass.getName());
-        }
+        mDatabase.registerModule(new DatabaseModuleSchemeBridge(scheme(tableClass)));
 
         return this;
     }
 
-    public <T extends StormObject> Storm registerInstanceCreator(Class<T> table, StormInstanceCreator<T> instanceCreator) {
+    public <T extends StormObject> Storm registerInstanceCreator(Class<T> table, StormConverterInstanceCreator<T> instanceCreator) {
         mInstanceCreators.put(table, instanceCreator);
         return this;
     }
@@ -77,6 +79,7 @@ public class Storm {
     public Database database() {
         return mDatabase;
     }
+
 
 
     public <T extends StormObject> StormParser<T> parser(Class<T> table) throws StormException {
@@ -87,13 +90,41 @@ public class Storm {
         }
     }
 
+    public <T extends StormObject> StormConverter<T> converter(Class<T> table) throws StormException {
+        return converter(table, parser(table));
+    }
+
+    public <T extends StormObject> StormConverter<T> converter(Class<T> table, StormParser<T> parser) throws StormException {
+        try {
+            return parser.converter();
+        } catch (StormParserException e) {
+            throw StormException.newInstance(e, "Exception obtaining converter for a class: `%s`", table.getName());
+        }
+    }
+
+    public <T extends StormObject> StormMetadata<T> metadata(Class<T> table) throws StormException {
+        try {
+            return mParserFactory.provide(table).metadata();
+        } catch (StormParserException e) {
+            throw StormException.newInstance(e, "Exception obtaining metadata for a class: `%s`", table.getName());
+        }
+    }
+
+    public <T extends StormObject> StormScheme scheme(Class<T> table) throws StormException {
+        try {
+            return mParserFactory.provide(table).scheme();
+        } catch (StormParserException e) {
+            throw StormException.newInstance(e, "Exception obtaining scheme for a class: `%s`", table.getName());
+        }
+    }
+
 
     public <T extends StormObject> String tableName(Class<T> table) {
-        return parser(table).getMetadata().getTableName();
+        return metadata(table).tableName();
     }
 
     public <T extends StormObject> Uri notificationUri(Class<T> table) {
-        return parser(table).getMetadata().getNotificationUri();
+        return metadata(table).notificationUri();
     }
 
     public <T extends StormObject> void notifyChange(Class<T> table) {

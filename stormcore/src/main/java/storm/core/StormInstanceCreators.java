@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import storm.lazy.Lazy;
-import storm.parser.StormInstanceCreator;
+import storm.parser.converter.StormConverterInstanceCreator;
 
 /**
  * Created by Dimitry Ivanov on 16.12.2015.
  */
 class StormInstanceCreators {
 
-    private final Lazy<Map<Class<?>, StormInstanceCreator<?>>> mCache = new Lazy<>(new Lazy.LazyProvider<Map<Class<?>, StormInstanceCreator<?>>>() {
+    private final Lazy<Map<Class<?>, StormConverterInstanceCreator<?>>> mCache = new Lazy<>(new Lazy.LazyProvider<Map<Class<?>, StormConverterInstanceCreator<?>>>() {
         @Override
-        public Map<Class<?>, StormInstanceCreator<?>> provide() {
-            return Collections.synchronizedMap(new HashMap<Class<?>, StormInstanceCreator<?>>());
+        public Map<Class<?>, StormConverterInstanceCreator<?>> provide() {
+            return Collections.synchronizedMap(new HashMap<Class<?>, StormConverterInstanceCreator<?>>());
         }
     });
 
@@ -23,17 +23,17 @@ class StormInstanceCreators {
 
     }
 
-    <T extends StormObject> StormInstanceCreator<T> get(Class<T> table) {
-        StormInstanceCreator<?> creator = mCache.get().get(table);
+    <T extends StormObject> StormConverterInstanceCreator<T> get(Class<T> table) {
+        StormConverterInstanceCreator<?> creator = mCache.get().get(table);
         if (creator == null) {
-            creator = new ReflectionInstanceCreator<>(table);
+            creator = new StormReflectionInstanceCreator<>(table);
             mCache.get().put(table, creator);
         }
         //noinspection unchecked
-        return (StormInstanceCreator<T>) creator;
+        return (StormConverterInstanceCreator<T>) creator;
     }
 
-    <T extends StormObject> void put(Class<T> table, StormInstanceCreator<T> creator) {
+    <T extends StormObject> void put(Class<T> table, StormConverterInstanceCreator<T> creator) {
         mCache.get().put(table, creator);
     }
 }

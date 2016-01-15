@@ -26,7 +26,7 @@ public class StormMetadataFactory extends StormParserItemFactoryBase<StormMetada
 
         return new StormMetadataRuntime<>(
                 table.getTableName(),
-                false,
+                primaryKeyColumn.isAutoIncrement(),
                 StormNotificationUriBuilder.getDefault(table.getMain(), table.getCustomNotificationUri()),
                 primaryKeyColumn.getName(),
                 primaryKeyColumn.getElement()

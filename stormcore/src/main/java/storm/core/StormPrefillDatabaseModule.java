@@ -7,7 +7,8 @@ import java.util.List;
 
 import storm.db.DatabaseModuleAdapter;
 import storm.parser.StormParser;
-import storm.parser.StormTableMetadata;
+import storm.parser.converter.StormConverter;
+import storm.parser.metadata.StormMetadata;
 
 /**
  * Created by Dimitry Ivanov on 24.12.2015.
@@ -31,9 +32,12 @@ public class StormPrefillDatabaseModule<T extends StormObject> extends DatabaseM
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        final StormParser<T> parser = mStorm.parser(mTable);
-        final StormTableMetadata<T> metadata = parser.getMetadata();
-        final String tableName = metadata.getTableName();
+        final StormParser<T> parser         = mStorm.parser(mTable);
+        final StormMetadata<T> metadata     = parser.metadata();
+        final StormConverter<T> converter   = mStorm.converter(mTable, parser);
+
+
+        final String tableName = metadata.tableName();
         final boolean putPrimaryKey = !metadata.isPrimaryKeyAutoincrement();
 
         db.beginTransaction();
@@ -45,7 +49,7 @@ public class StormPrefillDatabaseModule<T extends StormObject> extends DatabaseM
             // so we have to execute insert statements by our selves
 
             for (T item: mProvider.provide()) {
-                db.insert(tableName, null, parser.toContentValues(item, putPrimaryKey));
+                db.insert(tableName, null, converter.toContentValues(item, putPrimaryKey));
             }
 
             db.setTransactionSuccessful();
