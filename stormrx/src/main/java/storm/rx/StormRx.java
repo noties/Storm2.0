@@ -4,11 +4,10 @@ import java.util.Collection;
 
 import storm.core.Storm;
 import storm.core.StormException;
-import storm.core.StormFill;
 import storm.core.StormObject;
 import storm.db.Database;
 import storm.db.DatabaseModule;
-import storm.parser.StormInstanceCreator;
+import storm.parser.converter.StormConverterInstanceCreator;
 import storm.query.Query;
 import storm.query.Selection;
 
@@ -51,7 +50,7 @@ public class StormRx extends Storm {
     }
 
     @Override
-    public <T extends StormObject> StormRx registerInstanceCreator(Class<T> table, StormInstanceCreator<T> instanceCreator) {
+    public <T extends StormObject> StormRx registerInstanceCreator(Class<T> table, StormConverterInstanceCreator<T> instanceCreator) {
         return (StormRx) super.registerInstanceCreator(table, instanceCreator);
     }
 
