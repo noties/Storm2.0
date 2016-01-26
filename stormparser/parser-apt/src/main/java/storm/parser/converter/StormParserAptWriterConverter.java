@@ -3,9 +3,7 @@ package storm.parser.converter;
 import javax.annotation.processing.Filer;
 import javax.lang.model.util.Elements;
 
-import storm.parser.StormParserAptClassNameBuilder;
 import storm.parser.StormParserAptData;
-import storm.parser.StormParserAptWriter;
 import storm.parser.StormParserAptWriterBase;
 
 /**
@@ -18,12 +16,7 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
     }
 
     @Override
-    protected boolean shouldWriteToFile(StormParserAptData data) {
-        return data.isShouldGenerateConverter();
-    }
-
-    @Override
-    protected String getSourceCode(StormParserAptData data) throws Throwable {
+    protected String getSourceCode(String packageName, String className, StormParserAptData data) throws Throwable {
         return null;
     }
 }

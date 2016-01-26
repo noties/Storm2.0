@@ -18,12 +18,7 @@ public class StormParserAptWriterMetadata extends StormParserAptWriterBase {
     }
 
     @Override
-    protected boolean shouldWriteToFile(StormParserAptData data) {
-        return data.isShouldGenerateMetadata();
-    }
-
-    @Override
-    protected String getSourceCode(StormParserAptData data) throws Throwable {
+    protected String getSourceCode(String packageName, String className, StormParserAptData data) throws Throwable {
         return null;
     }
 }

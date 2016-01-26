@@ -19,7 +19,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import storm.annotations.Serialize;
-import storm.serializer.StormSerializer;
+import storm.parser.converter.serializer.StormSerializer;
 import storm.types.StormType;
 
 /**

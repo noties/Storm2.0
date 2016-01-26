@@ -1,12 +1,25 @@
 package storm.parser;
 
-import java.lang.reflect.Field;
+import storm.reflect.ReflectionInstanceCreator;
 
 /**
  * Created by Dimitry Ivanov on 02.01.2016.
  */
-public interface StormParserItemFactory<I extends StormParserItem> {
+class StormParserItemFactory {
+    <T, I extends StormParserItem<T>> I provide(StormParserAptClassNameBuilder nameBuilder, Class<T> cl, Object... args) {
+        Class<?> aptClass;
+        try {
+            aptClass = Class.forName(
+                    nameBuilder.fullName(
+                            cl.getPackage().getName(),
+                            cl.getSimpleName()
+                    )
+            );
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
 
-    <T> T apt(Class<?> cl);
-    <T> I runtime(StormParserTable<Class<?>, Field, Class<?>> table) throws StormParserException;
+        //noinspection unchecked
+        return (I) ReflectionInstanceCreator.newInstance(aptClass, args);
+    }
 }

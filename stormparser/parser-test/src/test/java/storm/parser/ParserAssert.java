@@ -7,23 +7,13 @@ import org.junit.Assert;
  */
 public class ParserAssert {
 
-    public static void assertNoApt(Class<?> cl, StormParserAptClassNameBuilder builder) {
-        Assert.assertTrue(!apt(cl, builder));
-    }
-
-    public static void assertApt(Class<?> cl, StormParserAptClassNameBuilder builder) {
+    public static void assertApt(Class<?> cl, StormParserAptClassNameBuilder builder, Object... args) {
         Assert.assertTrue(apt(cl, builder));
     }
 
-    private static boolean apt(Class<?> cl, StormParserAptClassNameBuilder builder) {
-        final StormParserItemFactoryBase base = new StormParserItemFactoryBase(builder) {
-            @Override
-            public StormParserItem runtime(StormParserTable stormParserTable) throws StormParserException {
-                return null;
-            }
-        };
+    private static boolean apt(Class<?> cl, StormParserAptClassNameBuilder builder, Object... args) {
 
-        //noinspection unchecked
-        return base.apt(cl) != null;
+        final StormParserItemFactory factory = new StormParserItemFactory();
+        return factory.provide(builder, cl, args) != null;
     }
 }

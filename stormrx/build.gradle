@@ -11,7 +11,6 @@ dependencies {
             STORM_ITERATOR,
             STORM_QUERY,
             STORM_REFLECT,
-            STORM_SCHEME_RUNTIME,
             STORM_PARSER_RUNTIME,
             STORM_LAZY,
             STORM_CORE

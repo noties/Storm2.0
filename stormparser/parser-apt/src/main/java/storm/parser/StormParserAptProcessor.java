@@ -18,6 +18,7 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import storm.annotations.Table;
+import storm.parser.columns.StormParserAptWriterColumns;
 import storm.parser.converter.StormParserAptWriterConverter;
 import storm.parser.metadata.StormParserAptWriterMetadata;
 import storm.parser.scheme.StormParserAptWriterScheme;
@@ -47,7 +48,8 @@ public class StormParserAptProcessor extends AbstractProcessor {
         mWriters = Arrays.asList(
                 (StormParserAptWriter) new StormParserAptWriterScheme(elements, filer),
                 new StormParserAptWriterMetadata(elements, filer),
-                new StormParserAptWriterConverter(elements, filer)
+                new StormParserAptWriterConverter(elements, filer),
+                new StormParserAptWriterColumns(elements, filer)
         );
     }
 
@@ -72,8 +74,7 @@ public class StormParserAptProcessor extends AbstractProcessor {
                 try {
                     process(table);
                 } catch (Throwable t) {
-                    mMessager.printMessage(Diagnostic.Kind.ERROR, "Exception during processing element");
-                    log(Diagnostic.Kind.ERROR, "Exception during processing element `%s`, exception: %s, msg: %s", table, t.getClass().getSimpleName(), t.getMessage());
+                    log(Diagnostic.Kind.WARNING, "Exception during processing element `%s`, exception: %s, msg: %s", table, t.getClass().getSimpleName(), t.getMessage());
                 }
             }
         }
@@ -91,6 +92,10 @@ public class StormParserAptProcessor extends AbstractProcessor {
         final TypeElement typeElement = (TypeElement) table;
 
         final StormParserAptData data = mParser.parseData(typeElement);
+
+        if (data == null) {
+            return;
+        }
 
         // so, parse
         for (StormParserAptWriter writer: mWriters) {

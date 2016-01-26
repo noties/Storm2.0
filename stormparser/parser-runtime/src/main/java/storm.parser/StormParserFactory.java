@@ -1,110 +1,90 @@
 package storm.parser;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import storm.parser.converter.StormConverter;
-import storm.parser.converter.StormConverterFactory;
+import storm.parser.converter.StormConverterAptClassNameBuilder;
 import storm.parser.converter.StormConverterInstanceCreatorProvider;
+import storm.parser.converter.serializer.StormSerializer;
+import storm.parser.converter.serializer.StormSerializerProvider;
 import storm.parser.metadata.StormMetadata;
-import storm.parser.metadata.StormMetadataFactory;
+import storm.parser.metadata.StormMetadataAptClassNameBuilder;
 import storm.parser.scheme.StormScheme;
-import storm.parser.scheme.StormSchemeFactory;
+import storm.parser.scheme.StormSchemeAptNameBuilder;
+import storm.reflect.ReflectionInstanceCreator;
 
 /**
  * Created by Dimitry Ivanov on 02.01.2016.
  */
 public class StormParserFactory {
 
-    // stateless factories
-    private static final StormSchemeFactory SCHEME_FACTORY = new StormSchemeFactory();
-    private static final StormMetadataFactory METADATA_FACTORY = new StormMetadataFactory();
+    private static final StormParserItemFactory FACTORY = new StormParserItemFactory();
 
-    private static final StormParserTableParser TABLE_PARSER = new StormParserTableParser();
-    private static final StormParserHelperRuntime TABLE_PARSER_RUNTIME = new StormParserHelperRuntime();
+    private final StormConverterInstanceCreatorProvider mInstanceCreatorProvider;
+    private final StormSerializerProvider mSerializerProvider;
 
-    private final Map<Class<?>, StormParser<?>> mCache;
-    private final StormConverterFactory mConverterFactory;
+    private final Map<Class<?>, StormParser<?>> mCachedParsers;
 
     public StormParserFactory(StormConverterInstanceCreatorProvider instanceCreatorProvider) {
-        this.mCache = Collections.synchronizedMap(new HashMap<Class<?>, StormParser<?>>());
-        this.mConverterFactory = new StormConverterFactory(instanceCreatorProvider, new StormConverterSerializerProviderImpl());
+        this.mInstanceCreatorProvider = instanceCreatorProvider;
+        this.mSerializerProvider = new ParserSerializerProvider();
+        this.mCachedParsers = new HashMap<>();
     }
 
-    public <T> StormParser<T> provide(Class<T> cl) throws StormParserException {
-        StormParser<?> parser = mCache.get(cl);
+    public synchronized <T> StormParser<T> provide(Class<T> cl) throws StormParserException {
+        StormParser<?> parser = mCachedParsers.get(cl);
         if (parser == null) {
             parser = parser(cl);
-            mCache.put(cl, parser);
+            mCachedParsers.put(cl, parser);
         }
         //noinspection unchecked
         return (StormParser<T>) parser;
     }
 
-    private <T> StormParser<T> parser(Class<T> cl) {
+    private <T> StormParser<T> parser(final Class<T> cl) {
 
-        final Class<T> model = cl;
-
-        // only runtime
-        final ParserLazy<StormParserTable<Class<?>, Field, Class<?>>, StormParserException> table
-                = new ParserLazy<>(new ParserLazy.Provider<StormParserTable<Class<?>, Field, Class<?>>, StormParserException>() {
+        final ParserLazy<StormScheme> scheme = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormScheme>() {
             @Override
-            public StormParserTable<Class<?>, Field, Class<?>> provide() throws StormParserException {
-                return TABLE_PARSER.parseTable(TABLE_PARSER_RUNTIME, model);
+            public StormScheme provide() throws StormParserException {
+                return FACTORY.provide(StormSchemeAptNameBuilder.getInstance(), cl);
             }
         });
 
-        final ParserLazy<StormScheme, StormParserException> scheme;
-        final ParserLazy<StormConverter<T>, StormParserException> converter;
-        final ParserLazy<StormMetadata<T>, StormParserException> metadata;
+        final ParserLazy<StormConverter<T>> converter = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormConverter<T>>() {
+            @Override
+            public StormConverter<T> provide() throws StormParserException {
+                return FACTORY.provide(StormConverterAptClassNameBuilder.getInstance(), cl, mInstanceCreatorProvider, mSerializerProvider);
+            }
+        });
 
-        {
-            scheme = new ParserLazy<>(new ParserLazy.Provider<StormScheme, StormParserException>() {
-                @Override
-                public StormScheme provide() throws StormParserException {
-                    final StormScheme aptScheme = SCHEME_FACTORY.apt(model);
-                    if (aptScheme != null) {
-                        return aptScheme;
-                    }
-
-                    return SCHEME_FACTORY.runtime(table.get());
-                }
-            });
-        }
-
-        {
-            converter = new ParserLazy<>(new ParserLazy.Provider<StormConverter<T>, StormParserException>() {
-                @Override
-                public StormConverter<T> provide() throws StormParserException {
-
-                    final StormConverter<T> aptConverter = mConverterFactory.apt(model);
-
-                    if (aptConverter != null) {
-                        return aptConverter;
-                    }
-
-                    return mConverterFactory.runtime(table.get());
-                }
-            });
-        }
-
-        {
-            metadata = new ParserLazy<>(new ParserLazy.Provider<StormMetadata<T>, StormParserException>() {
-                @Override
-                public StormMetadata<T> provide() throws StormParserException {
-
-                    final StormMetadata<T> aptMetadata = METADATA_FACTORY.apt(model);
-                    if (aptMetadata != null) {
-                        return aptMetadata;
-                    }
-
-                    return METADATA_FACTORY.runtime(table.get());
-                }
-            });
-        }
+        final ParserLazy<StormMetadata<T>> metadata = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormMetadata<T>>() {
+            @Override
+            public StormMetadata<T> provide() throws StormParserException {
+                return FACTORY.provide(StormMetadataAptClassNameBuilder.getInstance(), cl);
+            }
+        });
 
         return new StormParserImpl<>(scheme, converter, metadata);
+    }
+
+    private static class ParserSerializerProvider implements StormSerializerProvider {
+
+        private final Map<Class<?>, StormSerializer> mCache;
+
+        ParserSerializerProvider() {
+            this.mCache = new HashMap<>();
+        }
+
+        @Override
+        public synchronized <IN, OUT> StormSerializer<IN, OUT> provide(Class<IN> cl) {
+            StormSerializer<?, ?> serializer = mCache.get(cl);
+            if (serializer == null) {
+                serializer = (StormSerializer<?, ?>) ReflectionInstanceCreator.newInstance(cl);
+                mCache.put(cl, serializer);
+            }
+            //noinspection unchecked
+            return (StormSerializer<IN, OUT>) serializer;
+        }
     }
 }

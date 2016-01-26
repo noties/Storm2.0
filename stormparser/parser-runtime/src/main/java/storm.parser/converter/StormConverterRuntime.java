@@ -1,3 +1,4 @@
+/*
 package storm.parser.converter;
 
 import android.content.ContentValues;
@@ -10,24 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import storm.parser.StormParserColumn;
-import storm.parser.StormParserTable;
+import storm.parser.converter.serializer.StormSerializerProvider;
 import storm.serializer.StormSerializer;
 import storm.types.StormType;
 
+*/
 /**
  * Created by Dimitry Ivanov on 13.12.2015.
- */
+ *//*
+
 class StormConverterRuntime<T> implements StormConverter<T> {
 
     private final StormParserTable<Class<?>, Field, Class<?>> mTable;
     private final StormConverterInstanceCreator<T> mInstanceCreator;
-    private final StormConverterSerializerProvider mSerializerProvider;
+    private final StormSerializerProvider mSerializerProvider;
 
     StormConverterRuntime(
             StormParserTable<Class<?>, Field, Class<?>> table,
             StormConverterInstanceCreator<T> instanceCreator,
-            StormConverterSerializerProvider serializerProvider
+            StormSerializerProvider serializerProvider
     ) {
         this.mTable = table;
         this.mInstanceCreator = instanceCreator;
@@ -241,43 +243,5 @@ class StormConverterRuntime<T> implements StormConverter<T> {
 
         return map;
     }
-
-//    private StormMetadata<T> buildMetadata() {
-//
-//        final StormParserColumn<Field, Class<?>> primaryKey;
-//        {
-//            StormParserColumn<Field, Class<?>> out = null;
-//            for (StormParserColumn<Field, Class<?>> column: mTable.getElements()) {
-//                if (column.isPrimaryKey()) {
-//                    out = column;
-//                    break;
-//                }
-//            }
-//            primaryKey = out;
-//        }
-//
-//        if (primaryKey == null) {
-//            throw new RuntimeException("Table `" + mTable.getTableName() + "` has no primary key");
-//        }
-//
-//        final boolean isAutoincrement = primaryKey.isAutoIncrement();
-//
-//        final Uri notificationUri;
-//        {
-//            final Table table = mClass.getAnnotation(Table.class);
-//            if (table == null) {
-//                notificationUri = null;
-//            } else {
-//                notificationUri = StormNotificationUriBuilder.getDefault(mClass, table.notificationUri());
-//            }
-//        }
-//
-//        return new StormTableMetadataRuntime<>(
-//                mTable.getTableName(),
-//                isAutoincrement,
-//                notificationUri,
-//                primaryKey.getName(),
-//                primaryKey.getElement()
-//        );
-//    }
 }
+*/

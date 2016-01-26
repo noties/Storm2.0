@@ -23,18 +23,16 @@ public class StormParserAptDataParser {
 
     StormParserAptData parseData(TypeElement table) throws Throwable {
 
-        final StormParserTable<TypeElement, Element, TypeMirror> parsedTable = mTableParser.parseTable(mHelper, table);
-
         final Table tableAnnotation = mHelper.getMainAnnotation(table, Table.class);
 
-        final boolean shouldGenerateScheme = tableAnnotation.generateScheme();
-        final boolean shouldGenerateMetadata = tableAnnotation.generateMetadata();
-        final boolean shouldGenerateConverter = tableAnnotation.generateConverter();
+        if (tableAnnotation == null
+                || !tableAnnotation.apt()) {
+            return null;
+        }
+
+        final StormParserTable<TypeElement, Element, TypeMirror> parsedTable = mTableParser.parseTable(mHelper, table);
 
         return new StormParserAptData(
-                shouldGenerateScheme,
-                shouldGenerateMetadata,
-                shouldGenerateConverter,
                 parsedTable
         );
     }

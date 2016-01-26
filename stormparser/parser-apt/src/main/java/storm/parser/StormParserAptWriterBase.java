@@ -23,25 +23,30 @@ public abstract class StormParserAptWriterBase implements StormParserAptWriter {
         this.mBuilder = builder;
     }
 
-    protected abstract boolean shouldWriteToFile(StormParserAptData data);
-    protected abstract String getSourceCode(StormParserAptData data) throws Throwable;
+    protected abstract String getSourceCode(
+            String packageName,
+            String className,
+            StormParserAptData data
+    ) throws Throwable;
 
     @Override
     public final void write(StormParserAptData data) throws Throwable {
-        if (!shouldWriteToFile(data)) {
-            return;
-        }
 
         final TypeElement element = data.getTable().getMain();
 
-        final String javaFileName = mBuilder.fullName(
-                mElements.getPackageOf(element).getQualifiedName().toString(),
-                element.getSimpleName().toString()
-        );
+        final String pkg        = mElements.getPackageOf(element).getQualifiedName().toString();
 
-        final String source = getSourceCode(data);
+        final String realClassName = element.getSimpleName().toString();
+        final String outClassName = mBuilder.className(realClassName);
 
-        writeToJavaFile(javaFileName, source);
+        final String javaFileName = mBuilder.fullName(pkg, realClassName);
+
+        final String source = getSourceCode(pkg, outClassName, data);
+
+        if (source != null
+                && source.length() > 0) {
+            writeToJavaFile(javaFileName, source);
+        }
     }
 
     private void writeToJavaFile(String javaFileName, String source) throws Throwable {

@@ -13,7 +13,7 @@ public class StormMetadataRuntimeTest extends StormMetadataBaseTest {
     @Override
     <T> StormMetadata<T> getMetadata(Class<T> cl) {
 
-        ParserAssert.assertNoApt(cl, StormMetadataAptClassNameBuilder.getInstance());
+//        ParserAssert.assertNoApt(cl, StormMetadataAptClassNameBuilder.getInstance());
 
         try {
             return new StormParserFactory(new TestReflectionInstanceCreator())

@@ -5,9 +5,6 @@ apply from: '../../common-all-dependencies.gradle'
 dependencies {
 
     compileModules(delegate,
-            STORM_ANNOTATIONS,
-            STORM_TYPES,
-            STORM_SERIALIZER,
             STORM_REFLECT,
             STORM_LAZY
     )

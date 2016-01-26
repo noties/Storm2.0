@@ -1,28 +1,15 @@
 package storm.parser;
 
+import storm.lazy.LazyThrows;
+
 /**
- * Created by Dimitry Ivanov on 02.01.2016.
+ * Created by Dimitry Ivanov on 24.01.2016.
  */
-class ParserLazy<V, T extends Throwable> {
+class ParserLazy<V extends StormParserItem> extends LazyThrows<V, StormParserException> {
 
-    interface Provider<V, T extends Throwable> {
-        V provide() throws T;
-    }
+    interface ParserLazyProvider<V> extends LazyThrowsProvider<V, StormParserException> {}
 
-    private final Provider<V, T> mProvider;
-
-    private V mValue;
-    private volatile boolean mIsProviderCalled;
-
-    ParserLazy(Provider<V, T> provider) {
-        this.mProvider = provider;
-    }
-
-    public synchronized V get() throws T {
-        if (!mIsProviderCalled) {
-            mValue = mProvider.provide();
-            mIsProviderCalled = true;
-        }
-        return mValue;
+    public ParserLazy(LazyThrowsProvider<V, StormParserException> provider) {
+        super(provider);
     }
 }

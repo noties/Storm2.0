@@ -1,14 +1,25 @@
 apply from: '../../common-android.gradle'
 apply from: '../../common-all-dependencies.gradle'
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+apply plugin: 'com.neenbedankt.android-apt'
+
 dependencies {
     compileModules(delegate,
             STORM_ANNOTATIONS,
             STORM_TYPES,
-            STORM_SERIALIZER,
             STORM_PARSER_RUNTIME,
-            STORM_PARSER_APT,
             STORM_CURSOR_MOCK,
-            STORM_REFLECT
+            STORM_REFLECT,
+            STORM_LAZY
     )
+    testApt "${GROUP}:${STORM_PARSER_APT}:${VERSION_NAME}@jar"
 }

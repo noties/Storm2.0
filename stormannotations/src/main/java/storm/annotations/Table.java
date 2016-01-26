@@ -15,9 +15,5 @@ public @interface Table {
     String value() default "";
     String notificationUri() default "";
 
-    boolean generateScheme() default true;
-    boolean generateMetadata() default true;
-    boolean generateConverter() default true;
-
     boolean recreateOnUpgrade() default false;
 }

@@ -7,7 +7,6 @@ dependencies {
     compileModules(delegate,
             STORM_PARSER_RUNTIME,
             STORM_ANNOTATIONS,
-            STORM_TYPES,
-            STORM_SERIALIZER
+            STORM_TYPES
     )
 }
