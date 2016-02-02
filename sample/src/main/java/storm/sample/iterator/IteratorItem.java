@@ -8,15 +8,15 @@ import storm.core.StormObject;
 /**
  * Created by Dimitry Ivanov on 25.12.2015.
  */
-@Table
+@Table(recreateOnUpgrade = true)
 class IteratorItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
-    private long id;
+    long id;
 
     @Column
-    private String data;
+    String data;
 
     public long getId() {
         return id;

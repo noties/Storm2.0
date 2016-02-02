@@ -16,14 +16,14 @@ class VersioningNewTable implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
-    private long id;
+    long id;
 
     @Column
-    private String data;
+    String data;
 
     @NewColumn(3)
     @Column
-    private double newField;
+    double newField;
 
     public long getId() {
         return id;

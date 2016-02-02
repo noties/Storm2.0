@@ -10,8 +10,6 @@ import storm.parser.StormParser;
 import storm.parser.StormParserException;
 import storm.parser.StormParserFactory;
 import storm.parser.converter.StormConverter;
-import storm.parser.converter.StormConverterInstanceCreator;
-import storm.parser.converter.StormConverterInstanceCreatorProvider;
 import storm.parser.metadata.StormMetadata;
 import storm.parser.scheme.StormScheme;
 import storm.query.Query;
@@ -28,9 +26,7 @@ public class Storm {
 
     private final StormDispatchers mDispatchers;
     private final Database mDatabase;
-//    private final StormSchemeFactory mSchemeFactory;
     private final StormParserFactory mParserFactory;
-    private final StormInstanceCreators mInstanceCreators;
 
     protected Storm (Database.Configuration configuration) {
         this(new StormDispatchersImpl(), configuration);
@@ -39,19 +35,7 @@ public class Storm {
     Storm(StormDispatchers dispatchers, Database.Configuration configuration) {
         this.mDispatchers = dispatchers;
         this.mDatabase = new Database(configuration);
-        this.mInstanceCreators = new StormInstanceCreators();
-        this.mParserFactory = new StormParserFactory(new StormConverterInstanceCreatorProvider() {
-            @Override
-            public <T> StormConverterInstanceCreator<T> provide(final Class<T> aClass) {
-                return new StormConverterInstanceCreator<T>() {
-                    @Override
-                    public T create() {
-                        //noinspection unchecked
-                        return (T) mInstanceCreators.get((Class<StormObject>) aClass);
-                    }
-                };
-            }
-        });
+        this.mParserFactory = new StormParserFactory();
     }
 
     public Storm registerDatabaseModule(DatabaseModule module) {
@@ -68,11 +52,6 @@ public class Storm {
 
         mDatabase.registerModule(new DatabaseModuleSchemeBridge(scheme(tableClass)));
 
-        return this;
-    }
-
-    public <T extends StormObject> Storm registerInstanceCreator(Class<T> table, StormConverterInstanceCreator<T> instanceCreator) {
-        mInstanceCreators.put(table, instanceCreator);
         return this;
     }
 
@@ -107,6 +86,14 @@ public class Storm {
             return mParserFactory.provide(table).metadata();
         } catch (StormParserException e) {
             throw StormException.newInstance(e, "Exception obtaining metadata for a class: `%s`", table.getName());
+        }
+    }
+
+    public <T extends StormObject> StormMetadata<T> metadata(Class<T> table, StormParser<T> parser) throws StormException {
+        try {
+            return parser.metadata();
+        } catch (StormParserException e) {
+            throw StormException .newInstance(e, "Exception obtaining metadata for a class: %s", table.getName());
         }
     }
 

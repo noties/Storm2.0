@@ -33,7 +33,7 @@ public class StormPrefillDatabaseModule<T extends StormObject> extends DatabaseM
     public void onCreate(SQLiteDatabase db) {
 
         final StormParser<T> parser         = mStorm.parser(mTable);
-        final StormMetadata<T> metadata     = parser.metadata();
+        final StormMetadata<T> metadata     = mStorm.metadata(mTable, parser);
         final StormConverter<T> converter   = mStorm.converter(mTable, parser);
 
 

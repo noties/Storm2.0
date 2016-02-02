@@ -13,10 +13,10 @@ class PreFillItem implements StormObject {
 
     @PrimaryKey
     @Column
-    private String key;
+    String key;
 
     @Column
-    private String value;
+    String value;
 
     public PreFillItem() {
 

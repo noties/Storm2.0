@@ -7,7 +7,6 @@ import storm.core.StormException;
 import storm.core.StormObject;
 import storm.db.Database;
 import storm.db.DatabaseModule;
-import storm.parser.converter.StormConverterInstanceCreator;
 import storm.query.Query;
 import storm.query.Selection;
 
@@ -49,12 +48,6 @@ public class StormRx extends Storm {
         return (StormRx) super.registerTable(tableClass);
     }
 
-    @Override
-    public <T extends StormObject> StormRx registerInstanceCreator(Class<T> table, StormConverterInstanceCreator<T> instanceCreator) {
-        return (StormRx) super.registerInstanceCreator(table, instanceCreator);
-    }
-
-    // todo, find out whether or not it's completely useless
     public StormObservablePreprocessor observablePreprocessor() {
         if (mObservablePreprocessor == null) {
             return StormObservablePreprocessorNoOp.getInstance();

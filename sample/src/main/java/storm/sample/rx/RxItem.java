@@ -15,15 +15,15 @@ class RxItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
-    private long id;
+    long id;
 
     @Column
-    private String data;
+    String data;
 
     @Column
     @NewColumn(2)
     @Default("def") // it's always good to have @Default for new columns
-    private String column;
+    String column;
 
     public long getId() {
         return id;

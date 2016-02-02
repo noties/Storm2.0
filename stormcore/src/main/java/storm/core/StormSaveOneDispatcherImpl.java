@@ -22,7 +22,7 @@ class StormSaveOneDispatcherImpl implements StormSaveOneDispatcher {
         //noinspection unchecked
         final Class<T> table = (Class<T>) value.getClass();
         final StormParser<T> parser = storm.parser(table);
-        final StormMetadata<T> metadata = parser.metadata();
+        final StormMetadata<T> metadata = storm.metadata(table, parser);
         final StormConverter<T> converter = storm.converter(table, parser);
 
         final ContentValues cv = converter.toContentValues(value, !metadata.isPrimaryKeyAutoincrement());

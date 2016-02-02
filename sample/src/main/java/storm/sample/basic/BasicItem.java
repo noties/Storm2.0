@@ -7,7 +7,7 @@ import storm.annotations.PrimaryKey;
 import storm.annotations.Serialize;
 import storm.annotations.Table;
 import storm.core.StormObject;
-import storm.serializer.pack.BooleanIntSerializer;
+import storm.parser.converter.serializer.BooleanIntSerializer;
 
 /**
  * Created by Dimitry Ivanov on 25.12.2015.
@@ -17,13 +17,13 @@ class BasicItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
-    private long id;
+    long id;
 
     @Column
-    private String text;
+    String text;
 
     @Column
-    private double real;
+    double real;
 
     // Note, that for booleans fields serializer must be specified
     // There is no support for them out-of-box.
@@ -32,7 +32,7 @@ class BasicItem implements StormObject {
     @Column
     @Default("0")
     @Serialize(BooleanIntSerializer.class)
-    private boolean someBool;
+    boolean someBool;
 
     // empty constructor
     // note, that if object has no empty constructor an `InstanceCreator` should be registered

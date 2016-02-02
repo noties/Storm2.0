@@ -61,7 +61,6 @@ public class IteratorSampleActivity extends BaseActivity {
                     }
                 });
 
-        stormRx.registerDatabaseModule(new ReCreateOnUpgradeModule());
         stormRx.registerDatabaseModule(new StormPrefillDatabaseModule<IteratorItem>(stormRx, IteratorItem.class, new PreFillModule()));
 
         mSubscription = stormRx.query(IteratorItem.class)
@@ -169,18 +168,6 @@ public class IteratorSampleActivity extends BaseActivity {
                 list.add(new IteratorItem().setData("Item #" + i));
             }
             return list;
-        }
-    }
-
-    private static class ReCreateOnUpgradeModule extends DatabaseModuleAdapter {
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IteratorItem");
-            final IteratorItem_StormScheme scheme = new IteratorItem_StormScheme();
-            for (String statement: scheme.onCreate()) {
-                db.execSQL(statement);
-            }
         }
     }
 }

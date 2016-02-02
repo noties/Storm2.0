@@ -37,8 +37,8 @@ public class VersioningSampleActivity extends BaseActivity {
         // for ex, for `VersioningItem` will be created a class named `VersioningItem_StormScheme` in the same package
 
         // to visualise lets see what generated class will return for 1, 2, 3 versions
-        final VersioningItem_StormScheme itemStormScheme = new VersioningItem_StormScheme();
-        final VersioningNewTable_StormScheme table_stormScheme = new VersioningNewTable_StormScheme();
+        final VersioningItem_Scheme itemStormScheme = new VersioningItem_Scheme();
+        final VersioningNewTable_Scheme table_stormScheme = new VersioningNewTable_Scheme();
 
         List<String> list;
 

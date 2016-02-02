@@ -14,14 +14,14 @@ class VersioningItem implements StormObject {
 
     @PrimaryKey(autoincrement = true)
     @Column
-    private long id;
+    long id;
 
     @Column
-    private String data;
+    String data;
 
     @NewColumn(2)
     @Column
-    private long time;
+    long time;
 
     public long getId() {
         return id;

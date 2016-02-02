@@ -13,7 +13,7 @@ buildscript {
 apply plugin: 'com.neenbedankt.android-apt'
 
 dependencies {
-    compileModules(delegate,
+    testCompileModules(delegate,
             STORM_ANNOTATIONS,
             STORM_TYPES,
             STORM_PARSER_RUNTIME,
