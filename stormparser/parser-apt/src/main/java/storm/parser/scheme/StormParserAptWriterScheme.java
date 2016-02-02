@@ -29,9 +29,14 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
     }
 
     @Override
-    protected String getSourceCode(String packageName, String className, StormParserAptData data) throws Throwable {
+    protected boolean shouldCreateSourceCodeFile(StormParserAptData data) {
+        return data.scheme();
+    }
 
-        final Indent indent = new Indent(4);
+    @Override
+    protected String getSourceCode(String packageName, String className, String type, StormParserAptData data) throws Throwable {
+
+        final Indent indent = indent();
         final StringBuilder builder = new StringBuilder();
 
         final StormParserTable<TypeElement, Element, TypeMirror> table = data.getTable();
@@ -45,7 +50,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
                 .append("\n// do not modify\n\n");
 
         // class definition
-        builder.append("class ")
+        builder.append("public class ")
                 .append(className)
                 .append(" implements ")
                 .append(StormScheme.class.getName())
@@ -82,7 +87,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
 
     private static String generateOnCreateStatementsSourceBlock(Indent indent, StormParserTable<TypeElement, Element, TypeMirror> table) throws StormSchemeException {
 
-        final StormSchemeRuntime generator = new StormSchemeRuntime(table);
+        final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
         final List<String> statements = generator.onCreate();
 
         final StringBuilder builder = new StringBuilder()
@@ -121,7 +126,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
         final StringBuilder builder = new StringBuilder();
 
         if (table.isRecreateOnUpgrade()) {
-            final StormSchemeRuntime generator = new StormSchemeRuntime(table);
+            final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
             builder.append(indent.increment())
                     .append("return java.util.Arrays.asList(\n")
                     .append(indent.increment())
@@ -173,13 +178,13 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
                 if (columnVersion == 0) {
                     builder.append(indent)
                             .append("columns.add(\"")
-                            .append(StormSchemeRuntime.getColumnCreateStatement(column))
+                            .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
                             .append("\");\n");
                     if (column.getIndex() != null) {
 
                         builder.append(indent)
                                 .append("indexes.add(\"")
-                                .append(StormSchemeRuntime.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
+                                .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
                                 .append("\");\n");
 
                         hasAddedIndexes = true;
@@ -191,12 +196,12 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
                             .append(") {\n")
                             .append(indent.increment())
                             .append("columns.add(\"")
-                            .append(StormSchemeRuntime.getColumnCreateStatement(column))
+                            .append(StormSchemeStatementsGenerator.getColumnCreateStatement(column))
                             .append("\");\n");
                     if (column.getIndex() != null) {
                         builder.append(indent)
                                 .append("indexes.add(\"")
-                                .append(StormSchemeRuntime.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
+                                .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
                                 .append("\");\n");
                     }
                     builder.append(indent.decrement())
@@ -249,7 +254,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
                         .append(") {\n")
                         .append(indent.increment())
                         .append("list.add(\"")
-                        .append(StormSchemeRuntime.getAlterTableAddColumnStatement(table.getTableName(), column))
+                        .append(StormSchemeStatementsGenerator.getAlterTableAddColumnStatement(table.getTableName(), column))
                         .append("\");\n");
 
                 hasAddedStatements = true;
@@ -258,7 +263,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
 
                     builder.append(indent)
                             .append("indexes.add(\"")
-                            .append(StormSchemeRuntime.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
+                            .append(StormSchemeStatementsGenerator.getColumnIndexStatement(table.getTableName(), column.getName(), column.getIndex()))
                             .append("\");\n");
 
                     hasAddedIndexes = true;

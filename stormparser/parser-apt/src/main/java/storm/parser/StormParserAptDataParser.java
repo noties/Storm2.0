@@ -25,15 +25,21 @@ public class StormParserAptDataParser {
 
         final Table tableAnnotation = mHelper.getMainAnnotation(table, Table.class);
 
-        if (tableAnnotation == null
-                || !tableAnnotation.apt()) {
+        if (tableAnnotation == null) {
             return null;
         }
+
+        final boolean converter = tableAnnotation.converter();
+        final boolean metadata  = tableAnnotation.metadata();
+        final boolean scheme    = tableAnnotation.scheme();
 
         final StormParserTable<TypeElement, Element, TypeMirror> parsedTable = mTableParser.parseTable(mHelper, table);
 
         return new StormParserAptData(
-                parsedTable
+                parsedTable,
+                converter,
+                metadata,
+                scheme
         );
     }
 }

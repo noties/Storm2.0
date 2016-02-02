@@ -1,5 +1,7 @@
 package storm.parser.metadata;
 
+import android.net.Uri;
+
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -10,18 +12,30 @@ import org.robolectric.annotation.Config;
 import storm.annotations.Column;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Table;
+import storm.parser.ParserAssert;
+import storm.parser.StormParserException;
+import storm.parser.StormParserFactory;
 
 /**
  * Created by Dimitry Ivanov on 14.01.2016.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public abstract class StormMetadataBaseTest extends TestCase {
+public class StormMetadataTest extends TestCase {
 
-    abstract <T> StormMetadata<T> getMetadata(Class<T> cl);
+    private <T> StormMetadata<T> getMetadata(Class<T> cl) {
+
+        ParserAssert.assertApt(cl, StormMetadataAptClassNameBuilder.getInstance());
+
+        try {
+            return new StormParserFactory().provide(cl).metadata();
+        } catch (StormParserException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Table
-    private static class TableNoName {
+    static class TableNoName {
         @PrimaryKey
         @Column
         long id;
@@ -34,7 +48,7 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
 
     @Table("my_table_name")
-    private static class TableWithName {
+    static class TableWithName {
         @PrimaryKey
         @Column
         long id;
@@ -47,7 +61,7 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
 
     @Table
-    private static class UriDefaultClass {
+    static class UriDefaultClass {
         @PrimaryKey
         @Column
         long id;
@@ -55,15 +69,16 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
     @Test
     public void testDefaultUri() {
+
         assertEquals(
                 getMetadata(UriDefaultClass.class).notificationUri(),
-                StormNotificationUriBuilder.getDefault(UriDefaultClass.class, null)
+                notificationUri(UriDefaultClass.class, null)
         );
     }
 
 
     @Table(notificationUri = "custom://uri")
-    private static class UriCustomClass {
+    static class UriCustomClass {
         @PrimaryKey
         @Column
         long id;
@@ -73,12 +88,24 @@ public abstract class StormMetadataBaseTest extends TestCase {
     public void testCustomUri() {
         assertEquals(
                 getMetadata(UriCustomClass.class).notificationUri(),
-                StormNotificationUriBuilder.getDefault(UriCustomClass.class, "custom://uri")
+                notificationUri(UriCustomClass.class, "custom://uri")
+        );
+    }
+
+    // we are adding parent class to the name to avoid possible conflicts
+    // two inner classes might have the same name inside one package (but be in different classes)
+    private static Uri notificationUri(Class<?> cl, String def) {
+        return Uri.parse(
+                StormNotificationUriBuilder.getDefault(
+                        cl.getPackage().getName(),
+                        StormMetadataTest.class.getSimpleName() + "." + cl.getSimpleName(),
+                        def
+                )
         );
     }
 
     @Table
-    private static class PrimaryKeyNoAutoincrement {
+    static class PrimaryKeyNoAutoincrement {
         @PrimaryKey
         @Column
         long id;
@@ -94,7 +121,7 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
 
     @Table
-    private static class PrimaryKeyAutoincrement {
+    static class PrimaryKeyAutoincrement {
         @PrimaryKey(autoincrement = true)
         @Column
         long id;
@@ -110,7 +137,7 @@ public abstract class StormMetadataBaseTest extends TestCase {
 
 
     @Table
-    private static class PrimaryKeySelectionTable {
+    static class PrimaryKeySelectionTable {
         @PrimaryKey
         @Column
         long id;

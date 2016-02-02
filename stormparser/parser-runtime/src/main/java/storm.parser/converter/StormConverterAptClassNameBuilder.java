@@ -14,6 +14,6 @@ public class StormConverterAptClassNameBuilder extends StormParserAptClassNameBu
     }
 
     private StormConverterAptClassNameBuilder() {
-        super("Metadata");
+        super("Converter");
     }
 }

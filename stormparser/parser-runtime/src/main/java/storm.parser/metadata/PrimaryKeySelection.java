@@ -8,7 +8,7 @@ public class PrimaryKeySelection {
     private final String mPrimaryKeyName;
     private final Object mPrimaryKeyValue;
 
-    PrimaryKeySelection(String primaryKeyName, Object primaryKeyValue) {
+    public PrimaryKeySelection(String primaryKeyName, Object primaryKeyValue) {
         mPrimaryKeyName = primaryKeyName;
         mPrimaryKeyValue = primaryKeyValue;
     }

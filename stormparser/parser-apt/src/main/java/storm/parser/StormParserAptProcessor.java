@@ -1,5 +1,7 @@
 package storm.parser;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +20,6 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import storm.annotations.Table;
-import storm.parser.columns.StormParserAptWriterColumns;
 import storm.parser.converter.StormParserAptWriterConverter;
 import storm.parser.metadata.StormParserAptWriterMetadata;
 import storm.parser.scheme.StormParserAptWriterScheme;
@@ -48,8 +49,7 @@ public class StormParserAptProcessor extends AbstractProcessor {
         mWriters = Arrays.asList(
                 (StormParserAptWriter) new StormParserAptWriterScheme(elements, filer),
                 new StormParserAptWriterMetadata(elements, filer),
-                new StormParserAptWriterConverter(elements, filer),
-                new StormParserAptWriterColumns(elements, filer)
+                new StormParserAptWriterConverter(elements, filer)
         );
     }
 
@@ -75,6 +75,7 @@ public class StormParserAptProcessor extends AbstractProcessor {
                     process(table);
                 } catch (Throwable t) {
                     log(Diagnostic.Kind.WARNING, "Exception during processing element `%s`, exception: %s, msg: %s", table, t.getClass().getSimpleName(), t.getMessage());
+                    log(Diagnostic.Kind.WARNING, "StackTrace: %s", stackTrace(t));
                 }
             }
         }
@@ -105,5 +106,12 @@ public class StormParserAptProcessor extends AbstractProcessor {
 
     private void log(Diagnostic.Kind level, String msg, Object... args) {
         mMessager.printMessage(level, String.format(msg, args));
+    }
+
+    private static String stackTrace(Throwable throwable) {
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter writer = new PrintWriter(stringWriter);
+        throwable.printStackTrace(writer);
+        return stringWriter.toString();
     }
 }

@@ -18,7 +18,6 @@ import storm.annotations.Table;
 import storm.annotations.Unique;
 import storm.parser.ParserAssert;
 import storm.parser.StormParserFactory;
-import storm.parser.TestReflectionInstanceCreator;
 import storm.parser.converter.serializer.StormSerializer;
 
 /**
@@ -31,7 +30,7 @@ public class StormSchemeTest extends TestCase {
         ParserAssert.assertApt(cl, StormSchemeAptNameBuilder.getInstance());
 
         try {
-            return new StormParserFactory(new TestReflectionInstanceCreator()).provide(cl).scheme();
+            return new StormParserFactory().provide(cl).scheme();
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -94,7 +93,17 @@ public class StormSchemeTest extends TestCase {
     @Table("fourth")
     static class Test4 {
 
-        private static abstract class DateDoubleSerializer implements StormSerializer<Date, Double> {}
+        static class DateDoubleSerializer implements StormSerializer<Date, Double> {
+            @Override
+            public Double serialize(Date date) {
+                return null;
+            }
+
+            @Override
+            public Date deserialize(Double aDouble) {
+                return null;
+            }
+        }
 
         @Column("col1")
         @PrimaryKey(autoincrement = true)
@@ -187,7 +196,7 @@ public class StormSchemeTest extends TestCase {
     }
 
     @Table(recreateOnUpgrade = true)
-    private static class RecreateOnUpgradeColumn {
+    static class RecreateOnUpgradeColumn {
         @Column
         @PrimaryKey
         String someString;
@@ -210,7 +219,7 @@ public class StormSchemeTest extends TestCase {
     }
 
     @Table(recreateOnUpgrade = true)
-    private static class RecreateOnUpgradeTable {
+    static class RecreateOnUpgradeTable {
         @Column
         @PrimaryKey
         int someInt;

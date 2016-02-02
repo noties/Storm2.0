@@ -216,22 +216,38 @@ public class StormCursorMock implements Cursor {
 
     @Override
     public int getInt(int columnIndex) {
-        return (Integer) mValues[mPosition][columnIndex];
+        final Object value = mValues[mPosition][columnIndex];
+        if (value == null) {
+            return 0;
+        }
+        return (Integer) value;
     }
 
     @Override
     public long getLong(int columnIndex) {
-        return (Long) mValues[mPosition][columnIndex];
+        final Object value = mValues[mPosition][columnIndex];
+        if (value == null) {
+            return 0L;
+        }
+        return (Long) value;
     }
 
     @Override
     public float getFloat(int columnIndex) {
-        return (Float) mValues[mPosition][columnIndex];
+        final Object value = mValues[mPosition][columnIndex];
+        if (value == null) {
+            return .0F;
+        }
+        return (Float) value;
     }
 
     @Override
     public double getDouble(int columnIndex) {
-        return (Double) mValues[mPosition][columnIndex];
+        final Object value = mValues[mPosition][columnIndex];
+        if (value == null) {
+            return .0D;
+        }
+        return (Double) value;
     }
 
     @Override

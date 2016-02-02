@@ -23,7 +23,6 @@ import storm.cursormock.StormCursorMock;
 import storm.parser.ParserAssert;
 import storm.parser.StormParserException;
 import storm.parser.StormParserFactory;
-import storm.parser.TestReflectionInstanceCreator;
 import storm.parser.converter.serializer.BooleanIntSerializer;
 import storm.parser.converter.serializer.BooleanStringSerializer;
 import storm.parser.converter.serializer.StormSerializer;
@@ -36,17 +35,17 @@ import storm.parser.converter.serializer.StormSerializer;
 public class StormConverterTest extends TestCase {
 
     private <T> StormConverter<T> getConverter(Class<T> cl) {
-        ParserAssert.assertApt(cl, StormConverterAptClassNameBuilder.getInstance(), null);
+        ParserAssert.assertApt(cl, StormConverterAptClassNameBuilder.getInstance());
 
         try {
-            return new StormParserFactory(new TestReflectionInstanceCreator()).provide(cl).converter();
+            return new StormParserFactory().provide(cl).converter();
         } catch (StormParserException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Table
-    private static class Test1 {
+    static class Test1 {
 
         @Override
         public boolean equals(Object o) {
@@ -160,7 +159,7 @@ public class StormConverterTest extends TestCase {
     }
 
 
-    private static class DateLongSerializer implements StormSerializer<Date, Long> {
+    static class DateLongSerializer implements StormSerializer<Date, Long> {
 
         @Override
         public Long serialize(Date date) {
@@ -174,7 +173,7 @@ public class StormConverterTest extends TestCase {
     }
 
     @Table
-    private static class Test2 {
+    static class Test2 {
 
         @Override
         public boolean equals(Object o) {
@@ -245,7 +244,7 @@ public class StormConverterTest extends TestCase {
 
 
     @Table
-    private static class Test3 {
+    static class Test3 {
 
         @Override
         public boolean equals(Object o) {
