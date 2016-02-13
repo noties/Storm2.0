@@ -31,6 +31,7 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
     private static final String ARRAY_LIST_CLASS = "java.util.ArrayList<%s>";
 
     private static final String PARSE_METHOD_NAME = "parse";
+    private static final String TO_CONTENT_VALUES_GENERIC_METHOD_NAME = "toContentValuesInner";
 
     public StormParserAptWriterConverter(Elements elements, Filer filer) {
         super(elements, filer, StormConverterAptClassNameBuilder.getInstance());
@@ -87,6 +88,8 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         builder.append(fromCursorListMethod(indent, type, data));
 
         // `toContentValues` method
+        builder.append(toContentValuesGenericMethod(indent, type, data));
+        builder.append(toContentValuesListMethod(indent, type, data));
         builder.append(toContentValuesMethod(indent, type, data));
 
         builder.append("}\n");
@@ -232,7 +235,7 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         final String cursorGetValue = cursorVarName + ".%s(" + cursorIndexesVarName + ".%s)";
         final String serializersGetValue = serializersVarName + ".%s.deserialize(%s)";
 
-        builder.append("private static ")
+        builder.append("static ")
                 .append(type)
                 .append(" ")
                 .append(PARSE_METHOD_NAME)
@@ -479,11 +482,13 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         return builder.toString();
     }
 
-    private static String toContentValuesMethod(Indent indent, String type, StormParserAptData data) {
+    private static String toContentValuesGenericMethod(Indent indent, String type, StormParserAptData data) {
 
         final StringBuilder builder = new StringBuilder();
 
         final List<StormParserColumn<Element, TypeMirror>> columns = data.getTable().getElements();
+
+        final boolean hasSerializers = hasSerializers(data);
 
         final String varName = "value";
         final String putPrimaryKeyVarName = "putPrimaryKey";
@@ -491,10 +496,20 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         final String columnsCountVarName = "count";
         final String cvVarName = "cv";
 
-        builder.append("public ")
+        builder.append("static ")
                 .append(CONTENT_VALUES_CLASS)
-                .append(" toContentValues(")
-                .append(type)
+                .append(" ")
+                .append(TO_CONTENT_VALUES_GENERIC_METHOD_NAME)
+                .append("(");
+
+        if (hasSerializers) {
+            builder.append(SERIALIZERS_CLASS)
+                    .append(" ")
+                    .append(serializersVarName)
+                    .append(", ");
+        }
+
+        builder.append(type)
                 .append(" ")
                 .append(varName)
                 .append(", boolean ")
@@ -503,16 +518,16 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
 
         indent.increment();
 
-        if (hasSerializers(data)) {
-            builder.append(indent)
-                    .append("final ")
-                    .append(SERIALIZERS_CLASS)
-                    .append(" ")
-                    .append(serializersVarName)
-                    .append(" = new ")
-                    .append(SERIALIZERS_CLASS)
-                    .append("();\n");
-        }
+//        if (hasSerializers(data)) {
+//            builder.append(indent)
+//                    .append("final ")
+//                    .append(SERIALIZERS_CLASS)
+//                    .append(" ")
+//                    .append(serializersVarName)
+//                    .append(" = new ")
+//                    .append(SERIALIZERS_CLASS)
+//                    .append("();\n");
+//        }
 
         builder.append(indent)
                 .append("final int ")
@@ -579,6 +594,154 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
                 .append("return ")
                 .append(cvVarName)
                 .append(";\n")
+                .append(indent.decrement())
+                .append("}\n\n")
+                .append(indent);
+
+        return builder.toString();
+    }
+
+    private static String toContentValuesListMethod(Indent indent, String type, StormParserAptData data) {
+
+        final StringBuilder builder = new StringBuilder();
+//        final List<StormParserColumn<Element, TypeMirror>> columns = data.getTable().getElements();
+
+        final String valuesVar = "values";
+        final String putPrimaryKeyVar = "putPrimaryKey";
+        final String serializersVar = "s";
+        final String outVar = "out";
+        final String valueVar = "value";
+        final String cvVar = "cv";
+
+        final boolean hasSerializers = hasSerializers(data);
+
+        builder.append("public ")
+                .append(String.format(LIST_CLASS, CONTENT_VALUES_CLASS))
+                .append(" toContentValuesList(")
+                .append(String.format(LIST_CLASS, type))
+                .append(" ")
+                .append(valuesVar)
+                .append(", boolean ")
+                .append(putPrimaryKeyVar)
+                .append(") {\n")
+                .append(indent.increment());
+
+        if (hasSerializers) {
+            builder.append("final ")
+                    .append(SERIALIZERS_CLASS)
+                    .append(" ")
+                    .append(serializersVar)
+                    .append(" = new ")
+                    .append(SERIALIZERS_CLASS)
+                    .append("();\n")
+                    .append(indent);
+        }
+
+        builder.append("final ")
+                .append(String.format(LIST_CLASS, CONTENT_VALUES_CLASS))
+                .append(" ")
+                .append(outVar)
+                .append(" = new ")
+                .append(String.format(ARRAY_LIST_CLASS, CONTENT_VALUES_CLASS))
+                .append("();\n")
+                .append(indent);
+
+        builder.append(CONTENT_VALUES_CLASS)
+                .append(" ")
+                .append(cvVar)
+                .append(";\n")
+                .append(indent);
+
+        builder.append("for (")
+                .append(type)
+                .append(" ")
+                .append(valueVar)
+                .append(": ")
+                .append(valuesVar)
+                .append(") {\n")
+                .append(indent.increment())
+                .append(cvVar)
+                .append(" = ")
+                .append(TO_CONTENT_VALUES_GENERIC_METHOD_NAME)
+                .append("(");
+
+        final String methodVars;
+        if (hasSerializers) {
+            methodVars = String.format("%s, %s, %s", serializersVar, valueVar, putPrimaryKeyVar);
+        } else {
+            methodVars = String.format("%s, %s", valueVar, putPrimaryKeyVar);
+        }
+
+        builder.append(methodVars)
+                .append(");\n")
+                .append(indent);
+
+        builder.append("if (")
+                .append(cvVar)
+                .append(" != null) { ")
+                .append(outVar)
+                .append(".add(")
+                .append(cvVar)
+                .append("); }\n");
+
+        builder.append(indent.decrement())
+                .append("}\n")
+                .append(indent)
+                .append("return ")
+                .append(outVar)
+                .append(";\n")
+                .append(indent.decrement())
+                .append("}\n\n")
+                .append(indent);
+
+        return builder.toString();
+    }
+
+    private static String toContentValuesMethod(Indent indent, String type, StormParserAptData data) {
+
+        final StringBuilder builder = new StringBuilder();
+
+        final String valueVar = "value";
+        final String putPrimaryKeyVar = "putPrimaryKey";
+        final String serializersVar = "s";
+
+        final boolean hasSerializers = hasSerializers(data);
+
+        builder.append("public ")
+                .append(CONTENT_VALUES_CLASS)
+                .append(" toContentValues(")
+                .append(type)
+                .append(" ")
+                .append(valueVar)
+                .append(", boolean ")
+                .append(putPrimaryKeyVar)
+                .append(") {\n")
+                .append(indent.increment());
+
+        if (hasSerializers) {
+            builder.append("final ")
+                    .append(SERIALIZERS_CLASS)
+                    .append(" ")
+                    .append(serializersVar)
+                    .append(" = new ")
+                    .append(SERIALIZERS_CLASS)
+                    .append("();\n")
+                    .append(indent);
+        }
+
+        builder.append("return ")
+                .append(TO_CONTENT_VALUES_GENERIC_METHOD_NAME)
+                .append("(");
+
+        final String methodVars;
+        if (hasSerializers) {
+            methodVars = String.format("%s, %s, %s", serializersVar, valueVar, putPrimaryKeyVar);
+        } else {
+            methodVars = String.format("%s, %s", valueVar, putPrimaryKeyVar);
+        }
+
+        builder.append(methodVars)
+                .append(");\n")
                 .append(indent.decrement())
                 .append("}\n\n")
                 .append(indent.decrement());

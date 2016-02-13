@@ -19,5 +19,6 @@ public interface StormConverter<T> extends StormParserItem<T> {
     // and if primary key would be included in this ContentValues
     // there will be an exception
     ContentValues toContentValues(T value, boolean putPrimaryKey);
+    List<ContentValues> toContentValuesList(List<T> values, boolean putPrimaryKey);
 
 }
