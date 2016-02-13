@@ -18,13 +18,15 @@ public class LazyThrows<V, T extends Throwable> {
         this.mProvider = provider;
     }
 
-    public V get() throws T {
+    public synchronized V get() throws T {
         if (!mIsProviderCalled) {
-            synchronized (this) {
-                mCachedValue = mProvider.provide();
-                mIsProviderCalled = true;
-            }
+            mCachedValue = mProvider.provide();
+            mIsProviderCalled = true;
         }
         return mCachedValue;
+    }
+
+    public boolean isProviderCalled() {
+        return mIsProviderCalled;
     }
 }
