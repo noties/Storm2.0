@@ -62,9 +62,7 @@ public class PseudoTableActivity extends BaseActivity {
                 .subscribe(new Action1<List<PseudoResult>>() {
                     @Override
                     public void call(List<PseudoResult> pseudoResults) {
-                        for (PseudoResult result : pseudoResults) {
-                            Debug.i(result);
-                        }
+                        Debug.i("results: %s", pseudoResults);
                     }
                 }, new Action1<Throwable>() {
                     @Override

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import java.util.Collection;
+import java.util.List;
 
 import storm.parser.StormParser;
 import storm.parser.converter.StormConverter;
@@ -38,6 +39,14 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
 
         final String tableName = metadata.tableName();
 
+        final boolean putPrimsryKey = !metadata.isPrimaryKeyAutoincrement();
+        final List<ContentValues> contentValues = converter.toContentValuesList(collection, putPrimsryKey);
+
+        if (contentValues == null
+                || contentValues.size() == 0) {
+            return new long[0];
+        }
+
         final SQLiteDatabase db = storm.database().open();
 
         final long[] out = new long[size];
@@ -45,7 +54,6 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
         try {
 
             int index = 0;
-            ContentValues cv;
 
             // at this point we already might have a transaction
             final boolean hasTransactionAlready = db.inTransaction();
@@ -55,9 +63,8 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
             }
 
             try {
-                for (T value: collection) {
 
-                    cv = converter.toContentValues(value, !metadata.isPrimaryKeyAutoincrement());
+                for (ContentValues cv: contentValues) {
                     out[index++] = db.insert(tableName, null, cv);
                 }
 

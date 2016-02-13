@@ -26,6 +26,9 @@ class StormSaveOneDispatcherImpl implements StormSaveOneDispatcher {
         final StormConverter<T> converter = storm.converter(table, parser);
 
         final ContentValues cv = converter.toContentValues(value, !metadata.isPrimaryKeyAutoincrement());
+        if (cv == null) {
+            return -1L;
+        }
 
         final SQLiteDatabase db = storm.database().open();
 

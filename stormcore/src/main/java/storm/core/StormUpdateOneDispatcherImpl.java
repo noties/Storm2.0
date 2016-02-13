@@ -1,5 +1,6 @@
 package storm.core;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import storm.parser.StormParser;
@@ -26,6 +27,11 @@ class StormUpdateOneDispatcherImpl implements StormUpdateOneDispatcher {
         final StormMetadata<T> metadata = storm.metadata(table, parser);
         final StormConverter<T> converter = storm.converter(table, parser);
 
+        final ContentValues cv = converter.toContentValues(value, false);
+        if (cv == null) {
+            return 0;
+        }
+
         final PrimaryKeySelection primaryKeySelection = metadata.primaryKeySelection(value);
         final Selection selection = new Selection().equals(
                 primaryKeySelection.getPrimaryKeyName(),
@@ -38,7 +44,7 @@ class StormUpdateOneDispatcherImpl implements StormUpdateOneDispatcher {
 
             final int updated = db.update(
                     metadata.tableName(),
-                    converter.toContentValues(value, false),
+                    cv,
                     selection.getStatement(),
                     selection.getArguments()
             );
