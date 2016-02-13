@@ -64,15 +64,18 @@ public class Query implements IStatementBuilder {
     }
 
     public Query groupBy(String groupBy, String having, Object... havingArgs) {
-        mBuilder.append(" GROUP BY ")
-                .append(groupBy)
-                .append(" HAVING ")
-                .append(having);
 
-        if (havingArgs != null
-                && havingArgs.length > 0) {
-            for (Object arg: havingArgs) {
-                mArgs.add(String.valueOf(arg));
+        mBuilder.append(" GROUP BY ")
+                .append(groupBy);
+
+        if (having != null && having.length() > 0) {
+            if (havingArgs != null
+                    && havingArgs.length > 0) {
+                mBuilder.append(" HAVING ")
+                        .append(having);
+                for (Object arg: havingArgs) {
+                    mArgs.add(String.valueOf(arg));
+                }
             }
         }
 

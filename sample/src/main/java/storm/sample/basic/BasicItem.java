@@ -35,8 +35,7 @@ class BasicItem implements StormObject {
     boolean someBool;
 
     // empty constructor
-    // note, that if object has no empty constructor an `InstanceCreator` should be registered
-    public BasicItem() {
+    BasicItem() {
 
     }
 

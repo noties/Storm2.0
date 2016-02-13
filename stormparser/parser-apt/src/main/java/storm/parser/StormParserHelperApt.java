@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,8 +62,13 @@ public class StormParserHelperApt implements StormParserHelper<TypeElement, Elem
 
     @Override
     public boolean shouldParseElement(Element element) {
-        return element.getKind() == ElementKind.FIELD
-                && !element.getModifiers().contains(Modifier.TRANSIENT);
+        if (element.getKind() != ElementKind.FIELD) {
+            return false;
+        }
+        final Set<Modifier> modifiers = element.getModifiers();
+        return !(modifiers.contains(Modifier.TRANSIENT)
+                || modifiers.contains(Modifier.STATIC)
+                || modifiers.contains(Modifier.FINAL));
     }
 
     @Override

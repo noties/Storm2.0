@@ -85,7 +85,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
         return builder.toString();
     }
 
-    private static String generateOnCreateStatementsSourceBlock(Indent indent, StormParserTable<TypeElement, Element, TypeMirror> table) throws StormSchemeException {
+    private static String generateOnCreateStatementsSourceBlock(Indent indent, StormParserTable<TypeElement, Element, TypeMirror> table) {
 
         final StormSchemeStatementsGenerator generator = new StormSchemeStatementsGenerator(table);
         final List<String> statements = generator.onCreate();
@@ -121,7 +121,7 @@ public class StormParserAptWriterScheme extends StormParserAptWriterBase {
         return builder.toString();
     }
 
-    private static String generateOnUpgradeStatementsSourceBlock(Indent indent, StormParserTable<TypeElement, Element, TypeMirror> table) throws StormSchemeException {
+    private static String generateOnUpgradeStatementsSourceBlock(Indent indent, StormParserTable<TypeElement, Element, TypeMirror> table) {
 
         final StringBuilder builder = new StringBuilder();
 

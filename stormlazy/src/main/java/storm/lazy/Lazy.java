@@ -12,9 +12,6 @@ public class Lazy<T> {
     private volatile boolean mIsProviderCalled;
 
     public Lazy(LazyProvider<T> provider) {
-        if (provider == null) {
-            throw new NullPointerException("Provider cannot be NULL");
-        }
         this.mProvider = provider;
     }
 

@@ -21,6 +21,7 @@
         <activity android:name=".rx.RxSampleActivity" />
         <activity android:name=".versioning.VersioningSampleActivity" />
         <activity android:name=".iterator.IteratorSampleActivity" />
+        <activity android:name=".pseudotable.PseudoTableActivity" />
 
     </application>
 

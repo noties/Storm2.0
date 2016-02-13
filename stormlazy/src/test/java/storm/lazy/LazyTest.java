@@ -7,15 +7,6 @@ import junit.framework.TestCase;
  */
 public class LazyTest extends TestCase {
 
-    public void testNull() {
-        try {
-            new Lazy<Void>(null);
-            assertTrue(false);
-        } catch (NullPointerException e) {
-            assertTrue(true);
-        }
-    }
-
     public void testProviderCalled() {
         final Lazy<Void> lazy = new Lazy<>(new Lazy.LazyProvider<Void>() {
             @Override

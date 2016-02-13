@@ -78,9 +78,14 @@ public class StormParserAptWriterMetadata extends StormParserAptWriterBase {
         // `notificationUri` method
         final String customNotification = data.getTable().getCustomNotificationUri();
         final String notificationUri = StormNotificationUriBuilder.getDefault(packageName, type, customNotification);
-        builder.append("public static final android.net.Uri NOTIFICATION_URI = android.net.Uri.parse(\"")
+        builder.append("public static final String NOTIFICATION_URI_STRING = \"")
                 .append(notificationUri)
-                .append("\");\n")
+                .append("\";\n")
+                .append(indent);
+
+        builder.append("public static final android.net.Uri NOTIFICATION_URI = android.net.Uri.parse(")
+                .append("NOTIFICATION_URI_STRING")
+                .append(");\n")
                 .append(indent);
         builder.append("public android.net.Uri notificationUri() { return NOTIFICATION_URI; }\n\n")
                 .append(indent);

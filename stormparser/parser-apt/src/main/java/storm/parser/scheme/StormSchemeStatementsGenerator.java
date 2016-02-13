@@ -29,7 +29,7 @@ class StormSchemeStatementsGenerator implements StormScheme {
     }
 
     @Override
-    public List<String> onCreate() throws StormSchemeException {
+    public List<String> onCreate() {
 
         final String tableName = mTable.getTableName();
 
@@ -52,14 +52,14 @@ class StormSchemeStatementsGenerator implements StormScheme {
         }
 
         if (createStatements.size() == 0) {
-            throw new StormSchemeException("Table with name `" + tableName + "` has no create statements");
+            throw new RuntimeException("Table with name `" + tableName + "` has no create statements");
         }
 
         return getOnCreateStatement(tableName, createStatements, indexStatements);
     }
 
     @Override
-    public List<String> onUpgrade(int oldVersion, int newVersion) throws StormSchemeException {
+    public List<String> onUpgrade(int oldVersion, int newVersion) {
 
         // if table is marked as `recreateOnUpgrade` then we have to exec DROP & then full ON CREATE
         // it really doesn't matter what version we have

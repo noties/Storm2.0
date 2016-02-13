@@ -14,9 +14,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public abstract void showcase();
 
+    private boolean isVisible;
+
     @Override
     public void onStart() {
         super.onStart();
+
+        isVisible = true;
 
         logStart();
 
@@ -26,6 +30,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
+        isVisible = false;
 
         logEnd();
     }
@@ -42,5 +48,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         Debug.i(NAME, getClass().getSimpleName(), "end");
         Debug.i(LINE);
         Debug.i();
+    }
+
+    protected boolean isVisible() {
+        return isVisible;
     }
 }

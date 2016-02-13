@@ -238,24 +238,18 @@ public class StormSchemeTest extends TestCase {
 
         final StormScheme scheme = getScheme(cl);
 
-        try {
+        final List<String> onCreate = scheme.onCreate();
 
-            final List<String> onCreate = scheme.onCreate();
+        final int size = onCreate != null ? onCreate.size() : 0;
 
-            final int size = onCreate != null ? onCreate.size() : 0;
+        assertEquals(size, createStatements.length);
 
-            assertEquals(size, createStatements.length);
+        if (size == 0) {
+            return;
+        }
 
-            if (size == 0) {
-                return;
-            }
-
-            for (int i = 0; i < size; i++) {
-                assertEquals(onCreate.get(i), createStatements[i]);
-            }
-
-        } catch (StormSchemeException e) {
-            assertTrue(false);
+        for (int i = 0; i < size; i++) {
+            assertEquals(onCreate.get(i), createStatements[i]);
         }
     }
 
@@ -267,19 +261,15 @@ public class StormSchemeTest extends TestCase {
 
         final StormScheme scheme = getScheme(cl);
 
-        try {
-            final List<String> onUpdate = scheme.onUpgrade(oldVersion, newVersion);
-            final int size = onUpdate != null ? onUpdate.size() : 0;
-            assertEquals(size, onUpdateStatements.length);
-            if (size == 0) {
-                return;
-            }
+        final List<String> onUpdate = scheme.onUpgrade(oldVersion, newVersion);
+        final int size = onUpdate != null ? onUpdate.size() : 0;
+        assertEquals(size, onUpdateStatements.length);
+        if (size == 0) {
+            return;
+        }
 
-            for (int i = 0; i < size; i++) {
-                assertEquals(onUpdate.get(i), onUpdateStatements[i]);
-            }
-        } catch (StormSchemeException e) {
-            assertTrue(false);
+        for (int i = 0; i < size; i++) {
+            assertEquals(onUpdate.get(i), onUpdateStatements[i]);
         }
     }
 }

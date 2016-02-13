@@ -49,9 +49,7 @@ public class Storm {
     }
 
     public <T extends StormObject> Storm registerTable(Class<T> tableClass) throws StormException {
-
         mDatabase.registerModule(new DatabaseModuleSchemeBridge(scheme(tableClass)));
-
         return this;
     }
 

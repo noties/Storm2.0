@@ -9,7 +9,7 @@ import storm.parser.StormParserItem;
  */
 public interface StormScheme extends StormParserItem {
 
-    List<String> onCreate() throws StormSchemeException;
-    List<String> onUpgrade(int oldVersion, int newVersion) throws StormSchemeException;
+    List<String> onCreate();
+    List<String> onUpgrade(int oldVersion, int newVersion);
 
 }

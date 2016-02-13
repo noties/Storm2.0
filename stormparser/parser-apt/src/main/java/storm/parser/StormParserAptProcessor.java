@@ -70,12 +70,13 @@ public class StormParserAptProcessor extends AbstractProcessor {
 
         if (tables != null
                 && tables.size() > 0) {
+
             for (Element table: tables) {
                 try {
                     process(table);
                 } catch (Throwable t) {
                     log(Diagnostic.Kind.WARNING, "Exception during processing element `%s`, exception: %s, msg: %s", table, t.getClass().getSimpleName(), t.getMessage());
-                    log(Diagnostic.Kind.WARNING, "StackTrace: %s", stackTrace(t));
+//                    log(Diagnostic.Kind.WARNING, "StackTrace: %s", stackTrace(t));
                 }
             }
         }
