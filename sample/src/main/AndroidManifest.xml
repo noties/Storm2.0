@@ -23,6 +23,7 @@
         <activity android:name=".iterator.IteratorSampleActivity" />
         <activity android:name=".pseudotable.PseudoTableActivity" />
         <activity android:name=".extreme.ExtremeActivity" />
+        <activity android:name=".serialize.SerializeActivity" />
 
     </application>
 

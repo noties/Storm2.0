@@ -15,6 +15,7 @@ import storm.sample.iterator.IteratorSampleActivity;
 import storm.sample.prefill.PreFillSampleActivity;
 import storm.sample.pseudotable.PseudoTableActivity;
 import storm.sample.rx.RxSampleActivity;
+import storm.sample.serialize.SerializeActivity;
 import storm.sample.versioning.VersioningSampleActivity;
 
 /**
@@ -29,7 +30,8 @@ public class MainActivity extends Activity {
             VersioningSampleActivity.class,
             IteratorSampleActivity.class,
             PseudoTableActivity.class,
-            ExtremeActivity.class
+            ExtremeActivity.class,
+            SerializeActivity.class
     };
 
     @Override
