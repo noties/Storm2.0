@@ -3,6 +3,7 @@ package storm.parser.converter;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.util.Collection;
 import java.util.List;
 
 import storm.parser.StormParserItem;
@@ -19,6 +20,6 @@ public interface StormConverter<T> extends StormParserItem<T> {
     // and if primary key would be included in this ContentValues
     // there will be an exception
     ContentValues toContentValues(T value, boolean putPrimaryKey);
-    List<ContentValues> toContentValuesList(List<T> values, boolean putPrimaryKey);
+    List<ContentValues> toContentValuesList(Collection<T> values, boolean putPrimaryKey);
 
 }

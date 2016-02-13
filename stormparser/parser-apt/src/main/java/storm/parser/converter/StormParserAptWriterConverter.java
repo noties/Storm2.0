@@ -1,5 +1,7 @@
 package storm.parser.converter;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +29,9 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
     private static final String SERIALIZERS_CLASS = "Serializers";
     private static final String CONTENT_VALUES_CLASS = "android.content.ContentValues";
 
-    private static final String LIST_CLASS = "java.util.List<%s>";
-    private static final String ARRAY_LIST_CLASS = "java.util.ArrayList<%s>";
+    private static final String LIST_CLASS = List.class.getName() + "<%s>";
+    private static final String ARRAY_LIST_CLASS = ArrayList.class.getName() + "<%s>";
+    private static final String COLLECTION_CLASS = Collection.class.getName() + "<%s>";
 
     private static final String PARSE_METHOD_NAME = "parse";
     private static final String TO_CONTENT_VALUES_GENERIC_METHOD_NAME = "toContentValuesInner";
@@ -618,7 +621,7 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         builder.append("public ")
                 .append(String.format(LIST_CLASS, CONTENT_VALUES_CLASS))
                 .append(" toContentValuesList(")
-                .append(String.format(LIST_CLASS, type))
+                .append(String.format(COLLECTION_CLASS, type))
                 .append(" ")
                 .append(valuesVar)
                 .append(", boolean ")
