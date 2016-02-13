@@ -114,7 +114,7 @@ public class PseudoTableActivity extends BaseActivity {
                         .subscribe(new Action1<long[]>() {
                             @Override
                             public void call(long[] longs) {
-
+                                Debug.i("ids: %s", Arrays.toString(longs));
                             }
                         });
 
