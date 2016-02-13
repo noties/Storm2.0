@@ -10,6 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import storm.sample.basic.BasicSampleActivity;
+import storm.sample.extreme.ExtremeActivity;
 import storm.sample.iterator.IteratorSampleActivity;
 import storm.sample.prefill.PreFillSampleActivity;
 import storm.sample.pseudotable.PseudoTableActivity;
@@ -27,7 +28,8 @@ public class MainActivity extends Activity {
             RxSampleActivity.class,
             VersioningSampleActivity.class,
             IteratorSampleActivity.class,
-            PseudoTableActivity.class
+            PseudoTableActivity.class,
+            ExtremeActivity.class
     };
 
     @Override

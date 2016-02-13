@@ -22,6 +22,7 @@
         <activity android:name=".versioning.VersioningSampleActivity" />
         <activity android:name=".iterator.IteratorSampleActivity" />
         <activity android:name=".pseudotable.PseudoTableActivity" />
+        <activity android:name=".extreme.ExtremeActivity" />
 
     </application>
 
