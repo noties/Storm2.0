@@ -135,6 +135,11 @@ public class StormQuery<T extends StormObject> extends StormQueryOp implements S
     }
 
     @Override
+    public StormQuery<T> offset(long offset) {
+        return (StormQuery<T>) super.offset(offset);
+    }
+
+    @Override
     public StormQuery<T> join() {
         return (StormQuery<T>) super.join();
     }

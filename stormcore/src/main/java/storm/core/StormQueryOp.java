@@ -90,6 +90,11 @@ class StormQueryOp {
         return this;
     }
 
+    public StormQueryOp offset(long offset) {
+        mQuery.offset(offset);
+        return this;
+    }
+
     public StormQueryOp join() {
         mQuery.join();
         return this;

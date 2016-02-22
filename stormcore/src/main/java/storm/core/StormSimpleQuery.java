@@ -155,6 +155,11 @@ public class StormSimpleQuery<T extends StormObject> extends StormQueryOp implem
     }
 
     @Override
+    public StormSimpleQuery<T> offset(long offset) {
+        return (StormSimpleQuery<T>) super.offset(offset);
+    }
+
+    @Override
     public StormSimpleQuery<T> join() {
         return (StormSimpleQuery<T>) super.join();
     }
