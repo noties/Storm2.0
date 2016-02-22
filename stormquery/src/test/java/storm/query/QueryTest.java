@@ -5,14 +5,6 @@ package storm.query;
  */
 public class QueryTest extends AbsStatementTest<Query> {
 
-    static {
-        new Query()
-                .select()
-                .from("SomeTable")
-                .where("")
-                .limit(12);
-    }
-
     @Override
     protected Query setUpStatement() {
         return new Query();
@@ -36,6 +28,17 @@ public class QueryTest extends AbsStatementTest<Query> {
 
         assertStatement("SELECT col_1, col_2 FROM table");
         assertArgs();
+    }
+
+    public void testOffset() {
+
+        builder.select()
+                .from("table")
+                .limit(12L)
+                .offset(20L);
+
+        assertStatement("SELECT * FROM table LIMIT ? OFFSET ?");
+        assertArgs("12", "20");
     }
 
     public void testSubQuery() {

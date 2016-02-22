@@ -115,6 +115,13 @@ public class Query implements IStatementBuilder {
         return this;
     }
 
+    public Query offset(long offset) {
+        mBuilder.append(" OFFSET ")
+                .append('?');
+        mArgs.add(String.valueOf(offset));
+        return this;
+    }
+
     // inner join with USING
     public Query join(String table, String column, String... additionalColumns) {
         mBuilder.append(" JOIN ")
