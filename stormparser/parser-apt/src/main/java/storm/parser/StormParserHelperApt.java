@@ -179,6 +179,38 @@ public class StormParserHelperApt implements StormParserHelper<TypeElement, Elem
         return element.asType();
     }
 
+    @Override
+    public boolean isSerializerGeneric(Serialize serialize) {
+        TypeMirror typeMirror = null;
+        try {
+            serialize.value();
+        } catch (MirroredTypeException e) {
+            typeMirror = e.getTypeMirror();
+        }
+
+        if (typeMirror == null) {
+            throw new RuntimeException("Unexpected exception. Could not parse TypeMirror");
+        }
+
+
+        final TypeMirror serializer = extractSerializerInterface(typeMirror);
+        if (serializer == null) {
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        final String type = typeFirstArgument(serializer.toString());
+        if (type == null) {
+            throw new RuntimeException("Unexpected exception");
+        }
+
+        if (type.contains("<")) {
+            return false;
+        }
+
+        final TypeElement outType = mElements.getTypeElement(type);
+        return outType == null;
+    }
+
     private TypeMirror extractSerializerInterface(TypeMirror type) {
 
         final String object = "java.lang.Object";
@@ -214,5 +246,20 @@ public class StormParserHelperApt implements StormParserHelper<TypeElement, Elem
             }
         }
         return null;
+    }
+
+    // return null if there are no types
+    private static String typeFirstArgument(String type) {
+        // we need first `<`, then last `,`
+        final int openIndex = type.indexOf('<');
+        if (openIndex < 0) {
+            return null;
+        }
+        final int lastCommaIndex = type.lastIndexOf(',');
+        if (lastCommaIndex < 0) {
+            return null;
+        }
+
+        return type.substring(openIndex + 1, lastCommaIndex);
     }
 }

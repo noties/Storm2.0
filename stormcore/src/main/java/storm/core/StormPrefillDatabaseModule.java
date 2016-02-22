@@ -40,7 +40,8 @@ public class StormPrefillDatabaseModule<T extends StormObject> extends DatabaseM
         final String tableName = metadata.tableName();
         final boolean putPrimaryKey = !metadata.isPrimaryKeyAutoincrement();
 
-        db.beginTransaction();
+        final StormTransactionController transactionController = new StormTransactionController(db);
+        transactionController.beginTransaction();
 
         try {
 
@@ -52,11 +53,12 @@ public class StormPrefillDatabaseModule<T extends StormObject> extends DatabaseM
                 db.insert(tableName, null, converter.toContentValues(item, putPrimaryKey));
             }
 
-            db.setTransactionSuccessful();
+            transactionController.setTransactionSuccessful();
+
         } catch (SQLiteException e) {
             throw new StormException(e);
         } finally {
-            db.endTransaction();
+            transactionController.endTransaction();
         }
     }
 }

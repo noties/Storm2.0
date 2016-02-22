@@ -41,7 +41,6 @@ public class Database implements Closeable {
     private final DatabaseOpenHelper mOpenHelper;
     private final ContentResolver mContentResolver;
     private final List<DatabaseModule> mModules;
-    private final Object mMutex;
 
     private SQLiteDatabase mDatabase;
     private int mOpenCount;
@@ -61,40 +60,33 @@ public class Database implements Closeable {
         );
         this.mContentResolver = context.getContentResolver();
         this.mModules = new ArrayList<>();
-        this.mMutex = new Object();
     }
 
     // any modules must be registered before calling open
-    public Database registerModule(DatabaseModule dbModule) {
-        synchronized (mMutex) {
-            mModules.add(dbModule);
-        }
+    public synchronized Database registerModule(DatabaseModule dbModule) {
+        mModules.add(dbModule);
         return this;
     }
 
-    public Database registerModules(Collection<? extends DatabaseModule> modules) {
-        synchronized (mMutex) {
-            mModules.addAll(modules);
-        }
+    public synchronized Database registerModules(Collection<? extends DatabaseModule> modules) {
+        mModules.addAll(modules);
         return this;
     }
 
     // after obtaining SQLiteDatabase through this call, don't forget to call `Database.close()`
     // the best practice would be try/finally block.
     // don't call `close()` on a SQLiteDatabase object instance
-    public SQLiteDatabase open() throws DatabaseException {
+    public synchronized SQLiteDatabase open() throws DatabaseException {
 
-        synchronized (mMutex) {
-            if (++mOpenCount == 1) {
-                final List<DatabaseModule> modules = mModules;
-                if (modules.size() == 0) {
-                    // indicate that no modules were supplied
-                    throw new DatabaseException("Called `open` but Database has no registered modules. Did you call `Database.registerModule(s)`?");
-                } else {
-                    mOpenHelper.setModules(modules);
-                }
-                mDatabase = mOpenHelper.getWritableDatabase();
+        if (++mOpenCount == 1) {
+            final List<DatabaseModule> modules = mModules;
+            if (modules.size() == 0) {
+                // indicate that no modules were supplied
+                throw new DatabaseException("Called `open` but Database has no registered modules. Did you call `Database.registerModule(s)`?");
+            } else {
+                mOpenHelper.setModules(modules);
             }
+            mDatabase = mOpenHelper.getWritableDatabase();
         }
 
         if (!mDatabase.isOpen()) {
@@ -105,13 +97,10 @@ public class Database implements Closeable {
     }
 
     @Override
-    public void close() {
-
-        synchronized (mMutex) {
-            if (--mOpenCount == 0) {
-                mDatabase.close();
-                mDatabase = null;
-            }
+    public synchronized void close() {
+        if (--mOpenCount == 0) {
+            mDatabase.close();
+            mDatabase = null;
         }
     }
 

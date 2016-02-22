@@ -43,17 +43,14 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
         final String tableName = metadata.tableName();
 
         final SQLiteDatabase db = storm.database().open();
+        final StormTransactionController transactionController = new StormTransactionController(db);
 
         int index = 0;
         int updated = 0;
 
         try {
 
-            final boolean hasTransactionAlready = db.inTransaction();
-
-            if (!hasTransactionAlready) {
-                db.beginTransaction();
-            }
+            transactionController.beginTransaction();
 
             try {
 
@@ -78,9 +75,7 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
                     index++;
                 }
 
-                if (!hasTransactionAlready) {
-                    db.setTransactionSuccessful();
-                }
+                transactionController.setTransactionSuccessful();
 
                 if (updated > 0) {
                     storm.notifyChange(table);
@@ -93,9 +88,7 @@ class StormUpdateManyDispatcherImpl implements StormUpdateManyDispatcher {
                         table.getName(), values
                 );
             } finally {
-                if (!hasTransactionAlready) {
-                    db.endTransaction();
-                }
+                transactionController.endTransaction();
             }
 
 

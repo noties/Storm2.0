@@ -1,5 +1,11 @@
 package storm.sample.serialize;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ru.noties.debug.Debug;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,7 +29,7 @@ public class SerializeActivity extends BaseActivity {
         final StormRx stormRx = StormRx.newInstance(new Database.Configuration(
                 getApplicationContext(),
                 "serialize.db",
-                1
+                3
         ));
 
         stormRx.registerTable(SerializeItem.class);
@@ -35,14 +41,29 @@ public class SerializeActivity extends BaseActivity {
             }
         });
 
+        final List<List<String>> list = new ArrayList<List<String>>();
+        list.add(Arrays.asList("1_2", "1_2"));
+        list.add(Arrays.asList("2_1", "2_2"));
+
+        final Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+        map.put("key1", Arrays.asList(1, 2, 3));
+
         final SerializeItem item = new SerializeItem()
                 .setIntBool(true)
                 .setStrBool(true)
                 .setSimpleJson(new SerializeJsonItem(45L, "text_text_text"))
+                .setObject(new SerializeJsonItem(666L, "generic_deserialization & runtime type query"))
                 .setLazyJson(new Lazy<SerializeJsonItem>(new Lazy.LazyProvider<SerializeJsonItem>() {
                     @Override
                     public SerializeJsonItem provide() {
                         return new SerializeJsonItem(11L, "lazy_lazy_lazy");
+                    }
+                }))
+                .setListListString(list)
+                .setLazyMap(new Lazy<Map<String, List<Integer>>>(new Lazy.LazyProvider<Map<String, List<Integer>>>() {
+                    @Override
+                    public Map<String, List<Integer>> provide() {
+                        return map;
                     }
                 }));
 
@@ -68,6 +89,10 @@ public class SerializeActivity extends BaseActivity {
                                                     lazy.isProviderCalled(),
                                                     lazy.get()
                                             );
+
+                                            Debug.i("list: %s", serializeItem.getListListString());
+                                            Debug.i("map: %s", serializeItem.getLazyMap().get());
+
                                         }
                                     }, new DebugErrorAction());
                         }

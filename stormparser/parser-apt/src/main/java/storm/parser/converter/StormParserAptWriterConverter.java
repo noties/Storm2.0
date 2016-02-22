@@ -1,9 +1,12 @@
 package storm.parser.converter;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.Filer;
@@ -35,6 +38,9 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
 
     private static final String PARSE_METHOD_NAME = "parse";
     private static final String TO_CONTENT_VALUES_GENERIC_METHOD_NAME = "toContentValuesInner";
+
+    private static final String TYPE_CLASS_NAME = Type.class.getName();
+    private static final String PARAMETERIZED_CLASS_IMPL_NAME = "ParameterizedImpl";
 
     public StormParserAptWriterConverter(Elements elements, Filer filer) {
         super(elements, filer, StormConverterAptClassNameBuilder.getInstance());
@@ -79,6 +85,13 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
             builder.append(serializersClass(indent, data))
                     .append("\n\n")
                     .append(indent);
+        }
+
+        // additional type params
+        if (hasSerializerWithParameterizedType(data)) {
+            // common class for use
+            builder.append(parameterizedClass(indent));
+            builder.append(parameterizedConsts(indent, data));
         }
 
         // generic parse method
@@ -175,22 +188,36 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
 
         indent.increment();
 
-        final Set<StormParserColumn<Element, TypeMirror>> columnsWithSerializers = new HashSet<>();
+//        final Set<StormParserColumn<Element, TypeMirror>> columnsWithSerializers = new HashSet<>();
+        final Set<SerializerItem> elements = new HashSet<>();
 
         for (StormParserColumn<Element, TypeMirror> column: data.getTable().getElements()) {
             if (column.getSerializerType() != null) {
-                columnsWithSerializers.add(column);
+//                columnsWithSerializers.add(column);
+                elements.add(new SerializerItem(
+                        serializerType(column.getSerializerType()),
+                        serializerFieldName(column.getSerializerType())
+                ));
             }
         }
 
         // fields
-        for (StormParserColumn<Element, TypeMirror> column: columnsWithSerializers) {
+//        for (StormParserColumn<Element, TypeMirror> column: columnsWithSerializers) {
+//            builder.append("\n")
+//                    .append(indent)
+//                    .append("final ")
+//                    .append(serializerType(column))
+//                    .append(" ")
+//                    .append(serializerFieldName(column.getSerializerType()))
+//                    .append(";");
+//        }
+        for (SerializerItem item: elements) {
             builder.append("\n")
                     .append(indent)
                     .append("final ")
-                    .append(column.getSerializerType().toString())
+                    .append(item.type)
                     .append(" ")
-                    .append(serializerFieldName(column.getSerializerType()))
+                    .append(item.fieldName)
                     .append(";");
         }
 
@@ -202,13 +229,22 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
 
         indent.increment();
 
-        for (StormParserColumn<Element, TypeMirror> column: columnsWithSerializers) {
+//        for (StormParserColumn<Element, TypeMirror> column: columnsWithSerializers) {
+//            builder.append("\n")
+//                    .append(indent)
+//                    .append("this.")
+//                    .append(serializerFieldName(column.getSerializerType()))
+//                    .append(" = new ")
+//                    .append(serializerType(column))
+//                    .append("();");
+//        }
+        for (SerializerItem item: elements) {
             builder.append("\n")
                     .append(indent)
                     .append("this.")
-                    .append(serializerFieldName(column.getSerializerType()))
+                    .append(item.fieldName)
                     .append(" = new ")
-                    .append(column.getSerializerType().toString())
+                    .append(item.type)
                     .append("();");
         }
 
@@ -223,6 +259,42 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
         return builder.toString();
     }
 
+    private static String serializerType(TypeMirror mirror) {
+//        if (column.isSerializerGeneric()) {
+//            return String.format("%s<%s>", column.getSerializerType(), column.getElement().asType().toString());
+//        }
+        return rawType(mirror);
+    }
+
+    private static class SerializerItem {
+        private final String type;
+        private final String fieldName;
+        SerializerItem(String type, String fieldName) {
+            this.type = type;
+            this.fieldName = fieldName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            SerializerItem that = (SerializerItem) o;
+
+            if (type != null ? !type.equals(that.type) : that.type != null) return false;
+            return !(fieldName != null ? !fieldName.equals(that.fieldName) : that.fieldName != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = type != null ? type.hashCode() : 0;
+            result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
+            return result;
+        }
+    }
+
+
     private static String genericParseMethod(Indent indent, String type, StormParserAptData data) {
 
         final boolean hasSerializers = hasSerializers(data);
@@ -236,7 +308,7 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
 
         final String ifHasIndex = "if (" + cursorIndexesVarName + ".%s > -1)";
         final String cursorGetValue = cursorVarName + ".%s(" + cursorIndexesVarName + ".%s)";
-        final String serializersGetValue = serializersVarName + ".%s.deserialize(%s)";
+        final String serializersGetValue = serializersVarName + ".%s.deserialize(%s, %s)";
 
         builder.append("static ")
                 .append(type)
@@ -287,8 +359,29 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
             // check if we have serializer
             final String init;
             if (column.getSerializerType() != null) {
+
+                final TypeMirror typeMirror = column.getElement().asType();
+                final String fieldType;
+                if (isParameterizedType(typeMirror)) {
+                    fieldType = parametrizedTypeConstName(typeMirror);
+                } else {
+                    fieldType = column.getElement().asType().toString() + ".class";
+                }
+
+                final String serializerCast;
+                if (column.isSerializerGeneric()) {
+                    serializerCast = "(" + column.getElement().asType() + ") ";
+                } else {
+                    serializerCast = "";
+                }
+
                 // if we have serializer
-                init = String.format(serializersGetValue, serializerFieldName(column.getSerializerType()), getFromCursor);
+                init = serializerCast + String.format(
+                        serializersGetValue,
+                        serializerFieldName(column.getSerializerType()),
+                        fieldType,
+                        getFromCursor
+                );
             } else {
                 init = getFromCursor;
             }
@@ -313,6 +406,186 @@ public class StormParserAptWriterConverter extends StormParserAptWriterBase {
                 .append(indent.decrement())
                 .append("}\n");
 
+        return builder.toString();
+    }
+
+    private static String parameterizedClass(Indent indent) {
+
+        final StringBuilder builder = new StringBuilder();
+
+        final String rawTypeVar = "rawType";
+        final String typeArgsVar = "typeArgs";
+
+        builder.append("private static class ")
+                .append(PARAMETERIZED_CLASS_IMPL_NAME)
+                .append(" implements ")
+                .append(ParameterizedType.class.getName())
+                .append(" {\n")
+                .append(indent.increment());
+
+        // fields
+        builder.append("private final ")
+                .append(TYPE_CLASS_NAME)
+                .append(" ")
+                .append(rawTypeVar)
+                .append(";\n")
+                .append(indent)
+                .append("private final ")
+                .append(TYPE_CLASS_NAME)
+                .append("[] ")
+                .append(typeArgsVar)
+                .append(";\n")
+                .append(indent);
+
+        // constructor
+        builder.append(PARAMETERIZED_CLASS_IMPL_NAME)
+                .append("(")
+                .append(TYPE_CLASS_NAME)
+                .append(" ")
+                .append(rawTypeVar)
+                .append(", ")
+                .append(TYPE_CLASS_NAME)
+                .append("... ")
+                .append(typeArgsVar)
+                .append(") {\n")
+                .append(indent.increment())
+                .append("this.")
+                .append(rawTypeVar)
+                .append(" = ")
+                .append(rawTypeVar)
+                .append(";\n")
+                .append(indent)
+                .append("this.")
+                .append(typeArgsVar)
+                .append(" = ")
+                .append(typeArgsVar)
+                .append(";\n")
+                .append(indent.decrement())
+                .append("}\n")
+                .append(indent);
+
+        // requiredMethods
+        // Type getRawType();
+        builder.append("public ")
+                .append(TYPE_CLASS_NAME)
+                .append(" getRawType() { return ")
+                .append(rawTypeVar)
+                .append("; }\n")
+                .append(indent);
+
+        // Type[] getActualTypeArguments();
+        builder.append("public ")
+                .append(TYPE_CLASS_NAME)
+                .append("[] getActualTypeArguments() { return ")
+                .append(typeArgsVar)
+                .append("; }\n")
+                .append(indent);
+
+        // Type getOwnerType();
+        builder.append("public ")
+                .append(TYPE_CLASS_NAME)
+                .append(" getOwnerType() { return null; }\n");
+
+        builder.append(indent.decrement())
+                .append("}\n\n")
+                .append(indent);
+
+        return builder.toString();
+    }
+
+    private static String parameterizedConsts(Indent indent, StormParserAptData data) {
+
+        final StringBuilder builder = new StringBuilder();
+
+        TypeMirror mirror;
+
+        for (StormParserColumn<Element, TypeMirror> column: data.getTable().getElements()) {
+            mirror = column.getElement().asType();
+            if (isParameterizedType(mirror)) {
+                builder.append("private static final ")
+                        .append(TYPE_CLASS_NAME)
+                        .append(" ")
+                        .append(parametrizedTypeConstName(mirror))
+                        .append(" = ")
+                        .append(parameterizedConst(mirror))
+                        .append(";\n")
+                        .append(indent);
+            }
+        }
+
+        builder.append("\n\n")
+                .append(indent);
+
+        return builder.toString();
+    }
+
+    private static String parameterizedConst(TypeMirror typeMirror) {
+
+        if (isParameterizedType(typeMirror)) {
+
+            final List<? extends TypeMirror> typeArgs = ((DeclaredType) typeMirror).getTypeArguments();
+            final StringBuilder builder = new StringBuilder()
+                    .append("new ")
+                    .append(PARAMETERIZED_CLASS_IMPL_NAME)
+                    .append("(")
+                    .append(rawType(typeMirror))
+                    .append(".class");
+
+            for (TypeMirror mirror: typeArgs) {
+                builder.append(", ")
+                        .append(parameterizedConst(mirror));
+            }
+
+            builder.append(")");
+
+            return builder.toString();
+        }
+
+        return typeMirror.toString() + ".class";
+    }
+
+    private static String rawType(TypeMirror mirror) {
+        final String value = mirror.toString();
+        final int index = value.indexOf("<");
+        if (index > -1) {
+            return value.substring(0, index);
+        }
+        return value;
+    }
+
+    private static boolean hasSerializerWithParameterizedType(StormParserAptData data) {
+        for (StormParserColumn<Element, TypeMirror> column: data.getTable().getElements()) {
+            if (column.getSerializerType() != null) {
+                final TypeMirror typeMirror = column.getElement().asType();
+                if (isParameterizedType(typeMirror)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isParameterizedType(TypeMirror mirror) {
+        if (!(mirror instanceof DeclaredType)) {
+            return false;
+        }
+        final DeclaredType declaredType = (DeclaredType) mirror;
+        final List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+        return typeArguments != null && typeArguments.size() > 0;
+    }
+
+    private static String parametrizedTypeConstName(TypeMirror typeMirror) {
+        final String type = typeMirror.toString();
+        final StringBuilder builder = new StringBuilder();
+        char c;
+        for (int i = 0, count = type.length(); i < count; i++) {
+            c = type.charAt(i);
+            if (Character.isLetter(c)) {
+                builder.append(Character.toUpperCase(c));
+            } else {
+                builder.append("_");
+            }
+        }
         return builder.toString();
     }
 

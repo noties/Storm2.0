@@ -1,6 +1,10 @@
 package storm.sample.serialize;
 
+import java.util.List;
+import java.util.Map;
+
 import storm.annotations.Column;
+import storm.annotations.NewColumn;
 import storm.annotations.PrimaryKey;
 import storm.annotations.Serialize;
 import storm.annotations.Table;
@@ -34,6 +38,21 @@ class SerializeItem implements StormObject {
     @Column
     @Serialize(LazyJsonSerializer.class)
     Lazy<SerializeJsonItem> lazyJson;
+
+    @Column
+    @NewColumn(2)
+    @Serialize(GenericJsonSerializer.class)
+    SerializeJsonItem object;
+
+    @Column
+    @NewColumn(3)
+    @Serialize(GenericJsonSerializer.class)
+    List<List<String>> listListString;
+
+    @Column
+    @NewColumn(3)
+    @Serialize(GenericLazyJsonSerializer.class)
+    Lazy<Map<String, List<Integer>>> lazyMap;
 
     public long getId() {
         return id;
@@ -72,6 +91,33 @@ class SerializeItem implements StormObject {
 
     public SerializeItem setLazyJson(Lazy<SerializeJsonItem> lazyJson) {
         this.lazyJson = lazyJson;
+        return this;
+    }
+
+    public SerializeJsonItem getObject() {
+        return object;
+    }
+
+    public SerializeItem setObject(SerializeJsonItem object) {
+        this.object = object;
+        return this;
+    }
+
+    public List<List<String>> getListListString() {
+        return listListString;
+    }
+
+    public SerializeItem setListListString(List<List<String>> listListString) {
+        this.listListString = listListString;
+        return this;
+    }
+
+    public Lazy<Map<String, List<Integer>>> getLazyMap() {
+        return lazyMap;
+    }
+
+    public SerializeItem setLazyMap(Lazy<Map<String, List<Integer>>> lazyMap) {
+        this.lazyMap = lazyMap;
         return this;
     }
 }

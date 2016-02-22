@@ -59,12 +59,8 @@ public class Storm {
 
 
 
-    public <T extends StormObject> StormParser<T> parser(Class<T> table) throws StormException {
-        try {
-            return mParserFactory.provide(table);
-        } catch (StormParserException e) {
-            throw StormException.newInstance(e, "Exception obtaining Parser for a class: `%s`", table.getName());
-        }
+    public <T extends StormObject> StormParser<T> parser(Class<T> table) {
+        return mParserFactory.provide(table);
     }
 
     public <T extends StormObject> StormConverter<T> converter(Class<T> table) throws StormException {

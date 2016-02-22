@@ -136,12 +136,15 @@ class StormParserTableParser {
         }
 
         final TYPE serializerType;
+        final boolean isSerializerGeneric;
         {
             final Serialize serialize = helper.getElementAnnotation(element, Serialize.class);
             if (serialize == null) {
                 serializerType = null;
+                isSerializerGeneric = false;
             } else {
                 serializerType = helper.getSerializeValue(serialize);
+                isSerializerGeneric = helper.isSerializerGeneric(serialize);
             }
         }
 
@@ -226,7 +229,8 @@ class StormParserTableParser {
                 .setIsNonNull(isNonNull)
                 .setIndex(index)
                 .setForeignKey(foreignKey)
-                .setVersionWhenAdded(versionWhenAdded);
+                .setVersionWhenAdded(versionWhenAdded)
+                .setIsSerializerGeneric(isSerializerGeneric);
     }
 
     <MAIN, ELEMENT, TYPE> StormType parseType(

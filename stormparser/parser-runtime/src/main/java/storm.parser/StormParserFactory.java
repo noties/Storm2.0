@@ -23,7 +23,7 @@ public class StormParserFactory {
         this.mCachedParsers = new HashMap<>();
     }
 
-    public synchronized <T> StormParser<T> provide(Class<T> cl) throws StormParserException {
+    public synchronized <T> StormParser<T> provide(Class<T> cl) {
         StormParser<?> parser = mCachedParsers.get(cl);
         if (parser == null) {
             parser = parser(cl);
@@ -38,21 +38,33 @@ public class StormParserFactory {
         final ParserLazy<StormScheme> scheme = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormScheme>() {
             @Override
             public StormScheme provide() throws StormParserException {
-                return FACTORY.provide(StormSchemeAptNameBuilder.getInstance(), cl);
+                final StormScheme stormScheme = FACTORY.provide(StormSchemeAptNameBuilder.getInstance(), cl);
+                if (stormScheme == null) {
+                    throw StormParserException.newInstance("Unable to obtain StormScheme generated class for a class: " + cl.getName());
+                }
+                return stormScheme;
             }
         });
 
         final ParserLazy<StormConverter<T>> converter = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormConverter<T>>() {
             @Override
             public StormConverter<T> provide() throws StormParserException {
-                return FACTORY.provide(StormConverterAptClassNameBuilder.getInstance(), cl);
+                final StormConverter<T> stormConverter = FACTORY.provide(StormConverterAptClassNameBuilder.getInstance(), cl);
+                if (stormConverter == null) {
+                    throw StormParserException.newInstance("Unable to obtain StormConverter generated class for a class: " + cl.getName());
+                }
+                return stormConverter;
             }
         });
 
         final ParserLazy<StormMetadata<T>> metadata = new ParserLazy<>(new ParserLazy.ParserLazyProvider<StormMetadata<T>>() {
             @Override
             public StormMetadata<T> provide() throws StormParserException {
-                return FACTORY.provide(StormMetadataAptClassNameBuilder.getInstance(), cl);
+                final StormMetadata<T> stormMetadata = FACTORY.provide(StormMetadataAptClassNameBuilder.getInstance(), cl);
+                if (stormMetadata == null) {
+                    throw StormParserException.newInstance("Unable to obtain StormMetadata generated class for a class: " + cl.getName());
+                }
+                return stormMetadata;
             }
         });
 

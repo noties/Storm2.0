@@ -28,6 +28,8 @@ public class StormParserColumn<ELEMENT, TYPE> {
 
     private int mVersionWhenAdded;
 
+    private boolean mIsSerializerGeneric;
+
     public String getName() {
         return mName;
     }
@@ -74,6 +76,10 @@ public class StormParserColumn<ELEMENT, TYPE> {
 
     public StormSchemeForeignKey getForeignKey() {
         return mForeignKey;
+    }
+
+    public boolean isSerializerGeneric() {
+        return mIsSerializerGeneric;
     }
 
     public StormParserColumn<ELEMENT, TYPE> setName(String name) {
@@ -133,6 +139,11 @@ public class StormParserColumn<ELEMENT, TYPE> {
 
     public StormParserColumn<ELEMENT, TYPE> setForeignKey(StormSchemeForeignKey foreignKey) {
         mForeignKey = foreignKey;
+        return this;
+    }
+
+    public StormParserColumn<ELEMENT, TYPE> setIsSerializerGeneric(boolean isSerializerGeneric) {
+        mIsSerializerGeneric = isSerializerGeneric;
         return this;
     }
 }

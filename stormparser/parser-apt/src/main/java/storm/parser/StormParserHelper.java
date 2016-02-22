@@ -33,4 +33,6 @@ interface StormParserHelper<MAIN, ELEMENT, TYPE> {
     TYPE getSerializeValue(Serialize serialize);
 
     TYPE getElementType(ELEMENT element);
+
+    boolean isSerializerGeneric(Serialize serialize);
 }

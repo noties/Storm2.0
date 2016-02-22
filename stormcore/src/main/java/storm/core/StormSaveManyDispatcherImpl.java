@@ -39,8 +39,8 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
 
         final String tableName = metadata.tableName();
 
-        final boolean putPrimsryKey = !metadata.isPrimaryKeyAutoincrement();
-        final List<ContentValues> contentValues = converter.toContentValuesList(collection, putPrimsryKey);
+        final boolean putPrimaryKey = !metadata.isPrimaryKeyAutoincrement();
+        final List<ContentValues> contentValues = converter.toContentValuesList(collection, putPrimaryKey);
 
         if (contentValues == null
                 || contentValues.size() == 0) {
@@ -48,6 +48,7 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
         }
 
         final SQLiteDatabase db = storm.database().open();
+        final StormTransactionController transactionController = new StormTransactionController(db);
 
         final long[] out = new long[size];
 
@@ -55,12 +56,7 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
 
             int index = 0;
 
-            // at this point we already might have a transaction
-            final boolean hasTransactionAlready = db.inTransaction();
-
-            if (!hasTransactionAlready) {
-                db.beginTransaction();
-            }
+            transactionController.beginTransaction();
 
             try {
 
@@ -68,9 +64,7 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
                     out[index++] = db.insert(tableName, null, cv);
                 }
 
-                if (!hasTransactionAlready) {
-                    db.setTransactionSuccessful();
-                }
+                transactionController.setTransactionSuccessful();
 
                 if (index > 0) {
                     storm.notifyChange(table);
@@ -85,9 +79,7 @@ class StormSaveManyDispatcherImpl implements StormSaveManyDispatcher {
                 );
 
             } finally {
-                if (!hasTransactionAlready) {
-                    db.endTransaction();
-                }
+                transactionController.endTransaction();
             }
 
 

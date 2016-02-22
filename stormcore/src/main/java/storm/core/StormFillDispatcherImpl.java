@@ -49,14 +49,11 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
         }
 
         final SQLiteDatabase db = storm.database().open();
+        final StormTransactionController transactionController = new StormTransactionController(db);
 
         try {
 
-            final boolean hasTransaction = db.inTransaction();
-
-            if (!hasTransaction) {
-                db.beginTransaction();
-            }
+            transactionController.beginTransaction();
 
             try {
 
@@ -67,9 +64,7 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
                         args
                 );
 
-                if (!hasTransaction) {
-                    db.setTransactionSuccessful();
-                }
+                transactionController.setTransactionSuccessful();
 
                 if (updated > 0) {
                     storm.notifyChange(table);
@@ -84,9 +79,7 @@ class StormFillDispatcherImpl implements StormFillDispatcher {
                         table.getName(), value, cv
                 );
             } finally {
-                if (!hasTransaction) {
-                    db.endTransaction();
-                }
+                transactionController.endTransaction();
             }
 
         } finally {

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -167,7 +168,7 @@ public class StormConverterTest extends TestCase {
         }
 
         @Override
-        public Date deserialize(Long aLong) {
+        public Date deserialize(Type type, Long aLong) {
             return aLong == null || aLong == -1L ? null : new Date(aLong);
         }
     }

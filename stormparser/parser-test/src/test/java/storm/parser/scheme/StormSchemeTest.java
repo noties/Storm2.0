@@ -2,6 +2,7 @@ package storm.parser.scheme;
 
 import junit.framework.TestCase;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public class StormSchemeTest extends TestCase {
             }
 
             @Override
-            public Date deserialize(Double aDouble) {
+            public Date deserialize(Type type, Double aDouble) {
                 return null;
             }
         }
