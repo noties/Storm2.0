@@ -7,9 +7,9 @@ Work in progress
 
 
 ```groovy
-compile 'ru.noties.storm:runtime:x.x.x@jar'
-compile 'ru.noties.storm:rx:x.x.x@jar'
-apt 'ru.noties.storm-parser-apt:x.x.x'
+compile 'ru.noties.storm:runtime:2.0.0@jar'
+compile 'ru.noties.storm:rx:2.0.0@jar'
+apt 'ru.noties.storm:parser-apt:2.0.0'
 ```
 
 
