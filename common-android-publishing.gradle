@@ -12,10 +12,15 @@ artifacts {
 
 version = VERSION_NAME
 group = GROUP
+ext.POM_ARTIFACT_ID = project.name
 
-uploadArchives {
-    repositories {
-        add project.repositories.localRepo
+if (project.hasProperty('release_to_maven')) {
+    apply from: "${project.rootDir}/common-android-publishing-maven.gradle"
+} else {
+    uploadArchives {
+        repositories {
+            add project.repositories.localRepo
+        }
     }
 }
 
