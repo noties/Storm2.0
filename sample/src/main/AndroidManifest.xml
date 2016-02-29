@@ -24,6 +24,7 @@
         <activity android:name=".pseudotable.PseudoTableActivity" />
         <activity android:name=".extreme.ExtremeActivity" />
         <activity android:name=".serialize.SerializeActivity" />
+        <activity android:name=".keyvalue.KeyValueActivity" />
 
     </application>
 
